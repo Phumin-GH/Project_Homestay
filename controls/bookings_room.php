@@ -2,7 +2,9 @@
 include '../config/db_connect.php';
 
 ob_start();
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 error_reporting(E_ALL);
 ini_set('display_errors', 0); // ปิด warning/notice บนหน้า
 header('Content-Type: application/json');
