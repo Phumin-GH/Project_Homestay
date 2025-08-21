@@ -151,6 +151,7 @@ $favorites = $select->fetchAll(PDO::FETCH_ASSOC);
         height: 2.25rem;
         padding: 0;
         font-size: 1.1rem;
+        border-radius: 25px;
     }
 
     .btn-danger:hover {
@@ -303,7 +304,7 @@ $favorites = $select->fetchAll(PDO::FETCH_ASSOC);
                         <div class="favorite-actions">
 
                             <button class="btn-primary" data-action="delete">Book Now</button>
-                            <button class="btn-danger">
+                            <button class="btn-danger" title="Unfavorite">
                                 <i class="fa-solid fa-heart-crack"></i>
                             </button>
 

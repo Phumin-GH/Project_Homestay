@@ -7,10 +7,15 @@ if (!isset($_SESSION["User_email"])) {
 
 include '../config/db_connect.php';
 
-// if (!isset($_GET['id'])) {
-//     echo "ไม่พบรหัสบ้านพัก";
-//     exit();
-// }
+$email = $_SESSION['User_email'];
+$stmt = $conn->prepare("SELECT User_id FROM user WHERE User_email = ?");
+$stmt->execute([$email]);
+$user_id = $stmt->fetchColumn();
+
+// ดึง property_id ของ favorites ของ user
+$stmt = $conn->prepare("SELECT property_id FROM favorite WHERE User_id = ?");
+$stmt->execute([$user_id]);
+$fav_btn = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
 
 include '../controls/get_homestay.php'; // This will set $house, $rooms, $bookings, and $maps_url
@@ -92,6 +97,32 @@ if (!empty($house['Property_lat']) && !empty($house['Property_lng'])) {
     }
 
     .favorite-btn {
+        background: transparent;
+        border: 2.5px solid #ecf0f1;
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        font-size: 30px;
+        margin: 0;
+        /* ยกเลิก margin 150px ออก */
+        cursor: pointer;
+        color: #7f8c8d;
+        transition: all 0.2s ease;
+    }
+
+    .favorite-btn:hover {
+        background-color: #fdf2f2;
+        color: #c0392b;
+        border-color: #fbd2d2;
+    }
+
+    .favorite-btn.active {
+        background-color: #fdf2f2;
+        color: #c0392b;
+        border-color: #c0392b;
+    }
+
+    /* .favorite-btn {
         background: none;
         border: none;
         font-size: 1.2rem;
@@ -109,7 +140,7 @@ if (!empty($house['Property_lat']) && !empty($house['Property_lng'])) {
     .favorite-btn.active i {
         color: #e3342f;
 
-    }
+    } */
 
 
     /* .favorite-btn i:hover {
@@ -122,15 +153,16 @@ if (!empty($house['Property_lat']) && !empty($house['Property_lng'])) {
         color: #e74c3c;
     } */
 
-    .favorite-btn:hover {
+    /* .favorite-btn:hover {
         background: #e74c3c;
         transform: scale(1.1);
-    }
+    } */
 
     .section-title {
         font-size: 1.2rem;
         font-weight: 500;
         margin: 2rem 0 1rem 0;
+
 
     }
 
@@ -264,7 +296,7 @@ if (!empty($house['Property_lat']) && !empty($house['Property_lng'])) {
         gap: 1rem;
     }
 
-    .book-btn {
+    /* .book-btn {
         background: #1a7f37;
         color: #fff;
         border: none;
@@ -273,10 +305,10 @@ if (!empty($house['Property_lat']) && !empty($house['Property_lng'])) {
         font-size: 1.1rem;
         cursor: pointer;
         font-weight: 500;
-        transition: background 0.2s;
-    }
+        transition: background-color 0.2s ease-in-out;
+    } */
 
-    .bookBtn {
+    /* .book-btn {
         display: flex;
         background: #1a7f37;
         color: #fff;
@@ -286,20 +318,58 @@ if (!empty($house['Property_lat']) && !empty($house['Property_lng'])) {
         font-size: 1.1rem;
         cursor: pointer;
         font-weight: 500;
-        transition: background 0.2s;
+        transition: background-color 0.2s ease-in-out;
     }
 
-    .bookBtn:hover {
+    .book-btn:hover {
         background: #fff;
         color: #1a7f37;
         border: 2px solid #1a7f37;
     }
 
-    .booBtn:disabled {
+    .boo-btn:disabled {
         cursor: not-allowed;
         background: #ffffffff;
         color: #666464ff;
+    } */
+    .btn-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        /* แบ่ง 2 คอลัมน์เท่ากัน */
+        gap: 10px;
+        /* ระยะห่างระหว่างปุ่ม */
+        margin-top: 15px;
     }
+
+    .book-btn {
+        background: #1a7f37;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        padding: 0.7rem 2.2rem;
+        font-size: 1.1rem;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background-color 0.2s ease-in-out;
+        text-align: center;
+        /* ให้ข้อความอยู่กลาง */
+        width: 100%;
+        /* ให้ปุ่มขยายเต็ม column */
+    }
+
+    .book-btn:hover {
+        background: #fff;
+        color: #1a7f37;
+        border: 2px solid #1a7f37;
+    }
+
+    .book-btn:disabled {
+        cursor: not-allowed;
+        background: #f5f5f5;
+        color: #666464;
+        border: 1px solid #ddd;
+    }
+
 
 
 
@@ -520,22 +590,32 @@ if (!empty($house['Property_lat']) && !empty($house['Property_lng'])) {
         display: none;
     }
 
-    /* .favoriteBtn {
-        padding: 0.375rem 0.75rem;
-        border-radius: 20px;
-        font-size: 0.75rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-left: 1rem;
-    } */
+    .btn-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        /* แบ่ง 2 คอลัมน์เท่ากัน */
+        gap: 10px;
+        /* ระยะห่างระหว่างปุ่ม */
+        margin-top: 15px;
+    }
+
+
+
     .title {
         display: flex;
         align-items: center;
-        /* จัดให้อยู่ตรงกลางแนวตั้ง */
-        gap: 1rem;
-        /* เว้นระยะระหว่าง h2 กับปุ่ม */
-        border: 2px solid black;
+        /* จัดให้อยู่กึ่งกลางแนวตั้ง */
+        justify-content: space-between;
+        /* ดัน h2 ไปซ้าย, ปุ่มไปขวา */
+
+    }
+
+    .booking-map-flex {
+        display: flex;
+        gap: 2rem;
+        margin-top: 2.5rem;
+        align-items: stretch;
+        /* ดันให้สูงเท่ากัน */
     }
     </style>
 </head>
@@ -587,9 +667,11 @@ if (!empty($house['Property_lat']) && !empty($house['Property_lng'])) {
                         <div class="title">
 
                             <h2><?php echo htmlspecialchars($house['Property_name']); ?></h2>
-                            <button class="favorite-btn" id="favoriteBtn" title="เพิ่มในรายการโปรด" onclick=cilckMe()
-                                data-room-property="<?php echo $room['Property_id']; ?>"><i
-                                    class="fa-solid fa-heart"></i></button>
+                            <button class="favorite-btn" title="เพิ่มในรายการโปรด"
+                                data-property-id="<?php echo $house['Property_id']; ?>" data-method="toggle"><i
+                                    class="fa-solid fa-heart">
+                                </i></button>
+
                         </div>
                         <div class="address"><i class="fa fa-map-marker-alt"></i>
                             <?php echo htmlspecialchars($house['Property_province'] . ', ' . $house['Property_district'] . ', ' . $house['Property_province']); ?>
@@ -628,8 +710,7 @@ if (!empty($house['Property_lat']) && !empty($house['Property_lng'])) {
                     </div>
                     <?php endforeach; ?>
                 </div>
-                <div class="booking-map-flex"
-                    style="display:flex; gap:2rem; margin-top:2.5rem; align-items:flex-start;">
+                <div class="booking-map-flex">
                     <div class="map-section" style="flex:1; min-width:280px;">
                         <div class="section-title">แผนที่ที่พัก</div>
                         <!-- <iframe class="map-frame" src="<?php /* echo $maps_url; */ ?>" allowfullscreen=""></iframe> -->
@@ -675,17 +756,20 @@ if (!empty($house['Property_lat']) && !empty($house['Property_lng'])) {
                             </div>
 
                             <h3 style="margin-top:1rem; font-weight:bold;">รวมราคา</h3>
-                            <div style="margin-top:1rem; font-weight:bold;">
-                                <p id="nights"></p>
+                            <div style="margin-top:1rem; ">
+                                <p>จำนวนคืนที่เข้าพัก : <span id="nights">1</span> คืน</p>
+                                <p>ราคารวม : <span name="total_price" id="total_price">0.00</span> บาท</p>
                             </div>
-                            <p>ราคารวม: <span name="total_price" id="total_price">0.00</span> บาท</p>
 
 
                             <!-- <button class="book-btn" name="bookBtn" id="bookBtn" style="width:100%;" onclick="openConfirm_Booking()">จอง</button> -->
-                            <button class="book-btn" name="bookBtn" id="bookBtn"
-                                onclick="openConfirm_Booking()">จอง</button>
+                            <div class="btn-group">
 
-                            <button class="book-btn" name="resetBtn" id="resetBtn">Reset</button>
+                                <button class="book-btn" name="bookBtn" id="bookBtn"
+                                    onclick="openConfirm_Booking()">จอง</button>
+
+                                <button class="book-btn" name="resetBtn" id="resetBtn">Reset</button>
+                            </div>
                         </div>
 
                     </div>
@@ -906,7 +990,7 @@ if (!empty($house['Property_lat']) && !empty($house['Property_lng'])) {
             const diffTime = checkoutDate - checkinDate;
             const diffDays = diffTime / (1000 * 60 * 60 * 24);
             diffDayDisplay.value = diffDays;
-            nightsDisplay.innerText = `จำนวนคืนที่เข้าพัก: ${diffDays} คืน`;
+            nightsDisplay.innerText = diffDays;
             fetch('../controls/bookings_room.php', {
                     method: 'POST',
                     headers: {
@@ -1159,35 +1243,48 @@ if (!empty($house['Property_lat']) && !empty($house['Property_lng'])) {
     } else {
         console.error('Element with id "booking-form" not found');
     }
-
+    const favoriteBtn = <?php echo json_encode($fav_btn); ?>;
     const buttons = document.querySelectorAll(".favorite-btn");
 
     buttons.forEach(button => {
+        const houseId = button.dataset.propertyId;
+        if (favoriteBtn.includes(parseInt(houseId))) {
+            button.classList.add('active');
+        } else {
+            button.classList.remove('active');
+        }
         button.addEventListener("click", async () => {
-            const houseId = button.dataset.propertyId;
-
+            const action = button.dataset.method;
+            alert(houseId);
             // ส่งข้อมูลไป PHP
             fetch("../controls/favorite.php", {
                     method: "POST",
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
                     },
-                    body: JSON.stringify({
-                        house_id: houseId
+                    body: new URLSearchParams({
+                        property_id: houseId,
+                        action: action
                     })
+
                 })
                 .then(response => response.json())
                 .then(result => {
 
                     if (result.success) {
                         // toggle icon
-                        if (button.classList.contains("active")) {
-                            button.classList.remove("active");
-                            button.innerHTML = "🤍 Favorite";
-                        } else {
+                        if (result.action === 'added') {
                             button.classList.add("active");
-                            button.innerHTML = "❤️ Favorited";
+
+
+                        } else if (result.action === 'removed') {
+                            button.classList.remove("active");
+
+
                         }
+                        // if (button.classList.contains("active")) {
+                        // } else {
+                        // }
                     } else {
                         alert("เกิดข้อผิดพลาด: " + result.message);
                     }
