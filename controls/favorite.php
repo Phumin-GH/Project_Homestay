@@ -1,45 +1,72 @@
 <?php
 session_start();
-header("Content-Type: application/json"); // ใช้ application/json เพราะเราส่ง/รับเป็น JSON
+header("Content-Type: application/json");
 include __DIR__ . '/../config/db_connect.php';
 
-//  เช็คว่ามี user login ไหม
+// ตรวจสอบ user login
 if (!isset($_SESSION['User_email'])) {
     echo json_encode(["success" => false, "message" => "กรุณาเข้าสู่ระบบ"]);
     exit;
 }
 
-$data = json_decode(file_get_contents("php://input"), true);
+// ตรวจสอบว่ามี POST
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-//  ป้องกัน error ถ้าไม่ได้ส่ง house_id มา
-if (!isset($data['house_id'])) {
-    echo json_encode(["success" => false, "message" => "ไม่พบ house_id"]);
+    $action = $_POST['action'] ?? '';
+    $property_id = $_POST['property_id'] ?? null;
+
+    if (!$property_id) {
+        echo json_encode(["success" => false, "message" => "ไม่พบ property_id"]);
+        exit;
+    }
+
+    $email = $_SESSION['User_email'];
+    $stmt = $conn->prepare("SELECT User_id FROM user WHERE User_email = ?");
+    $stmt->execute([$email]);
+    $user_id = $stmt->fetchColumn();
+
+    try {
+        if ($action === 'delete') {
+            // ลบ favorite
+            $check = $conn->prepare("SELECT 1 FROM favorite WHERE User_id = ? AND property_id = ?");
+            $check->execute([$user_id, $property_id]);
+            $exists = $check->fetchColumn();
+
+            if ($exists) {
+                $del = $conn->prepare("DELETE FROM favorite WHERE User_id = ? AND property_id = ?");
+                $del->execute([$user_id, $property_id]);
+                
+                echo json_encode(["success" => true, "message" => "ลบข้อมูลใน favorites"]);
+            } else {
+                echo json_encode(["success" => false, "message" => "ไม่พบข้อมูลใน favorites"]);
+            }
+            exit;
+        } elseif ($action === 'toggle') {
+            // เพิ่ม/ลบ favorite แบบ toggle
+            $check = $conn->prepare("SELECT 1 FROM favorite WHERE User_id = ? AND property_id = ?");
+            $check->execute([$user_id, $property_id]);
+            $exists = $check->fetchColumn();
+
+            if ($exists) {
+                $del = $conn->prepare("DELETE FROM favorite WHERE User_id = ? AND property_id = ?");
+                $del->execute([$user_id, $property_id]);
+                echo json_encode(["success" => true, "action" => "removed"]);
+            } else {
+                $insert = $conn->prepare("INSERT INTO favorite (User_id, property_id) VALUES (?, ?)");
+                $insert->execute([$user_id, $property_id]);
+                echo json_encode(["success" => true, "action" => "added"]);
+            }
+            exit;
+        } else {
+            echo json_encode(["success" => false, "message" => "Action ไม่ถูกต้อง"]);
+            exit;
+        }
+    } catch (PDOException $e) {
+        echo json_encode(["success" => false, "message" => $e->getMessage()]);
+        exit;
+    }
+} else {
+    echo json_encode(["success" => false, "message" => "Request ต้องเป็น POST"]);
     exit;
 }
-
-$house_id = $_POST['house_id'];
-$email = $_SESSION['User_email']; // ระวังตัวพิมพ์เล็ก/ใหญ่ ต้องตรงกัน
-$stmt = $conn->prepare("SELECT User_id FROM user WHERE email = ?");
-$stmt->execute([$email]);
-$user_id = $stmt->fetchColumn();
-
-try {
-    //  ตรวจสอบว่ามี favorite อยู่แล้วหรือไม่
-    $check = $conn->prepare("SELECT 1 FROM favorite WHERE User_id = ? AND property_id = ?");
-    $check->execute([$user_id, $house_id]);
-    $exists = $check->fetchColumn();
-
-    if ($exists) {
-        //  ถ้ามีแล้ว → ลบ
-        $del = $conn->prepare("DELETE FROM favorite WHERE User_id = ? AND property_id = ?");
-        $del->execute([$user_id, $house_id]);
-        echo json_encode(["success" => true, "action" => "removed"]);
-    } else {
-        //  ถ้ายังไม่มี → เพิ่ม
-        $insert = $conn->prepare("INSERT INTO favorite (User_id, property_id) VALUES (?, ?)");
-        $insert->execute([$user_id, $house_id]);
-        echo json_encode(["success" => true, "action" => "added"]);
-    }
-} catch (PDOException $e) {
-    echo json_encode(["success" => false, "message" => $e->getMessage()]);
-}
+?>
