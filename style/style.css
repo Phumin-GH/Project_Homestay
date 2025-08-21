@@ -1,0 +1,706 @@
+/* Reset and Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+  line-height: 1.6;
+  color: #1a1a1a;
+  background-color: whitesmoke;
+  font-weight: 400;
+}
+
+/* Header and Navigation */
+header {
+  background: #ffffff;
+  border-bottom: 1px solid #e5e5e5;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  height: 70px;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  height: 100%;
+  z-index: 50;
+}
+
+.logo1 {
+  display: flex;
+  align-items: center;
+}
+
+.logo h1 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.logo-images {
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.menu ul {
+  display: flex;
+  list-style: none;
+  align-items: center;
+  gap: 2rem;
+}
+
+.menu a {
+  color: #666666;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+/* .menu a:hover,
+.menu a.active {
+  background-color: #f8f9ff;
+  color: #1e5470;
+  transform: translateY(-1px);
+} */
+
+/* --- Dropdown Menu: Minimal Style --- */
+.dropdown {
+  position: relative;
+}
+
+.dropdown-toggle {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  background: none;
+  border: none;
+  color: #333;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background 0.15s, color 0.15s;
+}
+.dropdown-toggle:focus {
+  outline: 2px solid #1e5470;
+  outline-offset: 2px;
+  background: #f3f4f6;
+}
+.dropdown-toggle.active,
+.dropdown-toggle:active {
+  background: #f3f4f6;
+  color: #1e5470;
+}
+.dropdown-toggle i {
+  margin-left: 0.5rem;
+  font-size: 1.1em;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 0.25rem);
+  right: 0;
+  min-width: 180px;
+  background: #fff;
+  border-radius: 6px;
+  border: none;
+  box-shadow: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: opacity 0.18s, transform 0.18s;
+  z-index: 1001;
+  padding: 0.25rem 0;
+  list-style: none;
+  pointer-events: none;
+  display: block;
+}
+.dropdown-menu.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+  grid-template-columns: 1fr;
+}
+.dropdown-menu li {
+  display: block;
+  width: 100%;
+}
+.dropdown-menu a {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  color: #333;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 400;
+  text-decoration: none;
+  background: none;
+  transition: background 0.13s, color 0.13s;
+}
+.dropdown-menu a:focus {
+  outline: 2px solid #1e5470;
+  outline-offset: 2px;
+  background: #f3f4f6;
+  color: #1e5470;
+}
+.dropdown-menu a:hover {
+  background: #f3f4f6;
+  color: #1e5470;
+}
+.dropdown-menu a i {
+  min-width: 1.1rem;
+  width: 1.1rem;
+  text-align: center;
+  font-size: 1em;
+}
+
+/* Responsive: show dropdown as block on mobile */
+@media (max-width: 768px) {
+  .dropdown-menu {
+    position: static;
+    min-width: 100%;
+    box-shadow: none;
+    border-radius: 0 0 12px 12px;
+    border: 1px solid #e5e5e5;
+    background: #fff;
+    padding: 0.5rem 0;
+    transform: none;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    display: none;
+  }
+  .dropdown-menu.show {
+    display: block;
+  }
+}
+
+/* Banner Section */
+.banner-image {
+  position: relative;
+  height: 500px;
+  overflow: hidden;
+  border-radius: 0 0 20px 20px;
+}
+
+.banner-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.7);
+}
+
+.banner-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: white;
+  z-index: 2;
+}
+
+.banner-text h2 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.banner-text p {
+  font-size: 1.2rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Shine Animation */
+.btn-shine {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: shine 3s infinite;
+}
+
+@keyframes shine {
+  0% {
+    background-position: -200% 0;
+  }
+  50% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Search Section */
+/* .search-sections {
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 16px;
+  margin: 1.5rem 40rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid #e5e5e5;
+  width: 1500px;
+}
+
+.search-containers {
+  max-width: 150rem;
+  margin: 1rem auto;
+}
+
+.search-boxs {
+  display: flex;
+  gap: 1rem;
+   grid-row-start: ; 
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid #e5e5e5;
+}
+
+.search-boxs input[type="text"] {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  background: #f8f9fa;
+   transition: border-color 0.2s ease; 
+}
+
+.search-boxs input[type="text"]:focus {
+  outline: none;
+  border-color: #1e5470;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  border: 1px solid #e5e5e5;
+  border-radius: 15;
+  transition: border-color 0.2s ease;
+}
+
+.search-boxs input[type="date"] {
+  padding: 0.75rem 1rem;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  background: white;
+  transition: border-color 0.2s ease;
+}
+
+.search-boxs input[type="date"]:focus {
+  outline: none;
+  border-color: #1e5470;
+}
+
+.search-boxs button {
+  background: #1e5470;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.search-boxs button:hover {
+  background: #1e5470;
+  transform: translateY(-1px);
+} */
+.search-section {
+  width: 100%;
+  max-width: 155rem; /* Increased max-width for a better layout */
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 16px; /* Slightly larger radius */
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08); /* Softer, more pronounced shadow */
+  border: 1px solid #e9ecef;
+}
+
+/* The flex container for the search elements */
+.search-box {
+  display: flex;
+  flex-wrap: wrap; /* Allow items to wrap on smaller screens */
+  gap: 1rem;
+  background: #ffffff;
+  padding: 0.5rem;
+  border-radius: 12px;
+  border: 1px solid #dee2e6;
+  align-items: center; /* Vertically align items */
+}
+
+/* Common styles for all input fields */
+.search-box input {
+  padding: 0.85rem 1rem;
+  border: none; /* Remove default border */
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: #f8f9fa;
+  color: #495057;
+  transition: all 0.3s ease;
+  outline: none; /* Remove default outline */
+}
+
+/* Style for the text input, making it take up available space */
+.search-box input[type="text"] {
+  flex: 1 1 250px; /* Flex-grow, flex-shrink, and basis */
+  min-width: 200px;
+}
+
+/* Style for date inputs */
+.search-box input[type="date"] {
+  flex: 1 1 150px; /* Allow date inputs to grow but have a smaller base size */
+  color-scheme: light; /* Ensures consistent date picker UI */
+}
+
+/* Add a subtle icon inside the date picker */
+.search-box input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0.6;
+  cursor: pointer;
+}
+
+/* Focus state for all inputs */
+.search-box input:focus {
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(30, 84, 112, 0.15);
+}
+
+/* Search button styling */
+.search-box button {
+  background: linear-gradient(135deg, #2a6f97, #1e5470);
+  color: white;
+  border: none;
+  padding: 0.85rem; /* Make it square-ish */
+  width: 50px; /* Fixed width */
+  height: 50px; /* Fixed height */
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1.2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Hover and active states for the button */
+.search-box button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(30, 84, 112, 0.3);
+}
+
+.search-box button:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+  .search-box {
+    flex-direction: column; /* Stack items vertically */
+    align-items: stretch; /* Make all items full-width */
+  }
+
+  .search-box input,
+  .search-box button {
+    width: 100%; /* Ensure full width for all elements */
+  }
+}
+/* Homestay List Section */
+.homestay-list {
+  max-width: 30rem;
+  margin: 2.5rem auto;
+  /* padding: 2rem; */
+}
+
+.homestay-list h2 {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  color: #333;
+  position: relative;
+}
+
+.homestay-list h2::after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 3px;
+  background: linear-gradient(135deg, #1e5470 0%, #cbeaec 100%);
+  border-radius: 2px;
+}
+
+/* Homestay Grid */
+.homestay-grid {
+  display: grid;
+  gap: 2rem;
+  margin-top: 2rem;
+  /* grid-template-columns: repeat(5, 1fr); */
+  grid-template-columns: repeat(auto-fit, minmax(750px, 2fr));
+}
+
+/* บังคับ 4 คอลัมน์เฉพาะหน้าจอ >= 1200px */
+@media (min-width: 1200px) {
+  .homestay-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+/* Homestay Card */
+.homestay-card {
+  background: #fafafa;
+  border-radius: 16px;
+  max-width: 85rem;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid #e5e5e5;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.homestay-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.homestay-info {
+  position: relative;
+}
+
+.homestay-info img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 15px;
+  transition: transform 0.3s ease;
+}
+
+.homestay-card:hover .homestay-info img {
+  transform: scale(1.05);
+}
+
+.homestay-info h3 {
+  padding: 1rem 1rem 0.5rem;
+  font-size: 1.5rem;
+  color: #333;
+  font-weight: 600;
+}
+
+.homestay-info p {
+  padding: 0 1rem 0.5rem;
+  color: #666;
+  font-size: 1rem;
+}
+
+.location {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #666;
+  font-size: 0.875rem;
+  /* margin-bottom: 0.5rem; */
+}
+
+.location i {
+  color: #e74c3c;
+}
+
+/* Favorite Button */
+
+/* Book Button */
+.book-btn {
+  width: calc(100% - 2rem);
+  margin-top: 2.5rem;
+  padding: 0.75rem 1.5rem;
+  background: #1e5470;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-decoration: none;
+}
+
+.book-btn:hover {
+  /*transform: translateY(-2px);*/
+  /*box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);*/
+  background: white;
+  color: #1e5470;
+  border: 2px solid #1e5470;
+}
+
+/* Footer */
+footer {
+  background: #333;
+  color: white;
+  text-align: center;
+  padding: 2rem;
+  margin-top: 3rem;
+}
+
+footer p {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  header {
+    height: auto;
+    padding: 0.5rem 0;
+  }
+
+  .navbar {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 0.5rem 1rem;
+    height: auto;
+  }
+
+  .logo h1 {
+    font-size: 1.125rem;
+  }
+
+  .menu ul {
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  .menu a {
+    width: 100%;
+    text-align: center;
+    padding: 0.75rem 1rem;
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .banner-text h2 {
+    font-size: 2rem;
+  }
+
+  .banner-text p {
+    font-size: 1rem;
+  }
+
+  /* .search-box {
+    flex-direction: column;
+    gap: 1rem;
+  } */
+
+  .date-box {
+    width: 100%;
+  }
+
+  .homestay-list {
+    padding: 1rem;
+  }
+
+  .homestay-list h2 {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding: 0.5rem;
+  }
+
+  .logo h1 {
+    font-size: 1rem;
+    gap: 0.5rem;
+  }
+
+  .logo-image {
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+  }
+
+  .menu ul {
+    gap: 0.25rem;
+  }
+
+  .menu a {
+    font-size: 0.8rem;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .banner-image {
+    height: 300px;
+  }
+
+  .banner-text h2 {
+    font-size: 1.5rem;
+  }
+
+  /* .search-container {
+    padding: 0 1rem;
+  } */
+}
+
+/* Animation for cards appearing */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.homestay-card {
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+.homestay-card:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.homestay-card:nth-child(3) {
+  animation-delay: 0.2s;
+}
+.homestay-card:nth-child(4) {
+  animation-delay: 0.3s;
+}
+.homestay-card:nth-child(5) {
+  animation-delay: 0.4s;
+}
+.homestay-card:nth-child(6) {
+  animation-delay: 0.5s;
+}
