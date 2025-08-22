@@ -1,14 +1,21 @@
 <?php
-$host = "localhost";
-$dbname = "homestay_db";
-$user = "root";
-$password = "";
+require_once __DIR__ . '/../vendor/autoload.php'; // path ไป vendor/autoload.php
+
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../'); // path ไป root ของโปรเจกต์
+$dotenv->load();
+
+$host = $_ENV['DB_Host'];
+$db   = $_ENV['DB_Name'];
+$user = $_ENV['DB_User'];
+$pass = $_ENV['DB_Password'];
+$charset = 'utf8mb4';
+
+$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
 
 try {
-    $conn = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $password);
-    // ตั้งค่าให้ PDO แจ้งเตือนข้อผิดพลาดแบบ exception
+    $conn = new PDO($dsn, $user, $pass);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    // echo "Connection successful"; // ใช้ทดสอบการเชื่อมต่อ
+    echo "Connected successfully!";
 } catch (PDOException $e) {
-    die("Connection failed: " . $e->getMessage());
+    echo "Connection failed: " . $e->getMessage();
 }
