@@ -7,8 +7,13 @@ if (!isset($_SESSION['User_email'])) {
 }
 require_once __DIR__ . '/../config/db_connect.php';
 
-define('OMISE_PUBLIC_KEY','pkey_test_64nbbhnxh0371dz2kzi');
-define('OMISE_SECRET_KEY', 'skey_test_64nbbhodcchurub65uw');
+require_once __DIR__ . '/../vendor/autoload.php'; // path ไป vendor/autoload.php
+
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../'); // path ไป root ของโปรเจกต์
+$dotenv->load();
+
+define('OMISE_PUBLIC_KEY',$_ENV['OMISE_PUBLIC_KEY']);
+define('OMISE_SECRET_KEY', $_ENV['OMISE_SECRET_KEY']);
 $email = $_SESSION['User_email'];
 $total_price = $_SESSION['total_price'] ?? 0;
 $booking_id = $_SESSION['booking_id'] ?? 0;

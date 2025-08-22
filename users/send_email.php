@@ -3,7 +3,10 @@ session_start();
 // --- STEP 0: Import necessary libraries ---
 require_once __DIR__ . '/../vendor/autoload.php'; // For PHPMailer (if using Composer)
 require_once __DIR__ .('/../fpdf186/fpdf.php');      // << Correct path to FPDF library
+require_once __DIR__ . '/../vendor/autoload.php'; // path ไป vendor/autoload.php
 
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../'); // path ไป root ของโปรเจกต์
+$dotenv->load();
 // Use PHPMailer namespaces
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -169,14 +172,14 @@ $pdf->Cell(0, 6, 'Phone: '.$hostPhone, 0, 1, 'L');
         $mail->isSMTP();
         $mail->Host       = 'smtp.gmail.com';
         $mail->SMTPAuth   = true;
-        $mail->Username   = 'phumin.duangchanta@gmail.com'; // Your Gmail address
-        $mail->Password   = 'araf nxhk cprz ifyz'; // << IMPORTANT: Use your real App Password
+        $mail->Username   = $_ENV['EMAIL']; // Your Gmail address
+        $mail->Password   = $_ENV['PASSWORD']; // << IMPORTANT: Use your real App Password
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
         $mail->CharSet    = "UTF-8";
     
         // Sender and recipient
-        $mail->setFrom('phumin.duangchanta@gmail.com', 'Homestay System');
+        $mail->setFrom($_ENV['EMAIL'], 'Homestay System');
         $mail->addAddress($customerEmail, 'User ');
     
         // --- Attach the PDF we created ---
