@@ -6,14 +6,20 @@ header("Location: host-login.php");
 exit();
 }
 if(isset($_POST['Property_id'])){
+
 $property_id = $_POST['Property_id'];
+
 $sql = "SELECT p.*,r.* FROM property p
 INNER JOIN room r ON p.Property_id = r.Property_id
 WHERE p.Property_id = ?
 ";
 $stmt = $conn->prepare($sql);
 $stmt -> execute([$property_id]);
-$houses = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$house = $stmt->fetch(PDO::FETCH_ASSOC);
+if(!$house) {
+    // No property found
+    echo "<script>alert('Property not found rooms'); window.location.href='manage-property.php';</script>";
+}
 }
 
 ?>
@@ -388,7 +394,7 @@ $houses = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <i class="fas fa-exclamation-circle"></i> <?php echo htmlspecialchars($error); ?>
                 </div>
                 <?php endif; ?>
-
+                <?php if (count($house) > 0): ?>
                 <div class="form-card">
                     <form method="POST" enctype="multipart/form-data" action="../controls/add_edit_property.php">
                         <?php
@@ -398,7 +404,7 @@ $houses = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             unset($_SESSION['error']);
                         }
                         ?>
-                        <?php foreach ($houses as $house):?>
+
                         <img class="box-img" src="../<?php echo htmlspecialchars( $house['Property_image']); ?>" alt="">
                         <div class="form-group">
                             <label for="property_name" class="form-label">
@@ -406,6 +412,8 @@ $houses = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             </label>
                             <input type="text" id="property_name" name="house_name" class="form-input"
                                 value="<?php echo htmlspecialchars( $house['Property_name']); ?>" required>
+                            <input type="hidden" name="property_id"
+                                value="<?php echo htmlspecialchars($house['Property_id']); ?>">
                         </div>
 
                         <div class="form-row-3">
@@ -501,7 +509,7 @@ $houses = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             </div>
 
                             <div class="form-actions">
-                                <button type="submit" class="btn btn-primary" name="add_property">
+                                <button type="submit" class="btn btn-primary" name="edit_property">
                                     <i class="fas fa-save"></i> บันทึกบ้านพัก
                                 </button>
                                 <a href="host-dashboard.php" class="btn btn-secondary">
@@ -509,9 +517,17 @@ $houses = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 </a>
                             </div>
                         </div>
-                        <?php endforeach; ?>
+
                     </form>
                 </div>
+                <?php else: ?>
+                <div class="empty-state">
+                    <i class="ph ph-heart-break"></i>
+                    <h3>No Favorites Yet</h3>
+                    <p>Start exploring and save your favorite homestays to see them here.</p>
+                    <a href="manage-property.php" class="btn btn-primary">Browse Homestays</a>
+                </div>
+                <?php endif; ?>
 
                 <!-- Hidden inputs for form submission -->
                 <!--<input type="hidden" id="property_latitude" name="property_latitude"

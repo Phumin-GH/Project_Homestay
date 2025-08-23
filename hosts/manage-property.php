@@ -288,12 +288,37 @@ if ($host_id) {
 
     <script src="../script/Barscript.js"></script>
     <script>
-    function toggleSidebar() {
-        const sidebar = document.getElementById('sidebar');
-        const mainContent = document.querySelector('.main-with-sidebar');
-        sidebar.classList.toggle("collapsed");
-        mainContent.classList.toggle("sidebar-collapsed");
-    }
+    document.addEventListener("DOMContentLoaded", function() {
+        const cards = document.querySelectorAll('.homestay-card');
+        cards.forEach(card => {
+            // const propertyId = card.dataset.id;
+            // const btn = document.querySelectorAll('.book-btn');
+            // alert("Property ID : " + propertyId);
+            // btn.forEach(btn => {
+            //     btn.addEventListener('click', function() {
+            //         fetch(`edit-property.php?id=${propertyId}`)
+            //             .then(response => response.text())
+            //             .then(data => {
+            //                 // Handle the response data if needed
+            //                 console.log('Property data fetched successfully:',
+            //                     data);
+            //                 window.location.href = 'edit-property.php';
+            //             })
+            //             .catch(error => {
+            //                 console.error('Error fetching property data:', error);
+            //             });
+
+            //     });
+            // });
+
+            function toggleSidebar() {
+                const sidebar = document.getElementById('sidebar');
+                const mainContent = document.querySelector('.main-with-sidebar');
+                sidebar.classList.toggle("collapsed");
+                mainContent.classList.toggle("sidebar-collapsed");
+            }
+        });
+    });
     </script>
 </body>
 
