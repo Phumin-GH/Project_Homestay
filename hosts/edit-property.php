@@ -24,9 +24,10 @@ if (!isset($_SESSION["Host_email"])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         .form-container {
-            max-width: 1250px;
+
             margin: 0 auto;
             padding: 2rem;
+            margin: 0 2.5rem 0 2.5rem;
         }
 
         .page-header {
@@ -123,6 +124,7 @@ if (!isset($_SESSION["Host_email"])) {
             display: block;
             font-weight: 600;
             color: #1a1a1a;
+            font-size: 16px;
             margin-bottom: 0.5rem;
 
         }
@@ -169,6 +171,7 @@ if (!isset($_SESSION["Host_email"])) {
         }
 
         .map-container {
+            position: relative;
             margin-bottom: 1.5rem;
             z-index: 0;
         }
@@ -198,7 +201,7 @@ if (!isset($_SESSION["Host_email"])) {
             border: 1px solid #e5e5e5;
             border-radius: 8px;
             padding: 1rem;
-            margin-top: 1rem;
+            margin: 1rem 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -228,7 +231,7 @@ if (!isset($_SESSION["Host_email"])) {
         .file-input-container {
             padding: 1rem;
             position: relative;
-            margin-top: 1.5rem;
+            /* margin-top: 1.5rem; */
             min-height: 16rem;
             display: flex;
             flex-direction: column;
@@ -240,6 +243,7 @@ if (!isset($_SESSION["Host_email"])) {
             cursor: pointer;
             transition: border-color 0.3s ease, background 0.3s ease;
         }
+
 
         .file-input-container:hover {
             background: #F2F7FE;
@@ -476,6 +480,9 @@ if (!isset($_SESSION["Host_email"])) {
                 grid-template-columns: 1fr;
             }
 
+            .upload-wrapper {
+                flex-direction: column;
+            }
 
             .form-actions {
                 flex-direction: column;
@@ -485,8 +492,16 @@ if (!isset($_SESSION["Host_email"])) {
                 flex-direction: column;
             }
 
+            .btn-del {
+                flex-direction: column;
+            }
+
             #map {
                 height: 300px;
+            }
+
+            .form-label {
+                font-size: 14px;
             }
 
             .coordinates-display {
@@ -495,13 +510,7 @@ if (!isset($_SESSION["Host_email"])) {
             }
         }
 
-        .box-img {
-            width: 25rem;
-            height: 15rem;
-            object-fit: cover;
-            border-radius: 8px;
-            margin-right: 1rem;
-        }
+
 
         .info-section h3 {
             color: #1a1a1a;
@@ -526,9 +535,17 @@ if (!isset($_SESSION["Host_email"])) {
             justify-content: space-between;
             align-items: center;
             /* ทำให้อยู่ระดับเดียวกันแนวตั้ง */
-            gap: 1.5rem;
+            gap: 0.5rem;
             /* เว้นระยะห่างระหว่างแต่ละ box */
-            margin-top: 1rem;
+            margin: 1rem 2.5rem 0 2.5rem;
+        }
+
+        .box-img {
+            width: 30rem;
+            height: 20rem;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-right: 1rem;
         }
     </style>
 </head>
@@ -737,7 +754,8 @@ if (!isset($_SESSION["Host_email"])) {
                                     </label>
                                     <?php foreach ($room as $i => $num): ?>
                                         <div class="form-row-5">
-                                            <input type="hidden" name="roomId[]" value="<?php echo $num['Room_id']; ?>">
+                                            <input type="hidden" id="room_id" name="roomId[]"
+                                                value="<?php echo $num['Room_id']; ?>">
 
                                             <label class="form-label">เลขห้อง:<input type="text" placeholder="1"
                                                     class="form-input"
@@ -766,7 +784,7 @@ if (!isset($_SESSION["Host_email"])) {
                                                     <option value="2">ปิด</option>
                                                 </select>
                                             </label>
-                                            <button type="button" class="btn btn-del">ลบ<i
+                                            <button type="button" class="btn btn-del" id="del-input">ลบ<i
                                                     class="fa-solid fa-trash"></i></button>
                                         </div>
                                     <?php endforeach; ?>
@@ -823,7 +841,7 @@ if (!isset($_SESSION["Host_email"])) {
     </div>
 
     <!-- Google Maps API -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=places"></script>
+    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=places"></script> -->
 
     <script>
         const head = document.getElementsByClassName('page-header')[0];
@@ -908,7 +926,7 @@ if (!isset($_SESSION["Host_email"])) {
                 alert("สร้างฟอร์มได้สูงสุด " + (maxForms - totalRoom) + " ฟอร์มเท่านั้น!");
             }
         });
-        // ❌ ลบทั้งหมด
+        // ลบ form  ทั้งหมด
         removeAllBtn.addEventListener("click", () => {
             formsDiv.innerHTML = "";
             formCount = 0;
@@ -1047,6 +1065,70 @@ if (!isset($_SESSION["Host_email"])) {
                     window.location.reload();
                 });
         });
+
+        $(document).ready(function() {
+            $("#del-input").on("click", function(e) {
+                const room_id = $("#room_id").val();
+                e.preventDefault();
+                const req = $.ajax({
+                    url: '../controls/add_edit_property.php',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        room_id: room_id,
+                        del_room: true
+                    }),
+                    dataType: 'json',
+
+                });
+                req.done(function(data) {
+                    if (data.message) {
+                        console.log(data.message);
+                        window.location.reload();
+                    } else {
+                        console.log(data.message);
+                        window.location.reload();
+                    }
+                });
+                req.fail(function(jqXHR, status, error) {
+                    console.error('Error:', status, error);
+                    window.location.reload();
+                });
+            });
+        });
+        // document.getElementById("del-input").addEventListener("click", function(e) {
+        //     e.preventDefault();
+        //     fetch('../controls/add_edit_property.php', {
+        //             method: 'POST',
+        //             headers: {
+        //                 'Content-Type': 'application/json'
+        //             },
+        //             body: JSON.stringify({
+        //                 room_id: room_id,
+        //                 del_room: true
+        //             })
+
+        //         })
+        //         .then(response => response.json())
+        //         .then(data => {
+        //             // แสดงข้อความตอบกลับจากเซิร์ฟเวอร์
+        //             if (data.success == true) {
+        //                 alert('Success');
+        //                 console.log(data.message);
+        //                 window.location.href = "manage-property.php";
+        //             } else {
+        //                 alert(data.message);
+        //                 console.log(data);
+        //                 // ถ้าต้องการรีเฟรชหน้าเว็บหลังจากส่งข้อมูลสำเร็จ
+        //                 window.location.reload();
+        //             }
+        //         })
+        //         .catch(error => {
+        //             console.error('Error:', error);
+        //             alert('เกิดข้อผิดพลาดในการส่งข้อมูล');
+        //             window.location.reload();
+        //         });
+        // });
     </script>
 
 </body>

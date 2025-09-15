@@ -6,11 +6,9 @@ include_once __DIR__ . '/../config/db_connect.php';
 require_once __DIR__ . '/../dao/Property.php';
 
 $propertyHandle = new Property($conn);
-
+$email = $_SESSION['Host_email'];
 $list_house = $propertyHandle->get_manageProperty($email);
-if ($list_house === false) {
-    $_SESSION['err'] = "ไม่พบข้อมูลอีเมล";
-}
+
 
 // บ้านพักที่อนุมัติแล้ว โชว์บน Menu
 $homestay = $propertyHandle->show_House();
@@ -28,7 +26,7 @@ if (isset($_POST['house_id'])) {
     $images = $propertyHandle->get_Image($property_id);
     $rooms = $propertyHandle->get_rooms($property_id);
 }
-// $email = $_SESSION['Host_email'];
+
 if (isset($_POST['Property_id'])) {
     $property_id = $_POST['Property_id'];
     $house = $propertyHandle->showPropertys($property_id);

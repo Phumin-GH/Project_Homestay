@@ -21,10 +21,11 @@ if (!isset($_SESSION["Host_email"])) {
     <link rel="stylesheet" href="../style/main-menu.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        .homestay-list {
+        .homestays-list {
             display: flex;
             flex-direction: column;
-            gap: 1.5rem;
+            /* gap: 1.5rem; */
+            /* max-width: 105rem; */
         }
 
         .homestay-card {
@@ -32,7 +33,8 @@ if (!isset($_SESSION["Host_email"])) {
             border: 1px solid #e5e5e5;
             border-radius: 8px;
             overflow: hidden;
-            width: 55rem;
+            /* width: 55rem; */
+            margin: 1.5rem 8rem 0 8rem;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
             cursor: pointer;
             display: flex;
@@ -46,7 +48,7 @@ if (!isset($_SESSION["Host_email"])) {
         }
 
         .homestay-card img {
-            width: 25rem;
+            width: 30rem;
             height: 15rem;
             object-fit: cover;
             border-radius: 8px;
@@ -332,13 +334,7 @@ if (!isset($_SESSION["Host_email"])) {
                 </div>
             </div>
         </aside>
-        <?php
-        if (isset($_SESSION['err'])) {
-            // echo "<div class='alert alert-danger'><i class='fa-solid fa-ban'></i>" . $_SESSION['error'] . "</div>";
-            echo "<script> alert(" . json_encode($_SESSION['err']) . "); </script>";
-            unset($_SESSION['err']);
-        }
-        ?>
+
         <div class="main-with-sidebar">
             <div class="page-header">
                 <h1><i class="fa-solid fa-house-medical-circle-check"></i> การจัดการบ้านพัก</h1>
@@ -353,7 +349,7 @@ if (!isset($_SESSION["Host_email"])) {
             <?php /*endif;*/ ?>
             <?php if (count($list_house) > 0): ?>
                 <h2>รายชื่อบ้านพักทั้งหมด ( <?php echo count($list_house) ?> )</h2>
-                <section class="homestay-list">
+                <section class="homestays-list">
                     <?php foreach ($list_house as $house): ?>
                         <div class="homestay-card" data-id="<?= htmlspecialchars($house['Property_id']) ?>">
                             <!-- onclick="window.location.href='detail-house.php?id=<?php /*echo htmlspecialchars($house['Property_id']); */ ?>'" -->

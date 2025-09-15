@@ -25,9 +25,7 @@ class Property
 
     public function get_manageProperty($email)
     {
-        if (empty($email)) {
-            return false;
-        }
+
         // ดึง Host_id
         $stmt = $this->conn->prepare("SELECT Host_id FROM host WHERE Host_email = ?");
         $stmt->execute([$email]);

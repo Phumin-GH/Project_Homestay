@@ -135,6 +135,7 @@ if (isset($_POST['edit_property'])) {
     $roomPrices = $_POST['roomPrice'] ?? [];
     $roomCaps = $_POST['roomCap'] ?? [];
     $roomUtens = $_POST['roomUten'] ?? [];
+    $status_room = $_POST['selectValue'] ?? [];
     // เช็กว่าอัปโหลดรูปมาหรือยัง
     try {
         if (!isset($_FILES['singleImage']) || $_FILES['singleImage']['error'] !== UPLOAD_ERR_OK) {
@@ -164,14 +165,30 @@ if (isset($_POST['edit_property'])) {
                 exit();
             }
         }
-        $stmt = $conn->prepare("SELECT COUNT(Pro_image) FROM pro_image WHERE Property_id =?");
-        $stmt->execute([$property_id]);
-        $Img_house = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        if ($Img_house) {
-            $del = $conn->prepare("DELETE FROM Pro_image WHERE Property_id = ?");
-            $del->execute([$property_id]);
-        }
+
+
+        // if (!isset($_FILES['multi_image']) || $_FILES['multi_image']['error'] !== UPLOAD_ERR_OK) {
+        //     $stmtImg = $conn->prepare("SELECT Pro_Image FROM pro_image WHERE Property_id = ?");
+        //     $stmtImg->execute([$property_id]);
+        //     $images = $stmtImg->fetchAll();
+
+        //     if (!$images) {
+        //         echo json_encode(['success' => false, 'message' => 'No image uploaded and no old image found.']);
+        //         exit();
+        //     }
+        //     foreach ($images as $i) {
+        //         $stmt = $conn->prepare("SELECT Pro_Image FROM pro_image WHERE Property_id = ?");
+        //         $stmt->execute([$property_id]);
+        //     }
+        // } else
         if (isset($_FILES['multi_image'])) {
+            $stmt = $conn->prepare("SELECT COUNT(Pro_image) FROM pro_image WHERE Property_id =?");
+            $stmt->execute([$property_id]);
+            $Img_house = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            if ($Img_house) {
+                $del = $conn->prepare("DELETE FROM Pro_image WHERE Property_id = ?");
+                $del->execute([$property_id]);
+            }
             $uploadDir = __DIR__ . '/../images/';
             if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
 
@@ -232,10 +249,12 @@ if (isset($_POST['edit_property'])) {
                     $price = $roomPrices[$i];
                     $cap = $roomCaps[$i];
                     $uten = $roomUtens[$i];
+                    $status = $status_room[$i];
+
                     if (!empty($id)) {
                         // ✅ Update ห้องเดิม 
-                        $stmt = $conn->prepare("UPDATE room SET Room_number=?, Room_price=?, Room_capacity=?, Room_utensils=? WHERE Room_id=? AND Property_id=?");
-                        $stmt->execute([$num, $price, $cap, $uten, $id, $property_id]);
+                        $stmt = $conn->prepare("UPDATE room SET Room_number=?,Room_status=?, Room_price=?, Room_capacity=?, Room_utensils=? WHERE Room_id=? AND Property_id=?");
+                        $stmt->execute([$num, $status, $price, $cap, $uten, $id, $property_id]);
                     } else {
                         $stmt = $conn->prepare("INSERT INTO room (Room_number, Room_price, Room_capacity, Room_utensils, Property_id) VALUES (?, ?, ?, ?, ?)");
                         $stmt->execute([$num, $price, $cap, $uten, $property_id]);
@@ -255,5 +274,22 @@ if (isset($_POST['edit_property'])) {
             // $_SESSION['error']= "ฐานข้อมูล: " . $e->getMessage();
             // header("Location: ../hosts/manage-property.php");
         }
+    }
+}
+$json_data = file_get_contents("php://input");
+$data = json_decode($json_data, true);
+if (isset($data['del_room'])) {
+    $room_id = $data['room_id'];
+    $room = "SELECT COUNT(*) FROM room WHERE Room_id = ?";
+    $stmt = $conn->prepare($room);
+    $stmt->execute([$room_id]);
+    $c_room = $stmt->fetchColumn();
+    if ($c_room > 0) {
+        $sql = "DELETE FROM room WHERE Room_id = ? ";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$c_room]);
+        echo json_encode(["success" => true, "message" => "ลบเรียบร้อย"]);
+    } else {
+        echo json_encode(["success" => false, "message" => "ไม่พบหมายเลขห้องที่ต้องการลบ"]);
     }
 }

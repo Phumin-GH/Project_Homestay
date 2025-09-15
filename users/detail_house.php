@@ -195,6 +195,9 @@ require_once __DIR__ . "/../api/get_listFavorites.php";
         .calendar-section,
         .map-section {
             margin-top: 2rem;
+            position: relative;
+
+            z-index: 0;
         }
 
         .calendar {
@@ -229,6 +232,7 @@ require_once __DIR__ . "/../api/get_listFavorites.php";
         }
 
         .map-frame {
+            position: relative;
             width: 100%;
             height: 260px;
             border: none;

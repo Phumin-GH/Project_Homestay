@@ -79,7 +79,7 @@ header {
   left: 0;
   height: calc(100vh - 70px); /* ความสูงเต็มจอลบด้วยความสูง navbar */
   overflow-y: auto;
-  z-index: 99;
+  z-index: 9999;
 }
 
 /* Custom Scrollbar for Sidebar */
