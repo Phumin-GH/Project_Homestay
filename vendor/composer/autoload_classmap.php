@@ -6,6 +6,7 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Attribute' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
     'OmiseAccount' => $vendorDir . '/omise/omise-php/lib/omise/OmiseAccount.php',
     'OmiseApiResource' => $vendorDir . '/omise/omise-php/lib/omise/res/OmiseApiResource.php',
@@ -54,4 +55,8 @@ return array(
     'OmiseUndefinedException' => $vendorDir . '/omise/omise-php/lib/omise/exception/OmiseExceptions.php',
     'OmiseUsedTokenException' => $vendorDir . '/omise/omise-php/lib/omise/exception/OmiseExceptions.php',
     'OmiseVaultResource' => $vendorDir . '/omise/omise-php/lib/omise/res/OmiseVaultResource.php',
+    'PhpToken' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/PhpToken.php',
+    'Stringable' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',
+    'UnhandledMatchError' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/UnhandledMatchError.php',
+    'ValueError' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/ValueError.php',
 );

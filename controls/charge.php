@@ -4,9 +4,11 @@ header('Content-Type: application/json');
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-// ตั้งค่า Key (Sandbox)
-define('OMISE_PUBLIC_KEY','pkey_test_64nbbhnxh0371dz2kzi');
-define('OMISE_SECRET_KEY', 'skey_test_64nbbhodcchurub65uw');
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../'); // path ไป root ของโปรเจกต์
+$dotenv->load();
+
+define('OMISE_PUBLIC_KEY',$_ENV['OMISE_PUBLIC_KEY']);
+define('OMISE_SECRET_KEY', $_ENV['OMISE_SECRET_KEY']);
 // (ออปชัน) กำหนด API Version ให้แน่นอน
 define('OMISE_API_VERSION', '2019-05-29');
 

@@ -1,111 +1,49 @@
 <?php
-session_start();
+// 1. เรียกใช้งาน Autoloader ของ Composer
+// เพื่อให้โปรเจกต์รู้จักไลบรารีที่เราติดตั้งไป
 require_once __DIR__ . '/vendor/autoload.php';
 
-define('OMISE_PUBLIC_KEY', 'pkey_test_64nbbhnxh0371dz2kzi');
-define('OMISE_SECRET_KEY', 'skey_test_64nbbhodcchurub65uw');
+// 2. โหลดตัวแปรจากไฟล์ .env
+// บรรทัดนี้สำคัญมาก! เป็นการบอกให้ phpdotenv อ่านไฟล์ .env
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
 
-$total_price = isset($_GET['total_price']) ? (float)$_GET['total_price'] : 0;
+// 3. ตั้งค่า Key ให้กับ Omise
+// เราจะใช้ค่าที่อ่านมาจาก $_ENV ซึ่งตอนนี้มีข้อมูลจากไฟล์ .env แล้ว
+define('OMISE_PUBLIC_KEY', $_ENV['OMISE_PUBLIC_KEY']);
+define('OMISE_SECRET_KEY', $_ENV['OMISE_SECRET_KEY']);
 
-if ($total_price <= 0) {
-    die("ราคาที่ส่งมาไม่ถูกต้อง");
-}
+// --- ส่วนของการสร้าง Charge (การเรียกเก็บเงิน) ---
 
-// ถ้ามี charge_id เดิม → ตรวจสอบสถานะ
-if (isset($_SESSION['charge_id'])) {
-    $oldCharge = OmiseCharge::retrieve($_SESSION['charge_id']);
-    if ($oldCharge['status'] === 'pending') {
-        $charge = $oldCharge;
-    } else {
-        unset($_SESSION['charge_id']); // ลบถ้าไม่ pending
-    }
-}
-
-// ถ้าไม่มี หรือหมดอายุแล้ว → สร้างใหม่
-if (!isset($charge)) {
+try {
+    // 4. สร้าง Charge สำหรับ PromptPay
     $charge = OmiseCharge::create([
-        'amount' => $total_price * 100,
-        'currency' => 'thb',
-        'source' => ['type' => 'promptpay'],
-        'return_uri' => 'https://example.com/thankyou.php',
+        'amount'      => 50050, // ยอดเงิน 500.50 บาท (ต้องระบุเป็นหน่วยสตางค์)
+        'currency'    => 'thb',
+        'source'      => ['type' => 'promptpay'], // ระบุแหล่งที่มาของเงินเป็น "promptpay"
+        'description' => 'Order ID: 12345', // คำอธิบายรายการ (ไม่บังคับ)
+        'return_uri'  => 'https://www.yourwebsite.com/payment_complete' // ลิงก์เมื่อจ่ายเงินสำเร็จ
     ]);
-    $_SESSION['charge_id'] = $charge['id'];
+    var_dump($charge);
+
+    // 5. แสดงผลลัพธ์และ QR Code
+    echo "<h1>สแกนเพื่อชำระเงิน</h1>";
+    echo "<p>สถานะ: " . $charge['status'] . "</p>";
+
+    // ตรวจสอบว่ามี QR Code ส่งกลับมาหรือไม่
+    if (isset($charge['source']['scannable_code']['image']['download_uri'])) {
+        $qrCodeUrl = $charge['source']['scannable_code']['image']['download_uri'];
+        echo '<img src="' . $qrCodeUrl . '" alt="PromptPay QR Code" width="300">';
+    } else {
+        echo "ไม่สามารถสร้าง QR Code ได้";
+    }
+
+    // (แนะนำ) สามารถแสดงข้อมูลทั้งหมดเพื่อตรวจสอบได้
+    // echo '<pre>';
+    // print_r($charge);
+    // echo '</pre>';
+
+} catch (Exception $e) {
+    // จัดการกับข้อผิดพลาดที่อาจเกิดขึ้น
+    echo "เกิดข้อผิดพลาด: " . $e->getMessage();
 }
-
-// แปลง expires_at ของ Omise เป็น timestamp สำหรับ JS
-$expires_at_timestamp = strtotime($charge['expires_at']) * 1000;
-?>
-<!DOCTYPE html>
-<html lang="th">
-
-<head>
-    <meta charset="UTF-8">
-    <title>ชำระเงินด้วย Omise PromptPay</title>
-</head>
-
-<body>
-    <h2>ชำระเงิน</h2>
-
-    <!-- แสดง QR Code -->
-    <img src="<?php echo $charge['source']['scannable_code']['image']['download_uri']; ?>"
-        style="width: 25rem; height: 25rem;" />
-
-    <p>Charge ID: <?php echo $charge['id']; ?></p>
-    <p>จำนวนเงิน: <?php echo number_format($charge['amount'] / 100, 2); ?> บาท</p>
-    <p>สถานะ: <span id="payment-status"><?php echo $charge['status']; ?></span></p>
-    <p>สร้างเมื่อ: <?php echo date('Y-m-d H:i:s', strtotime($charge['created_at'])); ?></p>
-    <p>หมดอายุ: <?php echo $charge['expires_at']; ?></p>
-
-    <div>เวลาที่เหลือในการชำระเงิน: <span id="countdown">กำลังโหลด...</span></div>
-
-    <script>
-    const expiresAt = <?php echo $expires_at_timestamp; ?>;
-    const chargeId = "<?php echo $charge['id']; ?>";
-
-    function updateCountdown() {
-        const now = new Date().getTime();
-        const distance = expiresAt - now;
-
-        if (distance < 0) {
-            document.getElementById("countdown").innerHTML = "หมดเวลาชำระเงิน";
-            clearInterval(countdownInterval);
-            clearInterval(statusInterval);
-            return;
-        }
-
-        const hours = Math.floor((distance / (1000 * 60 * 60)));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-        document.getElementById("countdown").innerHTML = hours + " ชั่วโมง " +
-            minutes + " นาที " + seconds + " วินาที";
-    }
-
-    updateCountdown();
-    const countdownInterval = setInterval(updateCountdown, 1000);
-
-    function checkChargeStatus() {
-        fetch(`check_status.php?charge_id=${chargeId}`)
-            .then(res => res.json())
-            .then(data => {
-                document.getElementById('payment-status').innerText = data.status;
-
-                if (data.status === 'successful' || data.paid) {
-                    alert('ชำระเงินสำเร็จ!');
-                    clearInterval(statusInterval);
-                    clearInterval(countdownInterval);
-                    window.location.href = 'users/main-menu.php';
-                } else if (data.status === 'expired') {
-                    alert('หมดเวลาชำระเงิน');
-                    clearInterval(statusInterval);
-                    clearInterval(countdownInterval);
-                }
-            });
-    }
-
-    const statusInterval = setInterval(checkChargeStatus, 5000);
-    checkChargeStatus();
-    </script>
-</body>
-
-</html>

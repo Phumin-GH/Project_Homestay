@@ -5,7 +5,7 @@ if (!isset($_SESSION["Host_email"])) {
     exit();
 }
 include '../config/db_connect.php';
-
+include '../controls/log_hosts.php';
 $host_email = $_SESSION['Host_email'];
 
 // ดึง host info
@@ -28,7 +28,7 @@ $stmt = $conn->prepare("
     SELECT  p.Property_id, p.Property_name
     FROM Property p
     WHERE p.Host_id = ? AND p.Property_status = '1'
-    ORDER BY p.Property_id DESC
+    ORDER BY p.Property_id ASC
 ");
 $stmt->execute([$host['Host_id']]);
 $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -44,7 +44,12 @@ $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // $room = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // ดึงห้องพักของ property แรก (หรือแยกดึงตาม property_id ที่เลือก)
-
+// if (isset($_SESSION['Host_email'])) {
+//     $sql = 'SELECT Host_status FROM host WHERE Host_email = ?';
+//     $stmt = $conn->prepare($sql);
+//     $stmt->execute([$_SESSION['Host_email']]);
+//     $status = $stmt->fetch(PDO::FETCH_ASSOC);
+// }
 ?>
 
 <!DOCTYPE html>
@@ -54,6 +59,7 @@ $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>เพิ่มการจอง Walk-in - Homestay Booking</title>
+    <link rel="website icon" type="png" href="/images/logo.png">
     <link rel="stylesheet" href="../style/style.css">
     <link rel="stylesheet" href="../style/main-menu.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -165,18 +171,25 @@ $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <i class="fas fa-bars"></i>
             </button>
             <ul class="sidebar-menu">
+                <?php if ($hosts['Host_Status'] == 'pending_verify'): ?>
+                <li><a href="addNew-property.php" title="ลงทะเบียนบ้านพักใหม่"><i class="fas fa-user-plus"></i>
+                        <span class="menu-label">ลงทะเบียนบ้านพักใหม่</span></a></li>
+                <?php endif; ?>
                 <li><a href="host-dashboard.php" title="รายงาน"><i class="fas fa-tachometer-alt"></i><span
                             class="menu-label">Dashboard</span></a></li>
                 <li><a href="profile.php" title="โปรไฟล์"><i class="fas fa-user"></i><span
                             class="menu-label">Profile</span></a>
                 </li>
+                <?php if ($hosts['Host_Status'] == 'active'): ?>
                 <li><a href="manage-property.php" title="จัดการบ้านพัก"><i class="fas fa-plus"></i><span
                             class="menu-label">Manage
                             Property</span></a></li>
 
+
                 <li><a href="list_booking.php" title="รายการที่จองเข้ามา"><i class="fa-solid fa-list-ul"></i><span
-                            class="menu-label">Test</span></a></li>
-                <li><a href="walkin-property.php" title="การจอง" class="active"><i
+                            class="menu-label">List Bookings</span></a></li>
+                <?php endif; ?>
+                <li><a href="walkin-property.php" class="active" title="การจอง"><i
                             class="fa-solid fa-person-walking"></i><span class="menu-label">Walkin</span></a></li>
                 <li><a href="../controls/logout.php" title="ออกจากระบบ"><i class="fas fa-sign-out-alt"></i><span
                             class="menu-label">Logout</span></a></li>
@@ -244,8 +257,8 @@ $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <label class="form-label">จำนวนคืน <span style="color:red">*</span></label>
                         <input type="number" name="total-days" class="form-input" id="total-days" placeholder="0"
                             disabled>
-                        <input type="number" name="price" class="form-input" id="price" placeholder="0" disabled>
-                        <input type="number" name="roomId" class="form-input" id="roomId" placeholder="0" disabled>
+                        <input type="hidden" name="price" class="form-input" id="price" placeholder="0" disabled>
+                        <input type="hidden" name="roomId" class="form-input" id="roomId" placeholder="0" disabled>
                     </div>
                     <div class="form-group">
                         <label class="form-label">จำนวนผู้เข้าพัก <span style="color:red">*</span></label>
@@ -295,7 +308,14 @@ $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
     propertySelect.addEventListener('change', function() {
         const selectedOption = propertySelect.options[propertySelect.selectedIndex];
         propertyId.value = selectedOption.dataset.propertyId || '';
+
     })
+    roomSelect.addEventListener('change', function() {
+        const selectOption = roomSelect.options[roomSelect.selectedIndex];
+        price.value = selectOption.dataset.price;
+        roomId.value = selectOption.dataset.roomId;
+
+    });
     checkinInput.addEventListener('change', function() {
         if (checkinInput.value) {
             // แปลงค่าวันที่เช็คอินเป็น Date object
@@ -317,58 +337,42 @@ $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
             }
         }
     });
-    [checkinInput, checkoutInput, guests].forEach(el => {
+    [propertySelect, roomSelect, checkinInput, checkoutInput, guests].forEach(el => {
         el.addEventListener('change', calculateDays);
         el.addEventListener('input', calculateDays);
     });
 
-
-
     function calculateDays() {
-        if (!roomId.value || !checkinInput.value || !checkoutInput.value) {
-
+        const checkinDate = new Date(checkinInput.value);
+        const checkoutDate = new Date(checkoutInput.value);
+        const timeDiff = checkoutDate - checkinDate;
+        const dayDiff = timeDiff / (1000 * 60 * 60 * 24); // แปลงเป็นจำนวนวัน
+        if (!roomId.value && isNaN(checkinDate) && isNaN(checkoutDate) &&
+            checkoutDate <= checkinDate && dayDiff < 0) {
             total_price.value = '0.00';
             bookingMessage.innerText = 'กรุณาเลือกห้องพักและวันที่เช็คอิน/เช็คเอาท์';
             bookingMessage.style.color = '#c0392b';
             bookingMessage.style.fontWeight = 'bold';
             bookingMessage.style.textAlign = 'center';
             bookingMessage.style.padding = '1rem';
-
-        }
-        const checkinDate = new Date(checkinInput.value);
-        const checkoutDate = new Date(checkoutInput.value);
-        if (isNaN(checkinDate) || isNaN(checkoutDate) || checkoutDate <= checkinDate) {
-
-
-            total_price.value = '0.00';
-            bookingMessage.innerText = 'กรุณาเลือกวันที่เช็คอินและเช็คเอาท์ที่ถูกต้อง';
-            bookingMessage.style.color = '#c0392b';
-
-        }
-        const timeDiff = checkoutDate - checkinDate;
-        const dayDiff = timeDiff / (1000 * 60 * 60 * 24); // แปลงเป็นจำนวนวัน
-
-        if (dayDiff > 0) {
-            total_days.value = dayDiff;
-        } else {
             total_days.value = 0;
+            return;
         }
+        total_days.value = dayDiff;
+        // if (dayDiff > 0) {
+        //     total_days.value = dayDiff;
+        // }
 
-        bookingMessage.innerText = 'กรุณาเลือกวันที่เช็คอินและเช็คเอาท์ที่ถูกต้อง';
-        bookingMessage.style.color = '#c0392b';
-
-        fetch('../controls/books_room.php', {
+        fetch('../controls/bookings_room.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
                 body: new URLSearchParams({
                     room_id: roomId.value,
-                    check_in_date: checkinInput.value,
-                    check_out_date: checkoutInput.value,
                     nights: dayDiff,
-                    guests: guests.value,
-                    price: price.value
+                    guests: guests.value
+
                 })
             })
 
@@ -378,16 +382,16 @@ $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
             })
             .then(data => {
                 console.log('Fetch response :', data);
-                if (data.error) {
-                    total_price.value = '0.00';
-                    bookingMessage.innerText = data.error;
-
-                    bookingMessage.style.color = '#c0392b';
-                    alert('Error' + data.error);
-                } else {
+                if (data.success) {
                     total_price.value = data.total_price;
-                    bookingMessage.innerText = data.message || '';
-                    bookingMessage.style.color = data.message ? 'blue' : '';
+                    // bookingMessage.innerText = data.message || '';
+                    // bookingMessage.style.color = data.message ? 'blue' : '';
+                    console.log(data.message);
+                } else {
+                    total_price.value = '0.00';
+                    bookingMessage.innerText = data.message;
+                    bookingMessage.style.color = '#c0392b';
+                    console.log('Error' + data.message);
                 }
             })
             .catch(error => {
@@ -395,20 +399,14 @@ $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 bookingMessage.innerText = 'เกิดข้อผิดพลาด: ' + error;
                 bookingMessage.style.color = '#c0392b';
                 total_price.value = '0.00';
-                alert('Error' + error);
+                console.log('Error' + error);
             });
 
     }
     const bookBtn = document.getElementById('bookBtn');
     bookBtn.addEventListener('click', function(e) {
         e.preventDefault();
-        if (!roomId.value || !checkinInput.value || !checkoutInput.value || !f_name.value || !l_name.value ||
-            !g_phone.value) {
-            console.log('Button disabled because some inputs are empty');
-            alert('Button disabled because some inputs are empty');
-
-        }
-        fetch('../controls/books_room.php', {
+        fetch('../controls/bookings_room.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
@@ -424,7 +422,7 @@ $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     nights: total_days.value,
                     total_price: total_price.value,
                     guests: guests.value,
-                    submit_btn: true
+                    submit_wki: true
                 })
             })
 
@@ -434,22 +432,23 @@ $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
             })
             .then(data => {
                 console.log('Fetch response :', data);
-                if (data.success) {
+                if (data.success === true) {
                     bookingMessage.innerText = data.message;
                     bookingMessage.style.color = 'green';
-                    alert('จองสำเร็จ');
+                    window.location.reload();
+                    alert(data.message);
                 } else {
-
                     // bookBtn.disabled = true;
-                    bookingMessage.innerText = data.error;
+                    bookingMessage.innerText = data.message;
                     bookingMessage.style.color = '#c0392b';
-                    alert('จองไใ่ได้');
+                    alert(data.message);
+                    window.location.reload();
                 }
             })
             .catch(error => {
                 console.log('Failed to parse JSON :', error);
                 bookingMessage.innerText = 'เกิดข้อผิดพลาด: Response ไม่ถูกต้อง';
-                alert('Error');
+                alert(error);
                 bookingMessage.style.color = '#c0392b';
                 // bookBtn.disabled = false;
             });
@@ -459,13 +458,10 @@ $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
         checkinInput.value = '';
         checkoutInput.value = '';
         guests.value = '1';
-
-
         total_price.value = '0.00';
         roomid.value = '';
         property.value = '';
         room_number.value = '';
-
         dayDiff.value = '';
         selectedRoomId = null;
         selectedPropertyId = null;
@@ -477,22 +473,16 @@ $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
         bookingMessage.style.padding = '1rem';
         bookBtn.disabled = true;
     }
-
     checkinInput.addEventListener('change', calculateDays);
     checkoutInput.addEventListener('change', calculateDays);
-
-
     propertySelect.addEventListener('change', function() {
-
         const propertyId = propertySelect.value; // ดึงค่า value
         // ถ้าเลือกบ้านพักว่าง ให้เคลียร์ห้องพัก
         if (!propertyId) {
             roomSelect.innerHTML = '<option value="">-- เลือกห้องพัก --</option>';
             return;
         }
-
         // ส่ง AJAX ไป PHP
-
         fetch(`../controls/get_rooms.php?Property_id=${propertyId}`)
             .then(response => {
                 //ตรวจสอบค่าผลลัพธ์ที่เกี่ยวNetwork ถ้ามีปัญหาให้แจ้ง network response was not ok
@@ -532,13 +522,6 @@ $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 alert('Error');
                 console.error('Error fetching rooms:', error);
             });
-
-    });
-    roomSelect.addEventListener('change', function() {
-
-        const selectOption = roomSelect.options[roomSelect.selectedIndex];
-        price.value = selectOption.dataset.price;
-        roomId.value = selectOption.dataset.roomId;
 
     });
     </script>

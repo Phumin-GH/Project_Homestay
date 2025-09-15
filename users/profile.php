@@ -1,7 +1,12 @@
 <?php
 session_start();
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 include "../config/db_connect.php";
-include "../controls/avatar.php";
+
+include "../controls/log_users.php";
+// include "../controls/get_users.php";
 if (!isset($_SESSION['User_email'])) {
     header("Location: user-login.php");
     exit();
@@ -17,13 +22,13 @@ $email = $_SESSION["User_email"];
 
 // ดึงข้อมูลทั้งหมดของ host
 $stmt = $conn->prepare("
-    SELECT Firstname, Lastname, Create_at, Phone, User_email 
+    SELECT Firstname, Lastname, Create_at, Phone, User_email ,User_Status
     FROM user
     WHERE User_email = ?
 ");
 $stmt->execute([$email]);
 // ถ้าต้องการ fetchAll (เช่นเก็บ array ของหลายแถว เพื่อใช้กับ loop)
-$users = $stmt->fetchAll(PDO::FETCH_ASSOC); 
+$users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 
@@ -33,6 +38,7 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="website icon" type="png" href="/images/logo.png">
     <title>Profile - Homestay Booking</title>
     <link rel="stylesheet" href="../style/style.css">
     <link rel="stylesheet" href="../style/main-menu.css">
@@ -75,9 +81,9 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </ul>
 
             <div class="sidebar-footer">
-                <div class="avatar">
-                    <!-- <i class="fas fa-user-circle"></i> -->
-                    <?php echo htmlspecialchars($avatar_initial); ?>
+                <div>
+                    <i class="fas fa-user-circle"></i>
+
                     <span class="menu-label"><?php echo htmlspecialchars($_SESSION['User_email']); ?></span>
                 </div>
             </div>
@@ -89,19 +95,20 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <div class="profile-header">
                     <div class="profile-avatar">
                         <!-- <i class="fas fa-user"></i> -->
-
-                        <?php echo htmlspecialchars($avatar_initial); ?>
+                        <h2>
+                            <?php echo htmlspecialchars($avatar_initial); ?>
+                        </h2>
                     </div>
 
                     <?php if (!empty($users)): ?>
-                    <?php foreach ($users as $user): ?>
-                    <h1 class="profile-name">
-                        <?php echo htmlspecialchars($user['Firstname'] . ' ' . $user['Lastname']); ?>
-                    </h1>
-                    <p class="profile-email"><?php echo htmlspecialchars($user['User_email']); ?></p>
-                    <?php endforeach; ?>
+                        <?php foreach ($users as $user): ?>
+                            <h1 class="profile-name">
+                                <?php echo htmlspecialchars($user['Firstname'] . ' ' . $user['Lastname']); ?>
+                            </h1>
+                            <p class="profile-email"><?php echo htmlspecialchars($user['User_email']); ?></p>
+                        <?php endforeach; ?>
                     <?php else: ?>
-                    <h1 class="profile-name">ไม่พบข้อมูลผู้ใช้</h1>
+                        <h1 class="profile-name">ไม่พบข้อมูลผู้ใช้</h1>
                     <?php endif; ?>
 
                     <button class="edit-btn" onclick="editProfile()">
@@ -111,47 +118,47 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
                 <!-- Profile Stats -->
-                <!--<div class="stats-grid">
+                <!-- <div class="stats-grid">
+                    
                     <div class="stat-card">
                         <div class="stat-number"><?php /*echo $bookings_result->num_rows;*/ ?></div>
                         <div class="stat-label">การจองทั้งหมด</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number"><?php /* echo $favorites_result->num_rows; */?></div>
+                        <div class="stat-number"><?php  /*echo $favorites_result->num_rows;*/ ?></div>
                         <div class="stat-label">รายการโปรด</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number"><?php /*echo $user['User_phone'] ? 'มี' : 'ไม่มี'; */?></div>
+                        <div class="stat-number"><?php /*echo $user['User_phone'] ? 'มี' : 'ไม่มี';*/ ?></div>
                         <div class="stat-label">เบอร์โทรศัพท์</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number"><?php /* echo date('Y', strtotime($user['User_created_at'])); */?></div>
+                        <div class="stat-number"><?php /*echo date('Y', strtotime($user['User_created_at']));*/ ?></div>
                         <div class="stat-label">ปีที่สมัคร</div>
                     </div>
-                </div>-->
+                </div> -->
 
                 <!-- Profile Information -->
                 <div class="profile-info">
                     <div class="info-grid">
                         <div class="info-section">
                             <h3>ข้อมูลส่วนตัว</h3>
-                            <?php include "../controls/log_users.php"?>
                             <?php foreach ($users as $user): ?>
-                            <div class="info-item">
-                                <div class="info-label">ชื่อ</div>
-                                <div class="info-value"><?php echo htmlspecialchars($user['Firstname']); ?></div>
-                            </div>
-                            <div class="info-item">
-                                <div class="info-label">นามสกุล</div>
-                                <div class="info-value"><?php echo htmlspecialchars($user['Lastname']); ?></div>
-                            </div>
-                            <div class="info-item">
-                                <div class="info-label">รหัสผ่าน</div>
-                                <div class="info-value">
-                                    <input type="password" value="••••••••••" maxlength="10" readonly
-                                        style="border: none; background: transparent;">
+                                <div class="info-item">
+                                    <div class="info-label">ชื่อ</div>
+                                    <div class="info-value"><?php echo htmlspecialchars($user['Firstname']); ?></div>
                                 </div>
-                            </div>
+                                <div class="info-item">
+                                    <div class="info-label">นามสกุล</div>
+                                    <div class="info-value"><?php echo htmlspecialchars($user['Lastname']); ?></div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">รหัสผ่าน</div>
+                                    <div class="info-value">
+                                        <input type="password" value="••••••••••" maxlength="10" readonly
+                                            style="border: none; background: transparent;">
+                                    </div>
+                                </div>
                         </div>
 
                         <div class="info-section">
@@ -164,20 +171,20 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <div class="info-label">เบอร์โทรศัพท์</div>
                                 <div class="info-value">
                                     <?php if ($user['Phone']): ?>
-                                    <span class="phone-display">
+                                        <span class="phone-display">
 
-                                        <span
-                                            class="phone-number"><?php echo htmlspecialchars($user['Phone']); ?></span>
-                                    </span>
+                                            <span
+                                                class="phone-number"><?php echo htmlspecialchars($user['Phone']); ?></span>
+                                        </span>
                                     <?php else: ?>
-                                    <span class="no-phone">ไม่ระบุ</span>
+                                        <span class="no-phone">ไม่ระบุ</span>
                                     <?php endif; ?>
                                 </div>
                             </div>
                             <!--<div class="info-item">
                                 <div class="info-label">วันที่สมัคร</div>
                                 <div class="info-value">
-                                    <?php /*echo date('d/m/Y', strtotime($user['User_created_at'])); */?></div>
+                                    <?php /*echo date('d/m/Y', strtotime($user['User_created_at'])); */ ?></div>
                             </div>-->
                             <div class="info-item">
                                 <div class="info-label">สถานะ</div>
@@ -190,26 +197,24 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 </div>
                             </div>
                         </div>
-                        <?php endforeach; ?>
+                    <?php endforeach; ?>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
     <footer>
         <p>&copy; 2024 Homestay Booking. All rights reserved.</p>
     </footer>
-
     <script>
-    function toggleSidebar() {
-        const sidebar = document.getElementById('sidebar');
-        sidebar.classList.toggle("collapsed");
-    }
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle("collapsed");
+        }
 
-    function editProfile() {
-        window.location.href = 'edit-profile.php';
-    }
+        function editProfile() {
+            window.location.href = 'edit-profile.php';
+        }
     </script>
 </body>
 

@@ -1,9 +1,10 @@
 <?php
 require_once dirname(__FILE__).'/vendor/autoload.php';
-
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../'); // path ไป root ของโปรเจกต์
+$dotenv->load();
 define('OMISE_API_VERSION', '2019-05-29');
-define('OMISE_PUBLIC_KEY','pkey_test_64nbbhnxh0371dz2kzi');
-define('OMISE_SECRET_KEY', 'skey_test_64nbbhodcchurub65uw');
+define('OMISE_PUBLIC_KEY',$_ENV['OMISE_PUBLIC_KEY']);
+define('OMISE_SECRET_KEY', $_ENV['OMISE_SECRET_KEY']);
 
 try {
     $token = OmiseToken::create([

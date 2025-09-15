@@ -1,5 +1,5 @@
 <?php
-    session_start();
+session_start();
 ?>
 <!DOCTYPE html>
 <html lang="th">
@@ -8,10 +8,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Homestay Booking</title>
+    <link rel="website icon" type="png" href="/images/logo.png">
     <link rel="stylesheet" href="../style/Loginstyle.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+    #password-strength {
+        width: 100%;
+        height: 8px;
+        background-color: #ddd;
+        border-radius: 4px;
+        margin-top: 5px;
+    }
 
+    #strength-bar {
+        height: 100%;
+        width: 0%;
+        border-radius: 4px;
+        transition: width 0.3s ease;
+    }
+    </style>
 </head>
 
 <body>
@@ -25,7 +41,7 @@
             <div>
                 <img src="../images/logo.png" style="width: 5rem; height: 5rem;">
             </div>
-            <h1>Welcome Back</h1>
+            <h1>Welcome Host to Back</h1>
             <p>Sign in to your account or create a new one</p>
         </div>
 
@@ -37,28 +53,7 @@
                 <i class="fas fa-user-plus"></i> Sign Up
             </div>
         </div>
-        <?php
-                if (isset($_SESSION['error'])) {
-                    echo "<div class='alert alert-danger'><i class='fa-solid fa-ban'></i>" . $_SESSION['error'] . "</div>";
-                    unset($_SESSION['error']);
-                }
-    
-                if (isset($_SESSION['message'])) {
-                    echo "<div class='alert alert-success'><i class='fa-solid fa-check'></i>" . $_SESSION['message'] . "</div>";
-                    unset($_SESSION['message']);
-                }
-        ?>
-        <?php
-            if (isset($_SESSION['error1'])) {
-                echo "<div class='alert alert-danger'><i class='fa-solid fa-ban'></i>" . $_SESSION['error1'] . "</div>";
-                unset($_SESSION['error1']);
-            }
 
-            if (isset($_SESSION['message1'])) {
-                echo "<div class='alert alert-success'>< class='fa-solid fa-check'></i>" . $_SESSION['message1'] . "</div>";
-                unset($_SESSION['message1']);
-            }
-        ?>
         <div class="auth-content">
             <form id="login-form" class="form-content active" action="../controls/log_hosts.php" method="post">
                 <h2 class="form-title">Sign In to Your Account</h2>
@@ -115,6 +110,10 @@
                     <label for="signup-password">Password</label>
                     <input type="password" id="signup-password" name="password" placeholder="Create a password"
                         required>
+                    <div id="password-strength">
+                        <div id="strength-bar"></div>
+                        <p id="password-message"></p>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -132,9 +131,9 @@
     </div>
 
     <!-- Forgot Password Modal -->
-    <!-- <div class="modal-overlay" id="forgot-password-modal">
+    <div class="modal-overlay" id="forgot-password">
         <div class="modal-content">
-            <button class="modal-close" id="close-forgot-modal">
+            <button class="modal-close" id="close-forgot">
                 <i class="fas fa-times"></i>
             </button>
 
@@ -144,16 +143,17 @@
             <form id="forgot-form">
                 <div class="form-group">
                     <label for="forgot-email">Email Address</label>
-                    <input type="email" id="forgot-email" placeholder="Enter your email" required>
+                    <input type="email" id="forgot-email" placeholder="Enter your email" name="email" required>
                 </div>
 
                 <button type="submit" class="btn btn-primary">
                     <i class="fas fa-paper-plane"></i>
                     Send Reset Link
                 </button>
+                <p id="msg"></p>
             </form>
         </div>
-    </div> -->
+    </div>
 
 
     <script>
@@ -164,9 +164,13 @@
         const loginForm = document.getElementById("login-form");
         const signupForm = document.getElementById("signup-form");
         const forgotPasswordLink = document.getElementById("forgot-password-link");
-        //const forgotPasswordModal = document.getElementById("forgot-password-modal");
-        // const closeForgotModalBtn = document.getElementById("close-forgot-modal");
+        const forgotPasswordModal = document.getElementById("forgot-password");
+        const closeForgotModalBtn = document.getElementById("close-forgot");
         const closeAuthBtn = document.getElementById("close-auth");
+        forgotPasswordLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            forgotPasswordModal.classList.add('active');
+        });
 
         // Tab switching
         loginTab.addEventListener("click", () => {
@@ -214,11 +218,8 @@
                 }
             });
         }
-    });
-    document.addEventListener('DOMContentLoaded', () => {
         const urlParams = new URLSearchParams(window.location.search);
         const tab = urlParams.get('tab');
-
         if (tab === 'signup') {
             document.getElementById('signup-tab').classList.add('active');
             document.getElementById('signup-form').classList.add('active');
@@ -230,6 +231,71 @@
             document.getElementById('signup-tab').classList.remove('active');
             document.getElementById('signup-form').classList.remove('active');
         }
+
+        const message = document.getElementById("password-message");
+        const strengthBar = document.getElementById("strength-bar");
+        const btn = document.getElementById("signup-submit");
+        const signUpPassword = document.getElementById("signup-password");
+        let strong =
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+{}[\]|\\,.?])[A-Za-z\d!@#$%^&*()_\-+{}[\]|\\,.?]{10,}$/;
+        let medium = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
+        let weak = /^.{1,}$/;
+        signUpPassword.addEventListener("input", () => {
+            const pwd = signUpPassword.value;
+            if (pwd.match(strong)) {
+                strengthBar.style.width = "100%";
+                strengthBar.style.backgroundColor = "green";
+                message.innerHTML =
+                    "รหัสผ่านแข็งแรง: มีตัวเล็ก ตัวใหญ่ ตัวเลข อักขระพิเศษ และความยาว 10+";
+                message.style.color = "green";
+            } else if (pwd.match(medium)) {
+                strengthBar.style.width = "60%";
+                strengthBar.style.backgroundColor = "orange";
+                message.innerHTML = "รหัสผ่านปานกลาง: มีตัวเล็ก ตัวใหญ่ ตัวเลข และความยาว8ตัวขึ้นไป";
+                message.style.color = "orange";
+            } else if (pwd.match(weak)) {
+                strengthBar.style.width = "30%";
+                strengthBar.style.backgroundColor = "red";
+                message.innerHTML = "รหัสผ่านอ่อนแอ: ต้องมีตัวเล็ก ตัวใหญ่ ตัวเลข และความยาว8ตัวขึ้นไป";
+                message.style.color = "red";
+            } else {
+                strengthBar.style.width = "0%";
+                message.innerHTML = "รหัสผ่าน: ต้องมีตัวเล็ก ตัวใหญ่ ตัวเลข และความยาว8ตัวขึ้นไป";
+
+            }
+        });
+        btn.addEventListener('click', (e) => {
+            e.preventDefault(); // ป้องกัน form submit
+
+            const pwd = signUpPassword.value; // เอาค่าปัจจุบัน
+            if (!pwd.match(strong)) {
+                // ป้องกัน form submit
+                e.preventDefault();
+                message.textContent =
+                    "รหัสผ่านต้องแข็งแรง: มีตัวเล็ก ตัวใหญ่ ตัวเลข อักขระพิเศษ และความยาว 10+";
+                message.style.color = "red";
+                passwordInput.focus();
+            }
+        });
+        document.getElementById('forgot-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const Host_email = e.target.email.value.trim();
+            const msgEl = document.getElementById('msg');
+
+            const res = await fetch('../controls/forgot-password.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                    Host_email
+                })
+            });
+            const data = await res.json();
+            msgEl.textContent = data.message;
+            alert(data.message);
+            window.location.reload();
+        });
     });
     </script>
 </body>

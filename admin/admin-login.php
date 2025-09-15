@@ -8,6 +8,7 @@ session_start();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Homestay Booking</title>
+    <link rel="website icon" type="png" href="/images/logo.png">
     <link rel="stylesheet" href="../style/Loginstyle.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
@@ -24,7 +25,7 @@ session_start();
                 <img src="../images/logo.png" style="width: 5rem; height: 5rem;">
             </div>
 
-            <h1>Welcome Back</h1>
+            <h1>Welcome Admin to Back</h1>
             <p>Sign in to your account or create a new one</p>
         </div>
 
@@ -43,27 +44,26 @@ session_start();
                 <p class="form-subtitle">Enter your credentials to access your account</p>
                 <?php
                 if (isset($_SESSION['error'])) {
-                    echo "<div class='alert alert-danger'><i class='fa-solid fa-ban'></i>" . $_SESSION['error'] . "</div>";
+                    echo "<script> alert(" . json_encode($_SESSION['error']) . "); </script>";
                     unset($_SESSION['error']);
                 }
-    
+
                 if (isset($_SESSION['message'])) {
-                    echo "<div class='alert alert-success'><i class='fa-solid fa-check'></i>" . $_SESSION['message'] . "</div>";
+                    echo "<script> alert(" . json_encode($_SESSION['message']) . "); </script>";
                     unset($_SESSION['message']);
                 }
-        ?>
+                ?>
                 <div class="form-group">
                     <label for="login-email">Email Address</label>
-                    <input type="email" id="login-email" name="email" placeholder="Enter your email" required>
+                    <input type="email" id="login-email" name="email" placeholder="admin@gmail.com" required>
                 </div>
 
                 <div class="form-group">
                     <label for="login-password">Password</label>
-                    <input type="password" id="login-password" name="password" placeholder="Enter your password"
-                        required>
+                    <input type="password" id="login-password" name="password" placeholder="admin1234" required>
                 </div>
 
-                <a href="#" id="forgot-password-link" class="forgot-link">Forgot your password?</a>
+                <!-- <a href="#" id="forgot-password-link" class="forgot-link">Forgot your password?</a> -->
 
                 <button type="submit" class="btn btn-primary" name="admin_login">
                     <i class="fas fa-sign-in-alt"></i>
@@ -136,79 +136,76 @@ session_start();
 
 
     <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const authContainer = document.getElementById('auth-container');
-        const loginTab = document.getElementById('login-tab');
-        /*const signupTab = document.getElementById('signup-tab');*/
-        const loginForm = document.getElementById('login-form');
-        /*const signupForm = document.getElementById('signup-form');*/
-        const forgotPasswordLink = document.getElementById('forgot-password-link');
-        const forgotPasswordModal = document.getElementById('forgot-password-modal');
-        const closeForgotModalBtn = document.getElementById('close-forgot-modal');
-        const closeAuthBtn = document.getElementById('close-auth');
+        document.addEventListener('DOMContentLoaded', () => {
+            const authContainer = document.getElementById('auth-container');
+            const loginTab = document.getElementById('login-tab');
+            /*const signupTab = document.getElementById('signup-tab');*/
+            const loginForm = document.getElementById('login-form');
+            /*const signupForm = document.getElementById('signup-form');*/
+            const forgotPasswordLink = document.getElementById('forgot-password-link');
+            const forgotPasswordModal = document.getElementById('forgot-password-modal');
+            const closeForgotModalBtn = document.getElementById('close-forgot-modal');
 
-        // Tab switching
-        /* loginTab.addEventListener('click', () => {
-             loginTab.classList.add('active');
-             signupTab.classList.remove('active');
-             loginForm.classList.add('active');
-             signupForm.classList.remove('active');
-         });
-
-         signupTab.addEventListener('click', () => {
-             signupTab.classList.add('active');
-             loginTab.classList.remove('active');
-             signupForm.classList.add('active');
-             loginForm.classList.remove('active');
-         });*/
-
-        // Forgot password modal
-        forgotPasswordLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            forgotPasswordModal.classList.add('active');
-        });
-
-        const closeForgotModal = () => {
-            forgotPasswordModal.classList.remove('active');
-        };
-
-        closeForgotModalBtn.addEventListener('click', closeForgotModal);
-
-        forgotPasswordModal.addEventListener('click', (event) => {
-            if (event.target === forgotPasswordModal) {
-                closeForgotModal();
-            }
-        });
-
-        // Close auth container
-        closeAuthBtn.addEventListener('click', () => {
-            window.location.href = "../index.php";
-        });
-
-        // Form submission handling
-        const forms = document.querySelectorAll('form');
-        forms.forEach(form => {
-            form.addEventListener('submit', (e) => {
-                const submitBtn = form.querySelector('button[type="submit"]');
-                submitBtn.classList.add('loading');
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            // Close auth container
+            document.getElementById('close-auth').addEventListener('click', () => {
+                window.location.href = "../index.php";
             });
-        });
+            // Tab switching
+            /* loginTab.addEventListener('click', () => {
+                 loginTab.classList.add('active');
+                 signupTab.classList.remove('active');
+                 loginForm.classList.add('active');
+                 signupForm.classList.remove('active');
+             });
 
-        // Password confirmation validation
-        const confirmPasswordInput = document.getElementById('signup-confirm-password');
-        const passwordInput = document.getElementById('signup-password');
+             signupTab.addEventListener('click', () => {
+                 signupTab.classList.add('active');
+                 loginTab.classList.remove('active');
+                 signupForm.classList.add('active');
+                 loginForm.classList.remove('active');
+             });*/
 
-        if (confirmPasswordInput && passwordInput) {
-            confirmPasswordInput.addEventListener('input', () => {
-                if (passwordInput.value !== confirmPasswordInput.value) {
-                    confirmPasswordInput.setCustomValidity('Passwords do not match');
-                } else {
-                    confirmPasswordInput.setCustomValidity('');
+            // Forgot password modal
+            forgotPasswordLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                forgotPasswordModal.classList.add('active');
+            });
+
+            const closeForgotModal = () => {
+                forgotPasswordModal.classList.remove('active');
+            };
+
+            closeForgotModalBtn.addEventListener('click', closeForgotModal);
+
+            forgotPasswordModal.addEventListener('click', (event) => {
+                if (event.target === forgotPasswordModal) {
+                    closeForgotModal();
                 }
             });
-        }
-    });
+            // Form submission handling
+            const forms = document.querySelectorAll('form');
+            forms.forEach(form => {
+                form.addEventListener('submit', (e) => {
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    submitBtn.classList.add('loading');
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                });
+            });
+
+            // Password confirmation validation
+            const confirmPasswordInput = document.getElementById('signup-confirm-password');
+            const passwordInput = document.getElementById('signup-password');
+
+            if (confirmPasswordInput && passwordInput) {
+                confirmPasswordInput.addEventListener('input', () => {
+                    if (passwordInput.value !== confirmPasswordInput.value) {
+                        confirmPasswordInput.setCustomValidity('Passwords do not match');
+                    } else {
+                        confirmPasswordInput.setCustomValidity('');
+                    }
+                });
+            }
+        });
     </script>
 </body>
 

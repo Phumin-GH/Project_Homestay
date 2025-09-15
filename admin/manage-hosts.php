@@ -4,6 +4,7 @@ if (!isset($_SESSION["Admin_email"])) {
     header("Location: admin-login.php");
     exit();
 }
+include "../controls/get_datas.php";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -12,6 +13,7 @@ if (!isset($_SESSION["Admin_email"])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Hosts - Homestay Booking</title>
+    <link rel="website icon" type="png" href="/images/logo.png">
     <link rel="stylesheet" href="../style/style.css">
     <link rel="stylesheet" href="../style/main-menu.css">
     <link rel="stylesheet" href="../style/barStyle.css">
@@ -84,6 +86,11 @@ if (!isset($_SESSION["Admin_email"])) {
 
     .status-active {
         color: #10b981;
+        font-weight: bold;
+    }
+
+    .status-pending {
+        color: #0798f8ff;
         font-weight: bold;
     }
 
@@ -264,6 +271,76 @@ if (!isset($_SESSION["Admin_email"])) {
         font-weight: 600;
         margin-bottom: 1rem;
     }
+
+    .modal-input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        margin-bottom: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .modal-input:focus {
+        border-color: #4A90E2;
+        box-shadow: 0 0 6px rgba(74, 144, 226, 0.4);
+        outline: none;
+    }
+
+    .auth-tabs {
+        display: flex;
+        background: #f8f9fa;
+        border-bottom: 1px solid #e5e5e5;
+        margin: 1.5rem 0;
+    }
+
+    .tab {
+        flex: 1;
+        padding: 1rem;
+        text-align: center;
+        cursor: pointer;
+        font-weight: 500;
+        color: #666666;
+        transition: all 0.2s ease;
+        position: relative;
+        filter: blur(1px);
+        opacity: 0.9;
+        transform: translateY(10px);
+
+        transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    .tab:hover {
+        filter: none;
+        opacity: 1;
+        color: #1e5470;
+    }
+
+    .tab.active {
+        color: #1e5470;
+        background: #ddf1faff;
+        filter: none;
+        opacity: 1;
+        border-radius: 15px 30px 0 0;
+        transform: translateY(0);
+    }
+
+    .tab.active::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: #1e5470;
+    }
+
+    .UserH2 {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin: 1rem 0 1rem 0;
+    }
     </style>
 </head>
 
@@ -315,31 +392,25 @@ if (!isset($_SESSION["Admin_email"])) {
                     <h1><i class="fas fa-users"></i> Manage Hosts</h1>
                     <p>จัดการข้อมูลเจ้าของบ้านพักทั้งหมด</p>
                 </div>
-                <?php include "../controls/get_hosts.php"; ?>
-                <button onclick="openWaitingHostsModal()"
-                    style="margin-bottom: 1.5rem; background: #12690bff; color: #fff; gap: 500px;  border: none; border-radius: 5px; padding: 0.6rem 1.2rem; font-size: 1.25rem; cursor: pointer;">
-                    <i class="fa-solid fa-user-plus"></i> บัญชีที่รออนุญาต
-                    <?php echo "(". count($verify_host) .")"; ?>
-                    <?php if (count($verify_host) > 0): ?>
-                    <div class="notify-display"></div>
-                    <?php else: ?>
-                    <div class="non-notify-display"></div>
-                    <?php endif; ?>
-                </button>
-                <button onclick="openUnauthorizedHostsModal()"
-                    style="margin:0.5rem 0  1.5rem 0; background: #a0682cff; color: #fff; border: none; border-radius: 5px; padding: 0.6rem 1.2rem; font-size: 1.25rem; cursor: pointer;">
-                    <i class="fa-solid fa-users-slash"></i> บัญชีที่ไม่อนุญาต
-                    <?php echo "(". count($ban_host) .")"; ?>
-
-                </button>
-                <div class="table-responsive">
+                <div class="auth-tabs">
+                    <div class="tab active" id="host-active-tab">
+                        <i class="fas fa-sign-in-alt"></i>Host active
+                    </div>
+                    <div class="tab" id="host-inactive-tab">
+                        <i class="fa-solid fa-users-line"></i> Host pending
+                    </div>
+                    <div class="tab" id="host-banned-tab">
+                        <i class="fa-solid fa-users-slash"></i> Host banned
+                    </div>
+                </div>
+                <div class="table-responsive active" id="host-active-section">
 
                     <?php if (count( $hosts) > 0): ?>
-                    <?php echo "<h1>รายชื่อทั้งหมด (".count( $hosts) .")</h1>" ?>
+                    <?php echo "<h1 class='UserH2'>รายชื่อทั้งหมด (".count( $hosts) .")</h1>" ?>
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>ลำดับ</th>
+                                <th>ลำดับที่</th>
                                 <th>ชื่อ-นามสกุล</th>
                                 <th>อีเมล</th>
                                 <th>เบอร์โทร</th>
@@ -354,37 +425,176 @@ if (!isset($_SESSION["Admin_email"])) {
                                 <td><?php echo htmlspecialchars($host['Host_firstname'] . ' ' . $host['Host_lastname']); ?>
                                 </td>
                                 <td><?php echo htmlspecialchars($host['Host_email']); ?></td>
-                                <td><?php echo "<span class='phone-prefix-display'>66+</span>" .'   '. htmlspecialchars($host['Host_phone']); ?>
+                                <td><?php echo  htmlspecialchars($host['Host_phone']); ?>
                                 </td>
                                 <td>
                                     <?php
-                                        $status = ($host['Host_Status'] == 1) ? "ใช้งานได้" : "ถูกระงับ";
-                                        $statusClass = ($host['Host_Status'] == 1) ? 'status-active' : 'status-inactive';
+                                        $status = ($host['Host_Status'] == 'active') ? "ใช้งานได้" : "ถูกระงับ";
+                                        $statusClass = ($host['Host_Status'] == 'active') ? 'status-active' : 'status-inactive';
                                     ?>
                                     <span
                                         class="<?php echo $statusClass; ?>"><?php echo htmlspecialchars($status); ?></span>
                                 </td>
                                 <td>
-                                    <form method="post" action="edit-host.php" style="display:inline;">
+                                    <!-- <form method="post" action="edit-host.php" style="display:inline;">
                                         <input type="hidden" name="host_id" value="<?php echo $host['Host_id']; ?>">
-                                        <button type="submit" class="btn btn-edit" title="แก้ไข"><i
-                                                class="fas fa-edit"></i></button>
-                                    </form>
-                                    <form method="post" action="delete-host.php" style="display:inline;"
+                                    </form> -->
+                                    <button type="submit" class="btn btn-edit" title="แก้ไข"
+                                        onclick="openEditHostModal(<?php echo (int)$host['Host_id']; ?>)"><i
+                                            class="fas fa-edit"></i></button>
+                                    <form method="post" action="toggle-host.php" style="display:inline;"
                                         onsubmit="return confirm('คุณต้องการลบเจ้าของบ้านพักนี้หรือไม่?');">
                                         <input type="hidden" name="host_id" value="<?php echo $host['Host_id']; ?>">
                                         <button type="submit" class="btn btn-delete" title="ลบ"><i
                                                 class="fas fa-trash"></i></button>
                                     </form>
-                                    <form method="post" action="toggle-approve-host.php" style="display:inline;">
+                                    <!-- <form method="post" action="toggle-host.php" style="display:inline;">
                                         <input type="hidden" name="host_id" value="<?php echo $host['Host_id']; ?>">
-                                        <?php if ($host['Host_Status'] == 2): ?>
-                                        <button type="submit" class="btn btn-reject" title="ไม่อนุมัติ"><i
+                                        <?php /*if ($host['Host_Status'] == 'cancel'):*/ ?>
+                                         <button type="submit" class="btn btn-reject" title="ไม่อนุมัติ"><i
                                                 class="fas fa-times"></i></button>
-                                        <?php else: ?>
+                                        <?php /*else:*/ ?>
                                         <button type="submit" class="btn btn-approve" title="อนุมัติ"><i
                                                 class="fas fa-check"></i></button>
-                                        <?php endif; ?>
+                                        <?php /*endif;*/ ?>
+                                    </form> -->
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                    <?php else: ?>
+                    <div class="empty-state">
+                        <i class="fas fa-users"></i>
+                        <h3>ไม่มีข้อมูลเจ้าของบ้านพัก</h3>
+                    </div>
+                    <?php endif; ?>
+                </div>
+                <div class="table-responsive " id="host-banned-section" style="display:none;">
+
+                    <?php if (count( $ban_host) > 0): ?>
+                    <?php echo "<h1 class='UserH2'>รายชื่อทั้งหมด (".count( $ban_host) .")</h1>" ?>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ลำดับที่</th>
+                                <th>ชื่อ-นามสกุล</th>
+                                <th>อีเมล</th>
+                                <th>เบอร์โทร</th>
+                                <th>สถานะ</th>
+                                <th>จัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($ban_host as $host): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($host['Host_id']); ?></td>
+                                <td><?php echo htmlspecialchars($host['Host_firstname'] . ' ' . $host['Host_lastname']); ?>
+                                </td>
+                                <td><?php echo htmlspecialchars($host['Host_email']); ?></td>
+                                <td><?php echo  htmlspecialchars($host['Host_phone']); ?>
+                                </td>
+                                <td>
+                                    <?php
+                                        $status = ($host['Host_Status'] == 'cancel') ? "ไม่ผ่านการอนุมัติ" : "ปลดแบน";
+                                        $statusClass = ($host['Host_Status'] == 'cancel') ? 'status-inactive' : 'status-active';
+                                    ?>
+                                    <span
+                                        class="<?php echo $statusClass; ?>"><?php echo htmlspecialchars($status); ?></span>
+                                </td>
+                                <td>
+                                    <!-- <form method="post" action="edit-host.php" style="display:inline;">
+                                        <input type="hidden" name="host_id" value="<?php echo $host['Host_id']; ?>">
+                                    </form> -->
+                                    <!-- <button type="submit" class="btn btn-edit" title="แก้ไข"
+                                        onclick="openEditHostModal(<?php /*echo (int)$host['Host_id'];*/ ?>)"><i
+                                            class="fas fa-edit"></i></button>
+                                    <form method="post" action="toggle-host.php" style="display:inline;"
+                                        onsubmit="return confirm('คุณต้องการลบเจ้าของบ้านพักนี้หรือไม่?');">
+                                        <input type="hidden" name="host_id" value="<?php /*echo $host['Host_id'];*/ ?>">
+                                        <button type="submit" class="btn btn-delete" title="ลบ"><i
+                                                class="fas fa-trash"></i></button>
+                                    </form> -->
+                                    <form method="post" action="../controls/toggle-host.php" style="display:inline;"
+                                        onsubmit="return confirm('คุณต้องการลบเจ้าของบ้านพักนี้หรือไม่?');">
+                                        <input type="hidden" name="host_id" value="<?php echo $host['Host_id']; ?>">
+                                        <button type="submit" class="btn btn-delete" title="ลบ" name="del_host"><i
+                                                class="fas fa-trash"></i></button>
+                                    </form>
+                                    <form method="post" action="../controls/toggle-host.php" style="display:inline;">
+                                        <input type="hidden" name="host_id" value="<?php echo $host['Host_id']; ?>">
+
+                                        <button type="submit" class="btn btn-approve" title="อนุมัติ" name="rej_host"><i
+                                                class="fa-solid fa-repeat"></i></i></button>
+
+                                    </form>
+                                    <!-- <form method="post" action="toggle-host.php" style="display:inline;">
+                                        <input type="hidden" name="host_id" value="<?php echo $host['Host_id']; ?>">
+                                        <?php /*if ($host['Host_Status'] == 'cancel'):*/ ?>
+                                         <button type="submit" class="btn btn-reject" title="ไม่อนุมัติ"><i
+                                                class="fas fa-times"></i></button>
+                                        <?php /*else:*/ ?>
+                                        <button type="submit" class="btn btn-approve" title="อนุมัติ"><i
+                                                class="fas fa-check"></i></button>
+                                        <?php /*endif;*/ ?>
+                                    </form> -->
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                    <?php else: ?>
+                    <div class="empty-state">
+                        <i class="fas fa-users"></i>
+                        <h3>ไม่มีข้อมูลเจ้าของบ้านพัก</h3>
+                    </div>
+                    <?php endif; ?>
+                </div>
+                <div class="table-responsive " id="host-inactive-section" style="display:none;">
+
+                    <?php if (count($verify_host) > 0): ?>
+                    <?php echo "<h1 class='UserH2'>รายชื่อทั้งหมด (".count( $hosts) .")</h1>" ?>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ลำดับที่</th>
+                                <th>ชื่อ-นามสกุล</th>
+                                <th>อีเมล</th>
+                                <th>เบอร์โทร</th>
+                                <th>สถานะ</th>
+                                <th>จัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($verify_host as $host): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($host['Host_id']); ?></td>
+                                <td><?php echo htmlspecialchars($host['Host_firstname'] . ' ' . $host['Host_lastname']); ?>
+                                </td>
+                                <td><?php echo htmlspecialchars($host['Host_email']); ?></td>
+                                <td><?php echo  htmlspecialchars($host['Host_phone']); ?>
+                                </td>
+                                <td>
+                                    <?php
+                                        $status = ($host['Host_Status'] == 'pending_verify') ? "รอการตรวจสอบ" : "ไม่อนุมัติ";
+                                        $statusClass = ($host['Host_Status'] == 'pending_verify') ? 'status-pending' : 'status-inactive';
+                                    ?>
+                                    <span
+                                        class="<?php echo $statusClass; ?>"><?php echo htmlspecialchars($status); ?></span>
+                                </td>
+                                <td>
+                                    <form method="post" action="../controls/toggle-host.php" style="display:inline;"
+                                        onsubmit="return confirm('คุณไม่อนุมัติบัญชีเจ้าของบ้านพักนี้หรือไม่?');">
+                                        <input type="hidden" name="host_id" value="<?php echo $host['Host_id']; ?>">
+                                        <button type="submit" class="btn btn-delete" title="ไม่อนุมัติ"
+                                            name="cancel_host"><i class="fa-solid fa-thumbs-down"></i></button>
+                                    </form>
+                                    <form method="post" action="../controls/toggle-host.php" style="display:inline;">
+                                        <input type="hidden" name="host_id" value="<?php echo $host['Host_id']; ?>">
+
+                                        <button type="submit" class="btn btn-approve" title="อนุมัติ" name="rej_host"><i
+                                                class="fa-regular fa-thumbs-up"></i></button>
+
                                     </form>
                                 </td>
                             </tr>
@@ -402,212 +612,128 @@ if (!isset($_SESSION["Admin_email"])) {
         </div>
     </div>
     <!-- Modal for Unauthorized Hosts -->
-    <div id="waitingHostsModal" class="modal" style="display:none;">
+    <div id="EditHostsModal" class="modal" style="display:none;">
         <div class="modal-content">
-            <span class="close" onclick="document.getElementById('waitingHostsModal').style.display='none'"></span>
-            <h2>เจ้าของบ้านที่รอการอนุมัติ</h2>
-
-            <?php include "../controls/get_hosts.php"; ?>
-            <?php
-if (!isset($verify_host)) $verify_host = [];
-?>
-            <?php if (count(value: $verify_host) > 0): ?>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>ลำดับ</th>
-                        <th>ชื่อ-นามสกุล</th>
-                        <th>อีเมล</th>
-                        <th>เบอร์โทร</th>
-                        <th>สถานะ</th>
-                        <th>จัดการ</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($verify_host as $host): ?>
-                    <tr>
-                        <td><?php echo htmlspecialchars($host['Host_id']); ?></td>
-                        <td><?php echo htmlspecialchars($host['Host_firstname'] . ' ' . $host['Host_lastname']); ?>
-                        </td>
-                        <td><?php echo htmlspecialchars($host['Host_email']); ?></td>
-                        <td><?php echo "<span class='phone-prefix-display'>66+</span>".'   '. htmlspecialchars($host['Host_phone']); ?>
-                        </td>
-                        <td>
-                            <?php
-                                        $status = ($host['Host_Status'] == 0) ? "รออนุมัติ" : "ไม่อนุมัติ";
-                                        $statusClass = ($host['Host_Status'] == 0) ? 'status-active' : 'status-inactive';
-                                    ?>
-                            <span class="<?php echo $statusClass; ?>"><?php echo htmlspecialchars($status); ?></span>
-                        </td>
-                        <td>
-                            <form method="post" action="edit-host.php" style="display:inline;">
-                                <input type="hidden" name="host_id" value="<?php echo $host['Host_id']; ?>">
-                                <button type="submit" class="btn btn-edit" title="แก้ไข"><i
-                                        class="fas fa-edit"></i></button>
-                            </form>
-                            <form method="post" action="delete-host.php" style="display:inline;"
-                                onsubmit="return confirm('คุณต้องการลบเจ้าของบ้านพักนี้หรือไม่?');">
-                                <input type="hidden" name="host_id" value="<?php echo $host['Host_id']; ?>">
-                                <button type="submit" class="btn btn-delete" title="ลบ"><i
-                                        class="fas fa-trash"></i></button>
-                            </form>
-                            <form method="post" action="toggle-approve-host.php" style="display:inline;">
-                                <input type="hidden" name="host_id" value="<?php echo $host['Host_id']; ?>">
-                                <?php if ($host['Host_Status'] == 1): ?>
-                                <button type="submit" class="btn btn-reject" title="ไม่อนุมัติ"><i
-                                        class="fas fa-times"></i></button>
-                                <?php else: ?>
-                                <button type="submit" class="btn btn-approve" title="อนุมัติ"><i
-                                        class="fas fa-check"></i></button>
-                                <?php endif; ?>
-                            </form>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-            <?php else: ?>
-            <div class="empty-state">
-                <i class="fas fa-users"></i>
-                <h3>ไม่มีข้อมูลเจ้าของบ้านพัก</h3>
-            </div>
-            <?php endif; ?>
+            <span class="close" onclick="document.getElementById('EditHostsModal').style.display='none'">&times;</span>
+            <h2 class="modal-header">แก้ไขเจ้าของบ้าน</h2>
+            <form method="post" action="../controls/toggle-host.php">
+                <input type="hidden" name="host_id" id="edit_host_id">
+                <input type="text" class="modal-input" name="Firstname"
+                    placeholder="<?php echo htmlspecialchars($host['Host_firstname'])?>">
+                <input type="text" class="modal-input" name="Lastname"
+                    placeholder="<?php echo htmlspecialchars($host['Host_lastname'])?>">
+                <input type="text" class="modal-input" name="Email"
+                    placeholder="<?php echo htmlspecialchars($host['Host_email'])?>">
+                <input type="text" class="modal-input" name="Phone"
+                    placeholder="<?php echo htmlspecialchars($host['Host_phone'])?>">
+                <button type="submit" class="btn btn-save" name="edit_host">บันทึก</button>
+            </form>
         </div>
     </div>
-
-    <!-- Modal for Unauthorized Hosts -->
-    <div id="unauthorizedHostsModal" class="modal" style="display:none;">
-        <div class="modal-content">
-            <span class="close" onclick="document.getElementById('unauthorizedHostsModal').style.display='none'"></span>
-            <h2>เจ้าของบ้านที่ยังไม่อนุมัติ</h2>
-
-            <?php include "../controls/get_hosts.php"; ?>
-            <?php
-if (!isset($ban_host)) $ban_host = [];
-?>
-            <?php if (count(value: $ban_host) > 0): ?>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>ลำดับ</th>
-                        <th>ชื่อ-นามสกุล</th>
-                        <th>อีเมล</th>
-                        <th>เบอร์โทร</th>
-                        <th>สถานะ</th>
-                        <th>จัดการ</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($ban_host as $host): ?>
-                    <tr>
-                        <td><?php echo htmlspecialchars($host['Host_id']); ?></td>
-                        <td><?php echo htmlspecialchars($host['Host_firstname'] . ' ' . $host['Host_lastname']); ?>
-                        </td>
-                        <td><?php echo htmlspecialchars($host['Host_email']); ?></td>
-                        <td><?php echo "<span class='phone-prefix-display'>66+</span>".'   '. htmlspecialchars($host['Host_phone']); ?>
-                        </td>
-                        <td>
-                            <?php
-                                        $status = ($host['Host_Status'] == 0) ? "รออนุมัติ" : "ไม่อนุมัติ";
-                                        $statusClass = ($host['Host_Status'] == 0) ? 'status-active' : 'status-inactive';
-                                    ?>
-                            <span class="<?php echo $statusClass; ?>"><?php echo htmlspecialchars($status); ?></span>
-                        </td>
-                        <td>
-                            <form method="post" action="edit-host.php" style="display:inline;">
-                                <input type="hidden" name="host_id" value="<?php echo $host['Host_id']; ?>">
-                                <button type="submit" class="btn btn-edit" title="แก้ไข"><i
-                                        class="fas fa-edit"></i></button>
-                            </form>
-                            <form method="post" action="delete-host.php" style="display:inline;"
-                                onsubmit="return confirm('คุณต้องการลบเจ้าของบ้านพักนี้หรือไม่?');">
-                                <input type="hidden" name="host_id" value="<?php echo $host['Host_id']; ?>">
-                                <button type="submit" class="btn btn-delete" title="ลบ"><i
-                                        class="fas fa-trash"></i></button>
-                            </form>
-                            <form method="post" action="toggle-approve-host.php" style="display:inline;">
-                                <input type="hidden" name="host_id" value="<?php echo $host['Host_id']; ?>">
-                                <?php if ($host['Host_Status'] == 1): ?>
-                                <button type="submit" class="btn btn-reject" title="ไม่อนุมัติ"><i
-                                        class="fas fa-times"></i></button>
-                                <?php else: ?>
-                                <button type="submit" class="btn btn-approve" title="อนุมัติ"><i
-                                        class="fa-solid fa-repeat"></i></i></button>
-                                <?php endif; ?>
-                            </form>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-            <?php else: ?>
-            <div class="empty-state">
-                <i class="fas fa-users"></i>
-                <h3>ไม่มีข้อมูลเจ้าของบ้านพัก</h3>
-            </div>
-            <?php endif; ?>
-        </div>
-    </div>
-
     <script>
-    function toggleSidebar() {
-        const sidebar = document.getElementById('sidebar');
-        const mainContent = document.querySelector('.main-with-sidebar');
-        sidebar.classList.toggle("collapsed");
-        mainContent.classList.toggle("sidebar-collapsed");
-    }
-
-    function openUnauthorizedHostsModal() {
-        document.getElementById('unauthorizedHostsModal').style.display = 'flex';
-        // Load unauthorized hosts via AJAX
-        const listDiv = document.getElementById('unauthorized-hosts-list');
-        listDiv.innerHTML =
-            '<div style="text-align:center;padding:2rem;"><i class="fas fa-spinner fa-spin"></i> กำลังโหลด...</div>';
-        fetch('get-unauthorized-hosts.php')
-            .then(response => response.text())
-            .then(html => {
-                listDiv.innerHTML = html;
-            })
-            .catch(() => {
-                listDiv.innerHTML =
-                    '<div style="color:#dc2626;text-align:center;">เกิดข้อผิดพลาดในการโหลดข้อมูล</div>';
-            });
-    }
-
-    function openWaitingHostsModal() {
-        document.getElementById('waitingHostsModal').style.display = 'flex';
-        // Load unauthorized hosts via AJAX
-        const listDiv = document.getElementById('unauthorized-hosts-list');
-        listDiv.innerHTML =
-            '<div style="text-align:center;padding:2rem;"><i class="fas fa-spinner fa-spin"></i> กำลังโหลด...</div>';
-        fetch('get-unauthorized-hosts.php')
-            .then(response => response.text())
-            .then(html => {
-                listDiv.innerHTML = html;
-            })
-            .catch(() => {
-                listDiv.innerHTML =
-                    '<div style="color:#dc2626;text-align:center;">เกิดข้อผิดพลาดในการโหลดข้อมูล</div>';
-            });
-    }
-
-    function closeUnauthorizedHostsModal() {
-        document.getElementById('unauthorizedHostsModal').style.display = 'none';
-    }
-
-    function closeWaitingHostsModal() {
-        document.getElementById('waitingHostsModal').style.display = 'none';
-    }
-
-    window.onclick = function(event) {
-        const modal = document.getElementById('unauthorizedHostsModal');
-        const modals = document.getElementById('waitingHostsModal');
-        if (event.target === modal) {
-            closeUnauthorizedHostsModal();
-        } else if (event.target === modals) {
-            closeWaitingHostsModal();
+    document.addEventListener('DOMContentLoaded', function() {
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.querySelector('.main-with-sidebar');
+            sidebar.classList.toggle("collapsed");
+            mainContent.classList.toggle("sidebar-collapsed");
         }
-    }
+
+        function openEditHostModal(hostId) {
+            document.getElementById("EditHostsModal").style.display = "flex";
+            document.getElementById("edit_host_id").value = hostId;
+        }
+
+        function openUnauthorizedHostsModal() {
+            document.getElementById('unauthorizedHostsModal').style.display = 'flex';
+            // Load unauthorized hosts via AJAX
+            const listDiv = document.getElementById('unauthorized-hosts-list');
+            listDiv.innerHTML =
+                '<div style="text-align:center;padding:2rem;"><i class="fas fa-spinner fa-spin"></i> กำลังโหลด...</div>';
+            fetch('get-unauthorized-hosts.php')
+                .then(response => response.text())
+                .then(html => {
+                    listDiv.innerHTML = html;
+                })
+                .catch(() => {
+                    listDiv.innerHTML =
+                        '<div style="color:#dc2626;text-align:center;">เกิดข้อผิดพลาดในการโหลดข้อมูล</div>';
+                });
+        }
+
+        function openWaitingHostsModal() {
+            document.getElementById('waitingHostsModal').style.display = 'flex';
+            // Load unauthorized hosts via AJAX
+            const listDiv = document.getElementById('unauthorized-hosts-list');
+            listDiv.innerHTML =
+                '<div style="text-align:center;padding:2rem;"><i class="fas fa-spinner fa-spin"></i> กำลังโหลด...</div>';
+            fetch('get-unauthorized-hosts.php')
+                .then(response => response.text())
+                .then(html => {
+                    listDiv.innerHTML = html;
+                })
+                .catch(() => {
+                    listDiv.innerHTML =
+                        '<div style="color:#dc2626;text-align:center;">เกิดข้อผิดพลาดในการโหลดข้อมูล</div>';
+                });
+        }
+
+        function closeUnauthorizedHostsModal() {
+            document.getElementById('unauthorizedHostsModal').style.display = 'none';
+        }
+
+        function closeEditHostsModal() {
+            document.getElementById('EditHostsModal').style.display = 'none';
+        }
+
+        function closeWaitingHostsModal() {
+            document.getElementById('waitingHostsModal').style.display = 'none';
+        }
+        window.onclick = function(event) {
+            const modal = document.getElementById('unauthorizedHostsModal');
+            const modals = document.getElementById('waitingHostsModal');
+            const editmodals = document.getElementById('EditHostsModal');
+            if (event.target === modal) {
+                closeUnauthorizedHostsModal();
+            } else if (event.target === modals) {
+                closeWaitingHostsModal();
+            } else if (event.target === editmodals) {
+                closeEditHostsModal();
+
+            }
+        }
+        const hostActiveTab = document.getElementById('host-active-tab');
+        const hostBannedTab = document.getElementById('host-banned-tab');
+        const hostInactiveTab = document.getElementById('host-inactive-tab');
+        const hostActiveSection = document.getElementById('host-active-section');
+        const hostBannedSection = document.getElementById('host-banned-section');
+        const hostInactiveSection = document.getElementById('host-inactive-section');
+        hostActiveTab.addEventListener('click', function() {
+            hostActiveTab.classList.add('active');
+            hostBannedTab.classList.remove('active');
+            hostInactiveTab.classList.remove('active');
+            hostActiveSection.style.display = 'block';
+            hostBannedSection.style.display = 'none';
+            hostInactiveSection.style.display = 'none';
+        });
+        hostBannedTab.addEventListener('click', function() {
+            hostBannedTab.classList.add('active');
+            hostActiveTab.classList.remove('active');
+            hostInactiveTab.classList.remove('active');
+            hostBannedSection.style.display = 'block';
+            hostActiveSection.style.display = 'none';
+            hostInactiveSection.style.display = 'none';
+        });
+        hostInactiveTab.addEventListener('click', function() {
+            hostInactiveTab.classList.add('active');
+            hostActiveTab.classList.remove('active');
+            hostBannedTab.classList.remove('active');
+            hostInactiveSection.style.display = 'block';
+            hostActiveSection.style.display = 'none';
+            hostBannedSection.style.display = 'none';
+
+        });
+    });
     </script>
 </body>
 

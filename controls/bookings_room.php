@@ -1,86 +1,159 @@
 <?php
-include '../config/db_connect.php';
-
-ob_start();
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-error_reporting(E_ALL);
-ini_set('display_errors', 0); // ปิด warning/notice บนหน้า
+require_once __DIR__ . '/../config/db_connect.php';
+require_once __DIR__ . '/../dao/Booking.php';
 header('Content-Type: application/json');
-
-// ดึงค่าจาก POST
-$room_id = (int)($_POST['room_id'] ?? 0);
-$property_id = (int)($_POST['property_id'] ?? 0);
-$check_in_date = $_POST['check_in_date'] ?? '';
-$check_out_date = $_POST['check_out_date'] ?? '';
-$nights = (int)($_POST['nights'] ?? 0);
-$guests = (int)($_POST['guests'] ?? 0);
-
-// ตรวจสอบข้อมูลเบื้องต้น
-if ($room_id <= 0) { echo json_encode(['error' => 'กรุณาเลือกห้องพัก']); exit; }
-if (empty($check_in_date) || empty($check_out_date)) { echo json_encode(['error' => 'กรุณาเลือกวันที่เช็คอินและเช็คเอาท์']); exit; }
-if ($nights <= 0) { echo json_encode(['error' => 'จำนวนคืนต้องมากกว่า 0']); exit; }
-if ($guests <= 0) { echo json_encode(['error' => 'จำนวนผู้เข้าพักต้องมากกว่า 0']); exit; }
-$today = date('Y-m-d');
-if ($check_in_date < $today) { echo json_encode(['error' => 'วันที่เช็คอินต้องเป็นวันในอนาคต']); exit; }
-if (strtotime($check_out_date) <= strtotime($check_in_date)) { echo json_encode(['error' => 'วันที่เช็คเอาท์ต้องอยู่หลังวันที่เช็คอิน']); exit; }
-if (empty($_SESSION['User_email'])) { echo json_encode(['error' => 'กรุณาเข้าสู่ระบบ']); exit; }
-
+$BookingHandler = new Booking($conn);
+// $price = (int)($_POST['price'] ?? 0);
 try {
-    // ดึงราคาห้อง
-    $stmt = $conn->prepare("SELECT Room_price AS price_per_night FROM room WHERE Room_id = ?");
-    $stmt->execute([$room_id]);
-    $room = $stmt->fetch(PDO::FETCH_ASSOC);
-    if (!$room) { echo json_encode(['error' => 'ไม่พบข้อมูลห้องพัก']); exit; }
 
-    $price_per_night = $room['price_per_night'];
-    $base_guests = 4;
-    $extra_guest_fee = 200;
-    $service_fee = 100;
-    $total_price = $nights * $price_per_night;
-    if ($guests > $base_guests) {
-        $total_price += ($guests - $base_guests) * $extra_guest_fee * $nights;
-    }
-    $total_price += $service_fee;
-    if ($total_price < 0) { $total_price = 0; }
-    
-    // บันทึกการจองเมื่อส่ง submit_book
-    if (isset($_POST['submit_btn'])) {
-        $email = $_SESSION['User_email'];
-        $stmt = $conn->prepare("SELECT User_id FROM user WHERE User_email = ?");
-        $stmt->execute([$email]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
-        if (!$user) { echo json_encode(['error' => 'ไม่พบผู้ใช้']); exit; }
+    if (isset($_POST['submit_onl'])) {
+        if (isset($_POST['total_price']) && isset($_POST['booking_id']) && isset($_POST['method'])) {
+            $_SESSION['total_price'] = $_POST['total_price'] ?? null;
+            $_SESSION['booking_id'] = $_POST['booking_id'] ?? null;
+            $_SESSION['method'] = $_POST['method'] ?? null;
+            $method = $_SESSION['method'];
+            $result = $BookingHandler->TypeGateway($method);
+            if ($result === false) {
+                echo json_encode(["gateway" => "unknow", "err" => "Unknow Method"]);
+                exit();
+            } else {
+                echo json_encode(["gateway" => $result, "msg" => $result]);
+                exit();
+            }
+        } elseif (isset($_POST['submit_onl'])) {
+            $email = $_SESSION['User_email'];
+            $room_id = (int)($_POST['room_id'] ?? 0);
+            $property_id = (int)($_POST['property_id'] ?? 0);
+            $check_in_date = $_POST['check_in_date'];
+            $check_out_date = $_POST['check_out_date'];
+            $nights = (int)($_POST['nights'] ?? 0);
+            $total_price = (int)($_POST['total_price']) ?? 0;
+            $guests = (int)($_POST['guests'] ?? 0);
+            if (isset($_SESSION['User_email'])) {
+                $result = $BookingHandler->book_online($email, $property_id, $room_id, $check_in_date, $check_out_date,  $nights, $guests, $total_price);
+                if (is_numeric($result)) {
+                    $booking_id = $result;
+                    echo json_encode(
+                        [
+                            'success' => true,
+                            'booking_id' => $booking_id,
+                            'total_price' => round($total_price, 2),
+                            'message' => 'จองสำเร็จ'
+                        ]
+                    );
+                    exit;
+                } else {
+                    echo json_encode([
+                        'success' => false,
+                        'message' => 'จองไม่สำเร็จ'
+                    ]);
+                    exit;
+                }
+            }
+            // if (isset($_SESSION['method'])) {
+            //     if ($method === 'credit-card') {
+            //         echo "credit-card";
+            //     } else if ($method === 'qrcode') {
+            //         echo "qrcode";
+            //     } else {
+            //         echo "no_price";
+            //     }
+            // }
+        }
+    } elseif (isset($_POST['submit_wki'])) {
+        $room_id = (int)($_POST['room_id'] ?? 0);
+        $property_id = (int)($_POST['property_id'] ?? 0);
+        $check_in_date = $_POST['check_in_date'];
+        $check_out_date = $_POST['check_out_date'];
+        $f_name = $_POST['firstName'];
+        $l_name = $_POST['lastName'];
+        $phone = $_POST['guestsPhone'];
+        $nights = (int)($_POST['nights'] ?? 0);
+        $total_price = (int)($_POST['total_price']) ?? 0;
+        $guests = (int)($_POST['guests'] ?? 0);
+        $result = $BookingHandler->book_walkin($property_id, $room_id, $check_in_date, $check_out_date, $f_name, $l_name, $phone, $nights, $guests, $total_price);
+        if ($result === true) {
+            echo json_encode([
+                'success' => true,
+                'message' => "สำเร็จ"
 
-        $insertSQL = "INSERT INTO booking 
-            (User_id, Property_id, Room_id, Check_in, Check_out, Guests, Night, Total_price) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        $stmt = $conn->prepare($insertSQL);
-        $stmt->execute([$user['User_id'], $property_id, $room_id, $check_in_date, $check_out_date, $guests, $nights, $total_price]);
-        $booking_id = $conn->lastInsertId();
+            ]);
+            exit;
+        } else {
+            echo json_encode([
+                'success' => false,
+                'message' => "ไม่สำเร็จ"
 
-        echo json_encode([
-            'success' => true,
-            'booking_id' => $booking_id,
-            'total_price' => round($total_price,2),
-            'message' => 'จองสำเร็จ'
-        ]);
-        exit;
+            ]);
+            exit;
+        }
     } else {
-        // ถ้าแค่คำนวณราคาโดยยังไม่ submit booking
-        echo json_encode([
-            'total_price' => round($total_price, 2),
-            'message' => ''
-        ]);
-        exit;
+        $room_id = (int)($_POST['room_id'] ?? 0);
+        $nights = (int)($_POST['nights'] ?? 0);
+        $guests = (int)($_POST['guests'] ?? 0);
+        // $price = (int)($_POST['price'] ?? 0);
+        $prices = $BookingHandler->calcuratePrice($room_id, $nights, $guests);
+        if (is_numeric($prices)) {
+            echo json_encode([
+                'success' => true,
+                'total_price' => round($prices, 2)
+            ]);
+            exit();
+        } else {
+            echo json_encode([
+                'success' => false,
+                'message' => $prices
+            ]);
+            exit();
+        }
     }
 
-} catch (PDOException $e) {
-    error_log("Error: " . $e->getMessage());
-    echo json_encode(['error' => 'เกิดข้อผิดพลาด: ' . $e->getMessage()]);
-    exit;
-}
+    if ($_POST['charge_id']) {
+        $charge_id = $_POST['charge_id'] ?? 0;
+        if (isset($charge_id)) {
+            $payment_status = $_POST['payment_status'] ?? '';
+            $qrcode = $_POST['qrCode'] ?? '';
+            $booking_id = $_POST['booking_id'] ?? 0;
+            $booking_status = $_POST['booking_status'] ?? '';
+            $payment_status = $_POST['payment_status'] ?? '';
+            $result = $BookingHandler->PaymentStatus($charge_id, $payment_status, $qrcode, $booking_id, $booking_status);
+            echo json_encode($result);
+            exit();
+        }
+    } elseif ($_GET['charge_id']) {
+        $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../'); // path ไป root ของโปรเจกต์
+        $dotenv->load();
 
-ob_end_flush();
-?>
+        define('OMISE_PUBLIC_KEY', $_ENV['OMISE_PUBLIC_KEY']);
+        define('OMISE_SECRET_KEY', $_ENV['OMISE_SECRET_KEY']);
+        $charge_id = $_GET['charge_id'] ?? '';
+        if (!$charge_id) {
+
+            echo json_encode(['error' => 'No charge_id provided']);
+            exit;
+        } else {
+            try {
+
+                $charge = OmiseCharge::retrieve($charge_id);
+                echo json_encode([
+                    'status' => $charge['status'],
+                    'paid' => $charge['paid'],
+                    'expired' => $charge['expired'] ?? false,
+                    'authorized' => $charge['authorized'] ?? false,
+                ]);
+            } catch (Exception $e) {
+                echo json_encode(['error' => $e->getMessage()]);
+            }
+        }
+    }
+} catch (Throwable $e) {
+    echo json_encode([
+        'success' => false,
+        'message' => 'เกิดข้อผิดพลาดร้ายแรงในฝั่งเซิร์ฟเวอร์: ' . $e->getMessage()
+
+    ]);
+    exit();
+}

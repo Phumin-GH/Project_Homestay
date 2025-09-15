@@ -6,16 +6,18 @@ if (isset($_POST['property_id'])) {
     $property_id = $_POST['property_id'];
 
     $sql = "
-        SELECT COUNT(*) as total 
-        FROM (
-            SELECT b.Check_in 
-            FROM booking b 
-            WHERE b.Property_id = ? AND DATE(b.Check_in) >= CURDATE()
-            UNION ALL
-            SELECT w.Check_in 
-            FROM walkin w 
-            WHERE w.Property_id = ? AND DATE(w.Check_in) >= CURDATE()
-        ) AS upcoming
+        SELECT COUNT(*) as total
+FROM (
+    SELECT b.Check_in
+    FROM booking b
+    WHERE b.Property_id = ?
+      AND DATE(b.Check_in) BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY)
+    UNION ALL
+    SELECT w.Check_in
+    FROM walkin w
+    WHERE w.Property_id = ?
+      AND DATE(w.Check_in) BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY)
+) AS upcoming
     ";
 
     $stmt = $conn->prepare($sql);

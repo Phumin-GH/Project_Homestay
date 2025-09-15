@@ -4,8 +4,19 @@ if (!isset($_SESSION['Host_email'])) {
     header("Location: host-login.php");
     exit();
 }
+include "../controls/log_hosts.php";
+include "../config/db_connect.php";
+// if (isset($_SESSION['Host_email'])) {
+//     $sql = 'SELECT Host_status FROM host WHERE Host_email = ?';
+//     $stmt = $conn->prepare($sql);
+//     $stmt->execute([$_SESSION['Host_email']]);
+//     $status = $stmt->fetch(PDO::FETCH_ASSOC);
+// }
+// require_once __DIR__ . '/../classes/Host.php';
+// $hostHandler = new Host($conn);
 
-
+// $email = $_SESSION['Host_email'];
+// $hosts = $hostHandler->getDataHost($email);
 ?>
 
 <!DOCTYPE html>
@@ -15,6 +26,7 @@ if (!isset($_SESSION['Host_email'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>แก้ไขโปรไฟล์ - Homestay Booking</title>
+    <link rel="website icon" type="png" href="/images/logo.png">
     <link rel="stylesheet" href="../style/style.css">
     <link rel="stylesheet" href="../style/main-menu.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -334,17 +346,25 @@ if (!isset($_SESSION['Host_email'])) {
                 <i class="fas fa-bars"></i>
             </button>
             <ul class="sidebar-menu">
+
+                <?php if ($hosts['Host_Status'] == 'pending_verify'): ?>
+                <li><a href="addNew-property.php" title="ลงทะเบียนบ้านพักใหม่"><i class="fas fa-user-plus"></i>
+                        <span class="menu-label">ลงทะเบียนบ้านพักใหม่</span></a></li>
+                <?php endif; ?>
                 <li><a href="host-dashboard.php" title="รายงาน"><i class="fas fa-tachometer-alt"></i><span
                             class="menu-label">Dashboard</span></a></li>
                 <li><a href="profile.php" class="active" title="โปรไฟล์"><i class="fas fa-user"></i><span
                             class="menu-label">Profile</span></a>
                 </li>
+                <?php if ($hosts['Host_Status'] == 'active'): ?>
                 <li><a href="manage-property.php" title="จัดการบ้านพัก"><i class="fas fa-plus"></i><span
                             class="menu-label">Manage
                             Property</span></a></li>
 
+
                 <li><a href="list_booking.php" title="รายการที่จองเข้ามา"><i class="fa-solid fa-list-ul"></i><span
-                            class="menu-label">Test</span></a></li>
+                            class="menu-label">List Bookings</span></a></li>
+                <?php endif; ?>
                 <li><a href="walkin-property.php" title="การจอง"><i class="fa-solid fa-person-walking"></i><span
                             class="menu-label">Walkin</span></a></li>
                 <li><a href="../controls/logout.php" title="ออกจากระบบ"><i class="fas fa-sign-out-alt"></i><span
@@ -372,8 +392,8 @@ if (!isset($_SESSION['Host_email'])) {
                 <!-- Edit Form -->
                 <form class="edit-form" method="POST" action="../controls/log_hosts.php">
                     <!-- Personal Information -->
-                    <?php include "../controls/log_hosts.php"?>
-                    <?php foreach ($hosts as $host): ?>
+
+
                     <div class="form-section">
                         <h3>ข้อมูลส่วนตัว</h3>
                         <div class="form-row">
@@ -381,24 +401,24 @@ if (!isset($_SESSION['Host_email'])) {
                             <div class="form-group">
                                 <label class="form-label">ชื่อ <span style="color:red">*</span></label>
                                 <input type="text" name="firstname" class="form-input"
-                                    value="<?php echo htmlspecialchars($host['Host_firstname']); ?>" required>
+                                    value="<?php echo htmlspecialchars($hosts['Host_firstname']); ?>" required>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">นามสกุล <span style="color:red">*</span></label>
                                 <input type="text" name="lastname" class="form-input"
-                                    value="<?php echo htmlspecialchars($host['Host_lastname']); ?>" required>
+                                    value="<?php echo htmlspecialchars($hosts['Host_lastname']); ?>" required>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="form-label">อีเมล</label>
                             <input type="email" class="form-input"
-                                value="<?php echo htmlspecialchars($host['Host_email']); ?>" disabled>
+                                value="<?php echo htmlspecialchars($hosts['Host_email']); ?>" disabled>
                             <div class="help-text">ไม่สามารถเปลี่ยนอีเมลได้</div>
                         </div>
                         <div class="form-group">
                             <label class="form-label">เลขบัตรประชาชน</label>
                             <input type="email" class="form-input"
-                                value="<?php echo htmlspecialchars($host['Host_IdCard']); ?>" disabled>
+                                value="<?php echo htmlspecialchars($hosts['Host_IdCard']); ?>" disabled>
                             <div class="help-text">ไม่สามารถเปลี่ยนเลขบัตรประชาชนได้</div>
                         </div>
                         <div class="form-group">
@@ -406,8 +426,8 @@ if (!isset($_SESSION['Host_email'])) {
                             <div class="phone-input-container">
 
                                 <input type="tel" name="phone" class="form-input phone-input"
-                                    value="<?php echo htmlspecialchars($host['Host_phone'] ?? ''); ?>"
-                                    placeholder="81-234-5678">
+                                    value="<?php echo htmlspecialchars($hosts['Host_phone'] ?? ''); ?>"
+                                    placeholder="081-234-5678">
                             </div>
                         </div>
                     </div>
@@ -434,15 +454,15 @@ if (!isset($_SESSION['Host_email'])) {
                         </div>
                         <div class="help-text">* ปล่อยว่างหากไม่ต้องการเปลี่ยนรหัสผ่าน</div>
                     </div>
-                    <?php endforeach; ?>
+
                     <!-- Buttons -->
                     <div class="btn-group">
                         <button type="submit" class="btn btn-primary" name="save_edit">
                             <i class="fas fa-save"></i> บันทึกการเปลี่ยนแปลง
                         </button>
-                        <a href="profile.php" class="btn btn-secondary">
+                        <button type="button" onclick=window.history.back(); class="btn btn-secondary">
                             <i class="fas fa-arrow-left"></i> กลับไปโปรไฟล์
-                        </a>
+                        </button>
                     </div>
                 </form>
             </div>

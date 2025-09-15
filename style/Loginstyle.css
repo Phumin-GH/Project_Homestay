@@ -270,6 +270,7 @@ body {
 .modal-overlay.active {
   opacity: 1;
   visibility: visible;
+  backdrop-filter: blur(10px);
 }
 
 .modal-content {
