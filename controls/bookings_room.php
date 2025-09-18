@@ -2,8 +2,8 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-require_once __DIR__ . '/../config/db_connect.php';
-require_once __DIR__ . '/../dao/Booking.php';
+require_once __DIR__ . '/../model/config/db_connect.php';
+require_once __DIR__ . '/../model/dao/Booking.php';
 header('Content-Type: application/json');
 $BookingHandler = new Booking($conn);
 // $price = (int)($_POST['price'] ?? 0);

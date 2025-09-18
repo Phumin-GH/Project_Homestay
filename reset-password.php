@@ -4,14 +4,10 @@ $token = $_GET['token'] ?? null;
 
 // ถ้าไม่มี token อาจจะแสดงข้อความหรือ redirect ออกไป
 if (!$token) {
-    // ในการใช้งานจริง ควร redirect ไปหน้า error หรือหน้าหลัก
     header('Location: index.php');
     exit();
-    // สำหรับตัวอย่างนี้ เราจะตั้ง token จำลองไว้เพื่อให้หน้าเว็บแสดงผลได้
-    // $token = 'a1b2c3d4e5f6g7h8';
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="th">
 
@@ -23,21 +19,14 @@ if (!$token) {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-
     <style>
-        /* --- General Styles --- */
         :root {
             --primary-color: #4a69bd;
-            /* สีหลัก (น้ำเงิน) */
             --background-color: #f4f7f6;
-            /* สีพื้นหลัง (เทาอ่อน) */
             --text-color: #333333;
-            /* สีตัวอักษร */
             --border-color: #dddddd;
-            /* สีเส้นขอบ */
             --white-color: #ffffff;
             --error-color: #e74c3c;
-            /* สีสำหรับข้อความผิดพลาด */
         }
 
         * {
@@ -56,7 +45,6 @@ if (!$token) {
             min-height: 100vh;
         }
 
-        /* --- Container --- */
         .reset-container {
             background-color: var(--white-color);
             padding: 40px;
@@ -67,7 +55,6 @@ if (!$token) {
             text-align: center;
         }
 
-        /* --- Header --- */
         .form-header h1 {
             font-size: 24px;
             font-weight: 600;
@@ -195,7 +182,7 @@ if (!$token) {
             } catch (error) {
                 console.error('Error:', error);
                 alert(error);
-                window.location.href = 'users/user-login.php';
+                window.location.href = 'views/users/user-login.php';
 
             }
         });

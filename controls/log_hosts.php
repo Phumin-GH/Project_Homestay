@@ -2,8 +2,8 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-require_once __DIR__ . '/../config/db_connect.php';
-require_once __DIR__ . '/../dao/Host.php';
+require_once __DIR__ . '/../model/config/db_connect.php';
+require_once __DIR__ . '/../model/dao/Host.php';
 $hostHandler = new Host($conn);
 $email = $_SESSION['Host_email'];
 $hosts = $hostHandler->getDataHost($email);
@@ -24,11 +24,11 @@ if (isset($_POST['host_signup'])) {
     if ($result === true) {
         $hostHandler->login($email, $password);
         $_SESSION['message'] = "Login เรียบร้อย";
-        header("Location: ../hosts/host-dashboard.php");
+        header("Location: ../views/hosts/host-dashboard.php");
         exit();
     } else {
         $_SESSION['error'] = $result;
-        header("Location: ../hosts/host-login.php?tab=signup");
+        header("Location: ../views/hosts/host-login.php?tab=signup");
         exit();
     }
 }
@@ -43,11 +43,11 @@ if (isset($_POST['host_login'])) {
     $result = $hostHandler->login($email, $password);
     if ($result === true) {
         $_SESSION['message'] = "Login เรียบร้อย";
-        header("Location: ../hosts/host-dashboard.php");
+        header("Location: ../views/hosts/host-dashboard.php");
         exit();
     } else {
         $_SESSION['error'] = $result;
-        header("Location: ../hosts/host-login.php?tab=signup");
+        header("Location: ../views/hosts/host-login.php?tab=login");
         exit();
     }
 }
@@ -64,11 +64,11 @@ if (isset($_POST['save_edit'])) {
 
     if ($result === true || $result === "success") {
         $_SESSION['message'] = "แก้ไข้ข้อมูลเรียบร้อย";
-        header("Location: ../hosts/profile.php");
+        header("Location: ../views/hosts/profile.php");
         exit();
     } else {
         $_SESSION['error'] = $result;
-        header("Location: ../hosts/profile");
+        header("Location: ../views/hosts/profile");
         exit();
     }
 }

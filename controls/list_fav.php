@@ -3,8 +3,8 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 header("Content-Type: application/json");
-require_once  __DIR__ . '/../config/db_connect.php';
-require_once __DIR__ . '/../dao/Favorites.php';
+require_once  __DIR__ . '/../model/config/db_connect.php';
+require_once __DIR__ . '/../model/dao/Favorites.php';
 // ตรวจสอบ user login
 if (!isset($_SESSION['User_email'])) {
     echo json_encode(["success" => false, "message" => "กรุณาเข้าสู่ระบบ"]);

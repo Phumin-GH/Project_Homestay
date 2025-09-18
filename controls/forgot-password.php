@@ -2,8 +2,8 @@
 // forgot-password.php
 header('Content-Type: application/json');
 date_default_timezone_set("Asia/Bangkok");
-require_once '../config/db_connect.php'; // เชื่อมต่อ MySQL
-require '../vendor/autoload.php';
+require_once __DIR__ . '../model/config/db_connect.php'; // เชื่อมต่อ MySQL
+require_once __DIR__ . '../vendor/autoload.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;

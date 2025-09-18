@@ -3,28 +3,12 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 header('Content-Type: application/json');
-require_once __DIR__ . '/../config/db_connect.php';
-require_once __DIR__ . '/../dao/Payment.php';
+require_once __DIR__ . '/../model/config/db_connect.php';
+require_once __DIR__ . '/../model/dao/Payment.php';
+require_once __DIR__ . '/../model/dao/Booking.php';
 $paymetHandler = new Payment($conn);
+$bookingHandler = new Booking($conn);
 
-// if (isset($_POST['booking_id']) && isset($_POST['charge_id'])) {
-//     $booking_id = $_POST['booking_id'] ?? 0;
-//     $charge_id = $_POST['charge_id'] ?? '';
-//     $payment_status = $_POST['payment_status'] ?? '';
-//     $qrcode = $_POST['qrCode'] ?? '';
-//     // $booking_id = $_POST['booking_id'] ?? '';
-//     $booking_status = $_POST['booking_status'] ?? '';
-//     // $payment_status = $_POST['payment_status'] ?? '';
-//     $result = $paymetHandler->update_payment_status($charge_id, $payment_status, $qrcode, $booking_id, $booking_status);
-//     if ($result === true) {
-//         echo json_encode(["success" => true, "message" => "ชำระเงินสำเร็จ!"]);
-//     } elseif (is_string($result)) {
-//         echo json_encode(["success" => false, "message" => $result]);
-//     } else {
-//         echo json_encode(["success" => false, "message" => $result]);
-//     }
-//     exit();
-// }
 if (isset($_POST['qrCode']) && isset($_POST['booking_id'])) {
     $qrCode = $_POST['qrCode'] ?? '';
     $charge_id = $_POST['charge_id'] ?? 0;
@@ -37,7 +21,6 @@ if (isset($_POST['qrCode']) && isset($_POST['booking_id'])) {
     }
     exit();
 } elseif (isset($_POST['amount']) && isset($_POST['number_card'])) {
-
     $booking_id = $_POST['booking_id'] ?? 0;
     $name = $_POST['Username'] ?? '';
     $number = $_POST['number_card'] ?? 0;
@@ -55,10 +38,9 @@ if (isset($_POST['qrCode']) && isset($_POST['booking_id'])) {
 } elseif (isset($_POST['booking_id'])) {
     $booking_id = $_POST['booking_id'] ?? 0;
     if (empty($booking_id)) {
-        // return "ไม่พบ ID";
         echo json_encode(['success' => false, 'message' => "ไม่พบ ID"]);
     }
-    $result = $paymetHandler->delete_Booking($booking_id);
+    $result = $bookingHandler->delete_Booking($booking_id);
     if ($result === true) {
         echo json_encode(['success' => true, 'message' => 'ลบการจองสำเร็จ!']);
     }

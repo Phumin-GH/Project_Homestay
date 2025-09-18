@@ -4,8 +4,8 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // 1. เรียกใช้ไฟล์ที่จำเป็น
-require_once __DIR__ . '/../config/db_connect.php';
-require_once __DIR__ . '/../dao/User.php';
+require_once __DIR__ . '/../model/config/db_connect.php';
+require_once __DIR__ . '/../model/dao/User.php';
 
 // 2. สร้าง Object จาก Class User
 $userHandler = new User($conn);
@@ -34,12 +34,12 @@ if (isset($_POST['save_signup'])) {
         // ลงทะเบียนสำเร็จ, ทำการล็อกอินเลย
         $userHandler->login($email, $password);
         $_SESSION['message'] = "Sign up เรียบร้อย.";
-        header("Location: ../users/main-menu.php"); // ไปยังหน้าหลัก
+        header("Location: ../views/users/main-menu.php"); // ไปยังหน้าหลัก
         exit();
     } else {
         // ถ้าไม่สำเร็จ ให้แสดงข้อผิดพลาด
         $_SESSION['error'] = $result;
-        header("Location: ../users/user-login.php?tab=signup");
+        header("Location: ../views/users/user-login.php?tab=signup");
         exit();
     }
 }
@@ -47,17 +47,14 @@ if (isset($_POST['save_signup'])) {
 if (isset($_POST['save_login'])) {
     $email = trim($_POST['email']);
     $password = trim($_POST['password']);
-
-    // 3. เรียกใช้ Method login() จาก Object
     $result = $userHandler->login($email, $password);
-
     if ($result === true) {
         $_SESSION['message'] = "Login เรียบร้อย.";
-        header("Location: ../users/main-menu.php"); // ไปยังหน้าหลัก
+        header("Location: ../views/users/main-menu.php"); // ไปยังหน้าหลัก
         exit();
     } else {
         $_SESSION['error'] = $result;
-        header("Location: ../users/user-login.php");
+        header("Location: ../views/users/user-login.php");
         exit();
     }
 }
@@ -74,13 +71,11 @@ if (isset($_POST['save_edit'])) {
 
     if ($result === true || $result === "success") {
         echo   "<script>alert(แก้ไข้ข้อมูลเรียบร้อย);</script>";
-        header("Location: ../users/profile.php");
+        header("Location: ../views/users/profile.php");
         exit();
     } else {
         $_SESSION['error'] = $result;
-        header("Location: ../users/profile.php");
+        header("Location: ../views/users/profile.php");
         exit();
     }
 }
-
-// (ส่วนของการแก้ไขโปรไฟล์ก็จะใช้หลักการเดียวกัน)

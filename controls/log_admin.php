@@ -2,8 +2,8 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-require_once __DIR__ . '/../config/db_connect.php';
-require_once __DIR__ . '/../dao/Admin.php';
+require_once __DIR__ . '/../model/config/db_connect.php';
+require_once __DIR__ . '/../model/dao/Admin.php';
 $adminHandler = new Admin($conn);
 
 $email = $_SESSION['Admin_email'];
@@ -21,17 +21,17 @@ if (isset($_POST['admin_login'])) {
     $result = $adminHandler->login($email, $password);
     if ($result === true) {
         $_SESSION['message'] = "Login เรียบร้อย";
-        header("Location: ../admin/admin-dashboard.php");
+        header("Location: ../views/admin/admin-dashboard.php");
         exit();
     } else {
         $_SESSION['error'] = $result;
-        header("Location: ../admin/admin-login.php");
+        header("Location: ../views/admin/admin-login.php");
         exit();
     }
 }
 
 if (isset($_POST['save_edit'])) {
-    $email = $_SESSION['User_email'];
+    $email = $_SESSION['Admin_email'];
     $username = trim($_POST['username']);
     $phone = trim($_POST['phone']);
     $currentPassword = trim($_POST['current_password']);
@@ -39,12 +39,12 @@ if (isset($_POST['save_edit'])) {
     $confirmPassword = trim($_POST['confirm_password']);
     $result = $adminHandler->updateProfile($email, $username, $phone, $currentPassword, $newPassword, $confirmPassword);
     if ($result === true || $result === "success") {
-        echo   "<script>alert(แก้ไข้ข้อมูลเรียบร้อย);</script>";
-        header("Location: ../admin/profile.php");
+        $_SESSION['msg'] = "แก้ไข้ข้อมูลเรียบร้อย";
+        header("Location: ../views/admin/profile.php");
         exit();
     } else {
         $_SESSION['error'] = $result;
-        header("Location: ../admin/profile.php");
+        header("Location: ../views/admin/profile.php");
         exit();
     }
 }

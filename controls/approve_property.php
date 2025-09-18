@@ -1,32 +1,29 @@
 <?php
-session_start();
-include '../config/db_connect.php';
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+require_once __DIR__ . '/../model/config/db_connect.php';
+require_once __DIR__ . '/../model/dao/Verify.php';
+$verifyHandler = new Verify($conn);
 if (empty($_SESSION['Admin_email'])) {
-    header("Location: admin-login.php");
+    header("Location: ../views/admin/admin-login.php");
     exit();
 }
 if (!isset($_GET['id'])) {
     echo "ไม่พบรหัสบ้านพัก";
-    header("Location: ../admin/approve-properties.php");
+    header("Location: ../views/admin/approve-properties.php");
     exit();
 }
 $property_id = $_GET['id'];
-if(isset($_POST['approve'])){
-    $status=1;
-    $updateSQL = "UPDATE property SET Property_status=? WHERE Property_id = ?";
-    $stmt = $conn->prepare($updateSQL);
-    $stmt->execute([$status,$property_id]);
+if (isset($_POST['approve'])) {
+    $result = $verifyHandler->approve_property($property_id);
     $_SESSION['msg'] = '<div class="alert alert-success">อนุมัติเรียบร้อย</div>';
-    header("Location: ../admin/approve-properties.php");
+    header("Location: ../views/admin/approve-properties.php");
     exit();
 }
-if(isset($_POST['cancel'])){
-    $status=2;
-    $updateSQL = "UPDATE property SET Property_status=? WHERE Property_id = ?";
-    $stmt = $conn->prepare($updateSQL);
-    $stmt->execute([$status,$property_id]);
+if (isset($_POST['cancel'])) {
+    $result = $verifyHandler->cancel_property($property_id);
     $_SESSION['error1'] = '<div class="alert alert-danger">เกิดข้อผิดพลาด: </div>';
-    header("Location: ../admin/approve-properties.php");
+    header("Location: ../views/admin/approve-properties.php");
     exit();
 }
-?>
