@@ -59,7 +59,7 @@ if (isset($_SESSION['email_data'])) {
 
 
 
-        // --- สร้าง HTML ใบเสร็จแบบ Minimal ---
+        // --- สร้าง HTML สำหรับใบเสร็จ ---
         $html = "
 <style>
     body {
