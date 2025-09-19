@@ -20,9 +20,8 @@ class Payment
         if (!$user_row) {
             return "ไม่พบผู้ใช้งานสำหรับอีเมล";
         }
-        $user_id = $user_row['User_id']; // ดึงค่า id ออกมา
+        $user_id = $user_row['User_id'];
 
-        // --- [FIX 2] แก้ไข SQL ให้เฉพาะเจาะจงโดยใช้ booking_id ---
         $sql = "SELECT b.Booking_id,b.Charge_id,h.Host_firstname,h.Host_phone,u.User_email,u.Firstname,u.Lastname,p.Property_name,
         p.Property_province,p.Property_district,p.Property_subdistrict,r.Room_number,r.Room_capacity,b.Guests,
         b.Check_in,b.Check_out,b.Total_price,b.Create_at
@@ -31,10 +30,10 @@ class Payment
         INNER JOIN User u ON b.User_id = u.User_id
         INNER JOIN Room r ON b.Room_id = r.Room_id
         INNER JOIN Host h ON p.Host_id = h.Host_id
-        WHERE b.Booking_id = ? AND b.User_id = ?"; // ระบุ Booking_id และ User_id
+        WHERE b.Booking_id = ? AND b.User_id = ?";
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$booking_id, $user_id]); // ส่งค่า booking_id และ user_id
+        $stmt->execute([$booking_id, $user_id]);
         $list_book = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($list_book) {
             $_SESSION['email_data'] = [
@@ -108,10 +107,8 @@ class Payment
                 $stmt = $this->conn->prepare($sql);
                 $stmt->execute(['paid', $number_card, 'successful', $charge['id'], $booking_id]);
                 return true;
-                // echo json_encode(["success" => true, "message" => "✅ Payment successful! " . $charge['status'], $charge['id']]);
             } else {
                 return "Payment failed";
-                // echo json_encode(["success" => false, "message" => "❌ Payment failed. Status: " . $charge['status']]);
             }
         } catch (Exception $e) {
             return $e->getMessage();
@@ -120,7 +117,7 @@ class Payment
     public function generateQRcode($total_price, $booking_id, $method)
     {
         $this->Omise_API();
-        if ($total_price <= 0 || $booking_id <= 0 || empty($method)) { // แก้ไขเงื่อนไขเล็กน้อย
+        if ($total_price <= 0 || $booking_id <= 0 || empty($method)) {
             return "ข้อมูลสำหรับการชำระเงินไม่ครบถ้วน";
         }
         try {
