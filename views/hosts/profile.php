@@ -42,8 +42,8 @@ if (!isset($_SESSION['Host_email'])) {
             </button>
             <ul class="sidebar-menu">
                 <?php if ($hosts['Host_Status'] == 'pending_verify'): ?>
-                    <li><a href="addNew-property.php" title="ลงทะเบียนบ้านพักใหม่"><i class="fas fa-user-plus"></i>
-                            <span class="menu-label">ลงทะเบียนบ้านพักใหม่</span></a></li>
+                <li><a href="addNew-property.php" title="ลงทะเบียนบ้านพักใหม่"><i class="fas fa-user-plus"></i>
+                        <span class="menu-label">ลงทะเบียนบ้านพักใหม่</span></a></li>
                 <?php endif; ?>
                 <li><a href="host-dashboard.php" title="รายงาน"><i class="fas fa-tachometer-alt"></i><span
                             class="menu-label">Dashboard</span></a></li>
@@ -51,13 +51,13 @@ if (!isset($_SESSION['Host_email'])) {
                             class="menu-label">Profile</span></a>
                 </li>
                 <?php if ($hosts['Host_Status'] == 'active'): ?>
-                    <li><a href="manage-property.php" title="จัดการบ้านพัก"><i class="fas fa-plus"></i><span
-                                class="menu-label">Manage
-                                Property</span></a></li>
+                <li><a href="manage-property.php" title="จัดการบ้านพัก"><i class="fas fa-plus"></i><span
+                            class="menu-label">Manage
+                            Property</span></a></li>
 
 
-                    <li><a href="list_booking.php" title="รายการที่จองเข้ามา"><i class="fa-solid fa-list-ul"></i><span
-                                class="menu-label">List Bookings</span></a></li>
+                <li><a href="list_booking.php" title="รายการที่จองเข้ามา"><i class="fa-solid fa-list-ul"></i><span
+                            class="menu-label">List Bookings</span></a></li>
                 <?php endif; ?>
                 <li><a href="walkin-property.php" title="การจอง"><i class="fa-solid fa-person-walking"></i><span
                             class="menu-label">Walkin</span></a></li>
@@ -83,16 +83,16 @@ if (!isset($_SESSION['Host_email'])) {
                         </h2>
                     </div>
                     <?php if (!empty($hosts)): ?>
-                        <h1 class="profile-name">
-                            <?php echo htmlspecialchars($hosts['Host_firstname'] . ' ' . $hosts['Host_lastname']); ?>
-                        </h1>
-                        <p class="profile-email"><?php echo htmlspecialchars($hosts['Host_email']); ?></p>
-                        <p class="profile-email">
-                            <?php echo date("เข้าใช้ครั้งแรก    d  M Y", strtotime($hosts['Create_at']));; ?></p>
+                    <h1 class="profile-name">
+                        <?php echo htmlspecialchars($hosts['Host_firstname'] . ' ' . $hosts['Host_lastname']); ?>
+                    </h1>
+                    <p class="profile-email"><?php echo htmlspecialchars($hosts['Host_email']); ?></p>
+                    <p class="profile-email">
+                        <?php echo date("เข้าใช้ครั้งแรก    d  M Y", strtotime($hosts['Create_at']));; ?></p>
 
 
                     <?php else: ?>
-                        <h1 class="profile-name">ไม่พบข้อมูลผู้ใช้</h1>
+                    <h1 class="profile-name">ไม่พบข้อมูลผู้ใช้</h1>
                     <?php endif; ?>
 
                     <button class="edit-btn" onclick="editProfile()">
@@ -102,7 +102,7 @@ if (!isset($_SESSION['Host_email'])) {
 
 
                 <!-- Profile Stats -->
-                <div class="stats-grid">
+                <!-- <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-number"><?php /*echo $bookings_result->num_rows;*/ ?></div>
                         <div class="stat-label">การจองทั้งหมด</div>
@@ -120,7 +120,7 @@ if (!isset($_SESSION['Host_email'])) {
                         </div>
                         <div class="stat-label">ปีที่สมัคร</div>
                     </div>
-                </div>
+                </div> -->
 
                 <!-- Profile Information -->
                 <div class="profile-info">
@@ -190,14 +190,14 @@ if (!isset($_SESSION['Host_email'])) {
     </footer>
 
     <script>
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle("collapsed");
-        }
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        sidebar.classList.toggle("collapsed");
+    }
 
-        function editProfile() {
-            window.location.href = 'edit-profile.php';
-        }
+    function editProfile() {
+        window.location.href = 'edit-profile.php';
+    }
     </script>
 </body>
 

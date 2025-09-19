@@ -135,20 +135,20 @@ if (!isset($_SESSION['Admin_email'])) {
                                     <?php endif; ?>
                                 </div>
                             </div>
-                            <!--<div class="info-item">
+                            <div class="info-item">
                                 <div class="info-label">วันที่สมัคร</div>
                                 <div class="info-value">
-                                    <?php /*echo date('d/m/Y', strtotime($host['Host_created_at'])); */ ?></div>
-                            </div>-->
-                            <!--<div class="info-item">
+                                    <?php echo date('d/m/Y', strtotime($admin['Host_created_at']));  ?></div>
+                            </div>
+                            <div class="info-item">
                                 <div class="info-label">สถานะ</div>
                                 <div class="info-value">
                                     <span class="status-badge">
                                         <i class="fas fa-check-circle"></i>
-                                        <?php /* echo $host['Host_Status'] ? htmlspecialchars($host['Host_Status']) : 'ใช้งานได้'; */ ?>
+                                        <?php echo $host['Host_Status'] ? htmlspecialchars($admin['Host_Status']) : 'ใช้งานได้';  ?>
                                     </span>
                                 </div>
-                            </div>-->
+                            </div>
                         </div>
                     </div>
                 </div>
