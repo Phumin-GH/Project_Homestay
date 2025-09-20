@@ -60,14 +60,12 @@ header {
   border-radius: 8px;
 }
 
-/* Layout */
 .layout {
   display: flex;
   min-height: 100vh;
-  margin-top: 70px; /* ให้ layout เริ่มหลังจาก navbar */
+  margin-top: 70px;
 }
 
-/* Sidebar */
 .sidebar {
   width: 20rem;
   background: #ffffff;
@@ -75,14 +73,13 @@ header {
   padding: 2rem 0;
   transition: all 0.3s ease;
   position: fixed;
-  top: 70px; /* เริ่มหลังจาก navbar */
+  top: 70px;
   left: 0;
-  height: calc(100vh - 70px); /* ความสูงเต็มจอลบด้วยความสูง navbar */
+  height: calc(100vh - 70px);
   overflow-y: auto;
   z-index: 9999;
 }
 
-/* Custom Scrollbar for Sidebar */
 .sidebar::-webkit-scrollbar {
   width: 6px;
 }
@@ -105,7 +102,6 @@ header {
   background: #a1a5a9;
 }
 
-/* Firefox Scrollbar */
 .sidebar {
   scrollbar-width: thin;
   scrollbar-color: #e1e5e9 transparent;
@@ -142,9 +138,6 @@ header {
   gap: 0.5rem;
 }
 
-/* .sidebar-menu li {
-} */
-
 .sidebar-menu li a {
   display: flex;
   align-items: center;
@@ -154,7 +147,7 @@ header {
   text-decoration: none;
   transition: all 0.2s ease;
   border-radius: 0 8px 8px 0;
-  margin: 0.25rem 1rem 0.25rem 0; /* <-- เพิ่ม margin มาไว้ที่นี่แทน */
+  margin: 0.25rem 1rem 0.25rem 0;
 }
 
 .sidebar-menu li a i:hover {

@@ -4,8 +4,7 @@ if (!isset($_SESSION["Host_email"])) {
     header("Location: host-login.php");
     exit();
 }
-
-include_once __DIR__ . "/../../controls/log_hosts.php";
+require_once  __DIR__ . "/../../controls/log_hosts.php";
 
 
 ?>
@@ -363,8 +362,8 @@ include_once __DIR__ . "/../../controls/log_hosts.php";
                 <li><a href="add-property.php" title="ลงทะเบียนบ้านพักใหม่"><i class="fas fa-user-plus"></i>
                         <span class="menu-label">ลงทะเบียนบ้านพักใหม่</span></a></li>
                 <?php endif; ?>
-                <li><a href="host-dashboard.php" class="active" title="รายงาน"><i
-                            class="fas fa-tachometer-alt"></i><span class="menu-label">Dashboard</span></a></li>
+                <li><a href="host-dashboard.php" title="รายงาน" class="active"><i
+                            class="fa-solid fa-ranking-star"></i><span class="menu-label">Dashboard</span></a></li>
                 <li><a href="profile.php" title="โปรไฟล์"><i class="fas fa-user"></i><span
                             class="menu-label">Profile</span></a>
                 </li>
@@ -372,13 +371,14 @@ include_once __DIR__ . "/../../controls/log_hosts.php";
                 <li><a href="manage-property.php" title="จัดการบ้านพัก"><i class="fas fa-plus"></i><span
                             class="menu-label">Manage
                             Property</span></a></li>
-
-
                 <li><a href="list_booking.php" title="รายการที่จองเข้ามา"><i class="fa-solid fa-list-ul"></i><span
                             class="menu-label">List Bookings</span></a></li>
-                <?php endif; ?>
+                <li><a href="refund_booking.php" title="การขอคืนเงิน"><i
+                            class="fa-solid fa-money-bill-transfer"></i><span class="menu-label">List Refund</span></a>
+                </li>
                 <li><a href="walkin-property.php" title="การจอง"><i class="fa-solid fa-person-walking"></i><span
                             class="menu-label">Walkin</span></a></li>
+                <?php endif; ?>
                 <li><a href="../../controls/logout.php" title="ออกจากระบบ"><i class="fas fa-sign-out-alt"></i><span
                             class="menu-label">Logout</span></a></li>
             </ul>

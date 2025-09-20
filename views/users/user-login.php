@@ -280,7 +280,7 @@
             const data = await res.json();
             msgEl.textContent = data.message;
             alert(data.message);
-            window.location.reload();
+            // window.location.reload();
         });
     });
     </script>

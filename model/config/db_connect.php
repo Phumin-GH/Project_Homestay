@@ -1,7 +1,7 @@
 <?php
-require_once __DIR__ . '/../../vendor/autoload.php'; // path ไป vendor/autoload.php
+require_once __DIR__ . '/../../vendor/autoload.php';
 
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../'); // path ไป root ของโปรเจกต์
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
 $dotenv->load();
 
 $host = $_ENV['DB_Host'];

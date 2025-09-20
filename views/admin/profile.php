@@ -89,12 +89,12 @@ if (!isset($_SESSION['Admin_email'])) {
                         </h2>
                     </div>
                     <?php if (isset($admin)): ?>
-                        <h1 class="profile-name">
-                            <?php echo htmlspecialchars($admin['Admin_username']); ?>
-                        </h1>
-                        <p class="profile-email"><?php echo htmlspecialchars($admin['Admin_email']); ?></p>
+                    <h1 class="profile-name">
+                        <?php echo htmlspecialchars($admin['Admin_username']); ?>
+                    </h1>
+                    <p class="profile-email"><?php echo htmlspecialchars($admin['Admin_email']); ?></p>
                     <?php else: ?>
-                        <h1 class="profile-name">ไม่พบข้อมูลผู้ใช้</h1>
+                    <h1 class="profile-name">ไม่พบข้อมูลผู้ใช้</h1>
                     <?php endif; ?>
                     <button class="edit-btn" onclick="editProfile()">
                         <i class="fas fa-edit"></i> แก้ไขโปรไฟล์
@@ -126,29 +126,21 @@ if (!isset($_SESSION['Admin_email'])) {
                                 <div class="info-label">เบอร์โทรศัพท์</div>
                                 <div class="info-value">
                                     <?php if ($admin['Admin_phone']): ?>
-                                        <span class="phone-display">
-                                            <span
-                                                class="phone-number"><?php echo htmlspecialchars($admin['Admin_phone']); ?></span>
-                                        </span>
+                                    <span class="phone-display">
+                                        <span
+                                            class="phone-number"><?php echo htmlspecialchars($admin['Admin_phone']); ?></span>
+                                    </span>
                                     <?php else: ?>
-                                        <span class="no-phone">ไม่ระบุ</span>
+                                    <span class="no-phone">ไม่ระบุ</span>
                                     <?php endif; ?>
                                 </div>
                             </div>
                             <div class="info-item">
                                 <div class="info-label">วันที่สมัคร</div>
                                 <div class="info-value">
-                                    <?php echo date('d/m/Y', strtotime($admin['Host_created_at']));  ?></div>
+                                    <?php echo date('d/M/Y', strtotime($admin['Create_at']));  ?></div>
                             </div>
-                            <div class="info-item">
-                                <div class="info-label">สถานะ</div>
-                                <div class="info-value">
-                                    <span class="status-badge">
-                                        <i class="fas fa-check-circle"></i>
-                                        <?php echo $host['Host_Status'] ? htmlspecialchars($admin['Host_Status']) : 'ใช้งานได้';  ?>
-                                    </span>
-                                </div>
-                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -159,14 +151,14 @@ if (!isset($_SESSION['Admin_email'])) {
         <p>&copy; 2024 Homestay Booking. All rights reserved.</p>
     </footer>
     <script>
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle("collapsed");
-        }
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        sidebar.classList.toggle("collapsed");
+    }
 
-        function editProfile() {
-            window.location.href = 'edit-profile.php';
-        }
+    function editProfile() {
+        window.location.href = 'edit-profile.php';
+    }
     </script>
 </body>
 

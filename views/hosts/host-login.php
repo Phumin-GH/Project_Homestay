@@ -143,9 +143,10 @@ session_start();
     <!-- Forgot Password Modal -->
     <div class="modal-overlay" id="forgot-password">
         <div class="modal-content">
-            <button class="modal-close" id="close-forgot">
+            <button class="close-button" id="close-forgot">
                 <i class="fas fa-times"></i>
             </button>
+
 
             <h2 class="form-title">Reset Password</h2>
             <p class="form-subtitle">Enter your email address and we'll send you a link to reset your password.</p>
@@ -275,9 +276,9 @@ session_start();
             }
         });
         btn.addEventListener('click', (e) => {
-            e.preventDefault(); // ป้องกัน form submit
+            e.preventDefault();
 
-            const pwd = signUpPassword.value; // เอาค่าปัจจุบัน
+            const pwd = signUpPassword.value;
             if (!pwd.match(strong)) {
                 // ป้องกัน form submit
                 e.preventDefault();
@@ -287,6 +288,7 @@ session_start();
                 passwordInput.focus();
             }
         });
+
         document.getElementById('forgot-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const Host_email = e.target.email.value.trim();

@@ -1,8 +1,5 @@
 <?php
 
-// เชื่อมต่อฐานข้อมูล MySQL (ตัวอย่าง PDO)
-ob_start();
-
 header('Content-Type: application/json');
 if (session_start() === PHP_SESSION_NONE) {
     session_start();
@@ -20,8 +17,7 @@ $booking_id = $_POST['booking_id'] ?? '';
 $booking_status = $_POST['booking_status'] ?? '';
 // $payment_status = $_POST['payment_status'] ?? '';
 // SQL บันทึกข้อมูล
-$sql = "
-UPDATE booking 
+$sql = "UPDATE booking 
 SET Charge_id = :charge_id,
     Booking_status = :booking_status,
     Payment_gateway = :payment_gateway,

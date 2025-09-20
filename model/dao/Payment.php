@@ -195,26 +195,4 @@ class Payment
             return $e->getMessage();
         }
     }
-    // public function update_payment_status($charge_id, $payment_status, $qrcode, $booking_id, $booking_status)
-    // {
-    //     if (!$charge_id || !$payment_status || !$qrcode || !$booking_id || !$booking_status) {
-    //         return "ไม่มีข้อมูลการจอง";
-    //     }
-    //     // SQL บันทึกข้อมูล
-    //     $sql = "UPDATE booking SET Charge_id = ?,Booking_status = ?,Payment_gateway = 'Qrcode',
-    // Payment_status = ?,Booking_qrcode = ? WHERE Booking_id = ?";
-    //     try {
-    //         $stmt = $this->conn->prepare($sql);
-    //         $stmt->execute([
-    //             $charge_id,
-    //             $booking_status,
-    //             $payment_status,
-    //             $qrcode,
-    //             $booking_id,
-    //         ]);
-    //         return true;
-    //     } catch (PDOException $e) {
-    //         return $e->getMessage();
-    //     }
-    // }
 }

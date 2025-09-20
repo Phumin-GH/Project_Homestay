@@ -2,8 +2,9 @@
 // forgot-password.php
 header('Content-Type: application/json');
 date_default_timezone_set("Asia/Bangkok");
-require_once __DIR__ . '../model/config/db_connect.php'; // เชื่อมต่อ MySQL
-require_once __DIR__ . '../vendor/autoload.php';
+require_once __DIR__ . '/../model/config/db_connect.php';
+require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../model/dao/Forgot_Password.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -61,16 +62,16 @@ try {
     $mail->Host       = 'smtp.gmail.com';
     $mail->SMTPAuth   = true;
     $mail->Username   = $_ENV['EMAIL'];
-    $mail->Password   = $_ENV['PASSWORD']; // ใช้ App Password ไม่ใช่ password ปกติ
+    $mail->Password   = $_ENV['PASSWORD'];
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
     $mail->Port       = 587;
 
     // ผู้ส่ง
     $mail->setFrom($_ENV['EMAIL'], 'Homestay Management');
     // ผู้รับ
-    if (isset($host)) {
+    if (isset($_POST['Host_email'])) {
         $Email = $Host_email;
-    } elseif (isset($user)) {
+    } elseif (isset($_POST['User_email'])) {
         $Email = $User_email;
     }
     $mail->addAddress($Email, 'User');
@@ -78,7 +79,7 @@ try {
     // เนื้อหา
     $mail->isHTML(true);
     $mail->Subject = 'Reset Password Link';
-    $resetLink = "http://localhost/homestay/reset-password.php?token=$token";
+    $resetLink = "http://localhost/homestay/views/reset-password.php?token=$token";
     $mail->Body    = "สวัสดีครับ,<br><br>
                       กรุณาคลิกที่ลิงก์ด้านล่างเพื่อเปลี่ยนรหัสผ่านของคุณ:<br>
                       <a href='$resetLink'>$resetLink</a>";

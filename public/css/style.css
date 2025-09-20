@@ -398,11 +398,10 @@ header {
   display: grid;
   gap: 0.5rem;
   margin-top: 1rem;
-  /* grid-template-columns: repeat(5, 1fr); */
+
   grid-template-columns: repeat(auto-fit, minmax(750px, 2fr));
 }
 
-/* บังคับ 4 คอลัมน์เฉพาะหน้าจอ >= 1200px */
 @media (min-width: 1200px) {
   .homestay-grid {
     grid-template-columns: repeat(4, 1fr);
