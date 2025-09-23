@@ -33,7 +33,7 @@ require_once  __DIR__ . "/../../controls/log_hosts.php";
     }
 
     .page-header {
-        background: #1e5470;
+        background: linear-gradient(155deg, #1e5470 0%, #74adc9ff 100%);
         color: white;
         padding: 3rem 2rem;
         border-radius: 16px;

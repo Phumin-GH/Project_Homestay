@@ -30,10 +30,12 @@ try {
             $check_in_date = $_POST['check_in_date'];
             $check_out_date = $_POST['check_out_date'];
             $nights = (int)($_POST['nights'] ?? 0);
-            $total_price = (int)($_POST['total_price']) ?? 0;
+            $total_price = (float)($_POST['total_price']) ?? 0;
             $guests = (int)($_POST['guests'] ?? 0);
+            $vat = (float)($_POST['vat_values'] ?? 0);
+            $service = (int)($_POST['service_values'] ?? 0);
             if (isset($_SESSION['User_email'])) {
-                $result = $BookingHandler->book_online($email, $property_id, $room_id, $check_in_date, $check_out_date,  $nights, $guests, $total_price);
+                $result = $BookingHandler->book_online($email, $property_id, $room_id, $check_in_date, $check_out_date,  $nights, $guests, $total_price, $service, $vat);
                 if (is_numeric($result)) {
                     $booking_id = $result;
                     echo json_encode(
@@ -48,20 +50,11 @@ try {
                 } else {
                     echo json_encode([
                         'success' => false,
-                        'message' => 'จองไม่สำเร็จ'
+                        'message' => $result
                     ]);
                     exit;
                 }
             }
-            // if (isset($_SESSION['method'])) {
-            //     if ($method === 'credit-card') {
-            //         echo "credit-card";
-            //     } else if ($method === 'qrcode') {
-            //         echo "qrcode";
-            //     } else {
-            //         echo "no_price";
-            //     }
-            // }
         }
     } elseif (isset($_POST['submit_wki'])) {
         $room_id = (int)($_POST['room_id'] ?? 0);
@@ -90,24 +83,63 @@ try {
             ]);
             exit;
         }
+    } elseif (isset($_POST['cancel_btn'])) {
+        if (isset($_POST['booking_id'])) {
+            $booking_id = (int)($_POST['booking_id'] ?? 0);
+            if (!$booking_id) {
+                echo json_encode(['success' => false, 'message' => 'รหัสการจองไม่ถูกต้อง']);
+                exit();
+            }
+            $result = $BookingHandler->cancel_booking($booking_id);
+            if ($result === true) {
+                echo json_encode(['success' => true, 'message' => 'ยกเลิกการจองเรียบร้อยแล้ว']);
+                exit();
+            } else {
+                echo json_encode(['success' => false, 'message' => 'one price']);
+                exit();
+            }
+        } else {
+            echo json_encode(['success' => false, 'message' => 'ไม่มีรหัสการจอง']);
+            exit();
+        }
     } else {
         $room_id = (int)($_POST['room_id'] ?? 0);
+        $property_id = (int)($_POST['property_id'] ?? 0);
         $nights = (int)($_POST['nights'] ?? 0);
         $guests = (int)($_POST['guests'] ?? 0);
+        $check_in = (int)($_POST['check_in_date'] ?? 0);
+        $check_out = (int)($_POST['check_out_date'] ?? 0);
         // $price = (int)($_POST['price'] ?? 0);
-        $prices = $BookingHandler->calcuratePrice($room_id, $nights, $guests);
-        if (is_numeric($prices)) {
+        $check_date = $BookingHandler->check_Calender($property_id, $room_id, $check_in, $check_out);
+        if (is_string($check_date)) {
             echo json_encode([
-                'success' => true,
-                'total_price' => round($prices, 2)
+                'check_success' => false,
+                'check_msg' => $check_date
             ]);
             exit();
         } else {
-            echo json_encode([
-                'success' => false,
-                'message' => $prices
-            ]);
-            exit();
+            $prices = $BookingHandler->calcuratePrice($room_id, $nights, $guests);
+            if (is_numeric($prices)) {
+                $service = 0.1;
+                $vat_tax = 0.07;
+                $service_amount = $prices * $service;
+                $tax_amount = $service_amount * $vat_tax;
+                $total_price = $prices + $tax_amount + $service_amount;
+                echo json_encode([
+                    'success' => true,
+
+                    'total_price' => round($total_price, 2),
+                    'service' => round($service_amount, 2),
+                    'vat' => round($tax_amount, 2)
+                ]);
+                exit();
+            } else {
+                echo json_encode([
+                    'success' => false,
+                    'message' => $prices
+                ]);
+                exit();
+            }
         }
     }
 

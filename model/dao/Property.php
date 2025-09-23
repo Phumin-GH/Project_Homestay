@@ -8,20 +8,14 @@ class Property
     {
         $this->conn = $db_connection;
     }
-    public function get_House($email)
+    public function total_property()
     {
-        $stmt = $this->conn->prepare("SELECT * FROM host WHERE Host_email = ?");
-        $stmt->execute([$email]);
-        $host = $stmt->fetch(PDO::FETCH_ASSOC);
-        $stmt = $this->conn->prepare("SELECT  p.Property_id, p.Property_name
-    FROM Property p
-    WHERE p.Host_id = ? AND p.Property_status = '1'
-    ORDER BY p.Property_id ASC");
-        $stmt->execute([$host['Host_id']]);
-        $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        return $properties;
+        $sql = "SELECT COUNT(*) FROM property";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        $total_property = $stmt->fetchColumn();
+        return $total_property;
     }
-    public function get_Property_Host() {}
 
     public function get_manageProperty($email)
     {
@@ -32,7 +26,7 @@ class Property
         $sql = "SELECT p.*, h.Host_firstname, h.Host_lastname 
             FROM Property p 
             INNER JOIN Host h ON p.Host_id = h.Host_id 
-            WHERE h.Host_id = ? AND p.Property_status = 1";
+            WHERE h.Host_id = ? AND p.Property_status = 'approve'";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$host_id]);
         $list_house = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -46,7 +40,7 @@ class Property
         $host = $stmt->fetch(PDO::FETCH_ASSOC);
         $stmt = $this->conn->prepare("SELECT  p.Property_id, p.Property_name
     FROM Property p
-    WHERE p.Host_id = ? AND p.Property_status = '1'
+    WHERE p.Host_id = ? AND p.Property_status = 'approve'
     ORDER BY p.Property_id ASC
 ");
         $stmt->execute([$host['Host_id']]);
@@ -55,9 +49,12 @@ class Property
     }
     public function get_Property($property_id)
     {
-        $stmt = $this->conn->prepare("SELECT p.*, h.Host_firstname, h.Host_lastname FROM property p 
+        $stmt = $this->conn->prepare("SELECT AVG(rv.Rating) as Rating ,p.*, h.Host_firstname, h.Host_lastname FROM property p 
         INNER JOIN host h ON p.Host_id = h.Host_id
-        WHERE p.Property_id = ?");
+        INNER JOIN review rv ON p.Property_id = rv.Property_id
+        WHERE p.Property_id = ?
+        GROUP BY h.Host_firstname,h.Host_lastname
+        ");
         $stmt->execute([$property_id]);
         $property = $stmt->fetch(PDO::FETCH_ASSOC);
         if (!$property) {
@@ -83,7 +80,12 @@ class Property
 
     public function show_House()
     {
-        $stmt = $this->conn->prepare("SELECT * FROM Property INNER JOIN Host on Property.Host_id = Host.Host_id WHERE Property.Property_status = 1");
+        $stmt = $this->conn->prepare("SELECT p.Property_id,p.Property_name,p.Property_province,p.Property_district,p.Property_subdistrict,h.Host_firstname,h.Host_lastname,p.Property_image,AVG(rv.Rating) AS Rating 
+        FROM property p
+        INNER JOIN host h on p.Host_id = h.Host_id
+        LEFT JOIN review rv on p.Property_id = rv.Property_id 
+        WHERE p.Property_status = 'approve'
+        GROUP BY p.Property_id,p.Property_name,p.Property_province,p.Property_district,p.Property_subdistrict,h.Host_firstname,h.Host_lastname,p.Property_image");
         $stmt->execute();
         $homestay = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $homestay;
@@ -102,7 +104,7 @@ class Property
     }
     public function get_RoomsWalkin($property_id)
     {
-        $stmt = $this->conn->prepare("SELECT Room_id, Room_number,Room_price FROM room WHERE Property_id = ? AND Room_status = '0'");
+        $stmt = $this->conn->prepare("SELECT Room_id, Room_number,Room_price FROM room WHERE Property_id = ? AND Room_status = 'Available'");
         $stmt->execute([$property_id]);
         $room = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $room;

@@ -177,7 +177,7 @@ require_once __DIR__ . "/../../api/get_ListHomestay.php";
                 <i class="fas fa-bars"></i>
             </button>
             <ul class="sidebar-menu">
-                <li><a href="main-menu.php" class="active" title="หน้าแดชบอร์ด"><i class="fas fa-home"></i><span
+                <li><a href="main-menu.php" class="active" title="หน้าแดชบอร์ด"><i class="fa-solid fa-house"></i><span
                             class="menu-label">Home</span></a></li>
                 <li><a href="profile.php" title="ข้อมูลผู้ใช้งาน"><i class="fas fa-user"></i><span
                             class="menu-label">Profile</span></a></li>
@@ -188,7 +188,7 @@ require_once __DIR__ . "/../../api/get_ListHomestay.php";
                 <li><a href="bookings.php"><i class="fas fa-calendar"></i><span class="menu-label"
                             title="รายการจอง">Bookings</span></a>
                 </li>
-                <li><a href="reviewa.php" title="รีวิวสถานที่พัก"><i class="fas fa-star"></i><span
+                <li><a href="review.php" title="รีวิวสถานที่พัก"><i class="fas fa-star"></i><span
                             class="menu-label">Review</span></a></li>
                 <li><a href="../../controls/logout.php" title="ออกจากระบบ"><i class="fas fa-sign-out-alt"></i><span
                             class="menu-label">Logout</span></a>
@@ -253,7 +253,10 @@ require_once __DIR__ . "/../../api/get_ListHomestay.php";
 
                                 <p> <?php echo htmlspecialchars($house["Host_firstname"] . " " . $house["Host_lastname"]) ?>
                                 </p>
-                                <p class="location">คะแนนรีวิว</p>
+                                <span style="color:#f5b301; font-size:1.1rem; margin-left:0.5rem;">
+                                    <i class="fa-solid fa-star"></i>
+                                </span>
+                                <?php echo round($house['Rating'], 1) ?>
                                 <p class="location"><i class="fa-solid fa-location-pin"></i>
                                     จ.<?php echo htmlspecialchars($house["Property_province"]); ?>
                                     อ.<?php echo htmlspecialchars($house["Property_district"]); ?>

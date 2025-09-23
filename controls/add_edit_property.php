@@ -55,20 +55,3 @@ if (isset($_POST['edit_property'])) {
         exit();
     }
 }
-// $json_data = file_get_contents("php://input");
-// $data = json_decode($json_data, true);
-// if (isset($data['del_room'])) {
-//     $room_id = $data['room_id'];
-//     $room = "SELECT COUNT(*) FROM room WHERE Room_id = ?";
-//     $stmt = $conn->prepare($room);
-//     $stmt->execute([$room_id]);
-//     $c_room = $stmt->fetchColumn();
-//     if ($c_room > 0) {
-//         $sql = "DELETE FROM room WHERE Room_id = ? ";
-//         $stmt = $conn->prepare($sql);
-//         $stmt->execute([$c_room]);
-//         echo json_encode(["success" => true, "message" => "ลบเรียบร้อย"]);
-//     } else {
-//         echo json_encode(["success" => false, "message" => "ไม่พบหมายเลขห้องที่ต้องการลบ"]);
-//     }
-// }

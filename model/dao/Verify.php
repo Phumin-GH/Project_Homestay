@@ -22,7 +22,7 @@ class Verify
     }
     public function get_cancel_hosts()
     {
-        $stmt = $this->conn->prepare("SELECT * FROM host WHERE Host_Status = 'banned'");
+        $stmt = $this->conn->prepare("SELECT * FROM host WHERE Host_Status = 'cancel'");
         $stmt->execute();
         $cancel_host = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $cancel_host;
@@ -64,14 +64,14 @@ class Verify
     }
     public function get_homestay()
     {
-        $stmt = $this->conn->prepare("SELECT * FROM Property INNER JOIN Host on Property.Host_id = Host.Host_id WHERE Property.Property_status = 0");
+        $stmt = $this->conn->prepare("SELECT * FROM Property INNER JOIN Host on Property.Host_id = Host.Host_id WHERE Property.Property_status = 'pending'");
         $stmt->execute();
         $homestay = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $homestay;
     }
     public function approve_property($property_id)
     {
-        $status = 1;
+        $status = 'approve';
         $updateSQL = "UPDATE property SET Property_status=? WHERE Property_id = ?";
         $stmt = $this->conn->prepare($updateSQL);
         $stmt->execute([$status, $property_id]);
@@ -79,7 +79,7 @@ class Verify
     }
     public function cancel_property($property_id)
     {
-        $status = 2;
+        $status = 'cancel';
         $updateSQL = "UPDATE property SET Property_status=? WHERE Property_id = ?";
         $stmt = $this->conn->prepare($updateSQL);
         $stmt->execute([$status, $property_id]);

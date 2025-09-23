@@ -191,7 +191,9 @@ if (isset($_GET['logout'])) {
     <script>
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
+            const mainContent = document.querySelector('.main-with-sidebar');
             sidebar.classList.toggle("collapsed");
+            mainContent.classList.toggle("sidebar-collapsed");
         }
 
         function editProfile() {

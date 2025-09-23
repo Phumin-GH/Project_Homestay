@@ -4,7 +4,8 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 include_once __DIR__ . '/../model/config/db_connect.php';
 require_once __DIR__ . '/../model/dao/Property.php';
-
+require_once __DIR__ . '/../model/dao/Review.php';
+$reviewsHandler = new Review($conn);
 $propertyHandle = new Property($conn);
 // บ้านพักที่อนุมัติแล้ว โชว์บน Menu
 $homestay = $propertyHandle->show_House();
@@ -22,12 +23,17 @@ if (isset($_POST['house_id'])) {
     $property_id = $_POST['house_id'] ?? null;
     $property = null;
     $property = $propertyHandle->get_Property($property_id);
+    $reviews = $reviewsHandler->get_Reviews($property_id);
+    if (is_string($reviews)) {
+        $_SESSION['err'] = "ไม่พบ ID";
+        $reviews = [];
+    }
     if (is_string($property)) {
         $_SESSION['err'] = $property;
     }
-    if (!empty($property['Property_lat']) && !empty($property['Property_lng'])) {
-        $maps_url = "https://www.google.com/maps?q=" . $property['Property_lat'] . "," . $property['Property_lng'] . "&hl=th&z=16&output=embed";
-    }
+    // if (!empty($property['Property_lat']) && !empty($property['Property_lng'])) {
+    //     $maps_url = "https://www.google.com/maps?q=" . $property['Property_lat'] . "," . $property['Property_lng'] . "&hl=th&z=16&output=embed";
+    // }
 
     $images = $propertyHandle->get_Image($property_id);
     $rooms = $propertyHandle->get_rooms($property_id);

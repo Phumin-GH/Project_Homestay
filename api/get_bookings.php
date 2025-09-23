@@ -11,9 +11,10 @@ if (isset($_SESSION['User_email'])) {
     $bookings = [];
     $history_booking = [];
     $cancel_booking = [];
-    // $bookings = $bookHandler->get_Booking($email);
+    $bookings = $bookHandler->get_Booking($email);
     $history_booking = $bookHandler->get_HistoryBook($email);
     $cancel_booking = $bookHandler->get_CancelBook($email);
+    $refund_booking = $bookHandler->get_Refund_Book($email);
     if (empty($bookings) && empty($history_booking) && empty($cancel_booking)) {
         $errmsg = "ไม่พบข้อมูลการจองทั้งหมด";
     }

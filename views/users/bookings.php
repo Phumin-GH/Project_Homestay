@@ -4,7 +4,7 @@ if (!isset($_SESSION["User_email"])) {
     header("Location: user-login.php");
     exit();
 }
-include __DIR__ . '/../../api/get_bookings.php';
+require_once __DIR__ . '/../../api/get_bookings.php';
 ?>
 
 <!DOCTYPE html>
@@ -26,7 +26,7 @@ include __DIR__ . '/../../api/get_bookings.php';
         }
 
         .page-header {
-            background: #1e5470;
+            background: linear-gradient(155deg, #1e5470 0%, #74adc9ff 100%);
             color: white;
             padding: 3rem 2rem;
             border-radius: 16px;
@@ -455,6 +455,14 @@ include __DIR__ . '/../../api/get_bookings.php';
             background-color: #5a6268;
         }
 
+        .contact-btn disabled {
+            background-color: #e9ecef;
+            color: #6c757d;
+            border: solid 2px #333;
+            border-radius: 8px;
+            padding: 0.4rem 0.8rem;
+            cursor: not-allowed;
+        }
 
         /* --- Responsive Design --- */
         @media (max-width: 768px) {
@@ -525,6 +533,63 @@ include __DIR__ . '/../../api/get_bookings.php';
             height: 2px;
             background: #1e5470;
         }
+
+        .modal {
+            display: none;
+            /* เริ่มต้นซ่อน */
+            position: fixed;
+            z-index: 500;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 400px;
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            right: 15px;
+            top: 10px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            resize: vertical;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button[type="submit"] {
+            background-color: #1e5470;
+            color: #fff;
+        }
+
+        button#closeBtn {
+            background-color: #ccc;
+            margin-left: 10px;
+        }
     </style>
 </head>
 
@@ -594,6 +659,9 @@ include __DIR__ . '/../../api/get_bookings.php';
                         <div class="tab" id="cancel-tab">
                             <i class="fa-solid fa-ban"></i> ยกเลิกการจอง
                         </div>
+                        <div class="tab" id="refund-tab">
+                            <i class="fa-solid fa-ban"></i> สถานะการคืนเงิน
+                        </div>
 
                     </div>
                     <section class="booking-list active" id="bookings-section">
@@ -652,9 +720,10 @@ include __DIR__ . '/../../api/get_bookings.php';
                                                 </div>
                                             </div>
                                             <div class="booking-actions">
-                                                <a href="tel:<?php echo htmlspecialchars($booking['Host_phone']); ?>"
-                                                    class="action-btn contact-btn"><i class="fas fa-phone"></i> Contact</a>
-                                                <button class="action-btn cancel-btn"><i class="fas fa-times"></i> Cancel</button>
+                                                <button class="action-btn cancel-btn"
+                                                    data-booking-id="<?php echo htmlspecialchars($booking['Booking_id']); ?>">
+                                                    <i class="fas fa-times" type="button"></i> Cancel
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -727,8 +796,15 @@ include __DIR__ . '/../../api/get_bookings.php';
                                                 <!-- <a href="tel:<?php /*echo htmlspecialchars($booking['Host_phone']);*/ ?>"
                                                     class="action-btn contact-btn"><i class="fas fa-phone"></i> Contact</a>
                                                 <button class="action-btn cancel-btn"><i class="fas fa-times"></i> Cancel</button> -->
-                                                <button class="action-btn refund-btn"><i class="fas fa-sync"></i>
-                                                    ดูรายละเอียด</button>
+                                                <!-- <button class="action-btn refund-btn"><i class="fas fa-sync"></i>
+                                        ดูรายละเอียด</button> -->
+                                                <form method="post" action="detail_house.php" style="display:inline;">
+                                                    <input type="hidden" name="house_id"
+                                                        value="<?php echo htmlspecialchars($booking["Property_id"]); ?>">
+                                                    <button type="submit" class="action-btn refund-btn">
+                                                        <i class="fas fa-sync"></i>ดูรายละเอียด
+                                                    </button>
+                                                </form>
                                             </div>
                                         </div>
                                     </div>
@@ -763,9 +839,11 @@ include __DIR__ . '/../../api/get_bookings.php';
                                                     <span class="status-badge date">ชำระเงิน:
                                                         <?php echo date('d/m/Y', strtotime($booking['Create_at'])); ?></span>
                                                     <span
-                                                        class="status-badge paid"><?php echo $booking['Booking_status'] == "successful" ? 'ชำระเงินเรียบร้อย' : 'ยังไม่ชำระเงิน'; ?></span>
+                                                        class="status-badge unpaid"><?php echo $booking['Booking_status'] == "failed" ? 'ยกเลิกการจอง' : 'การจองสำเร็จ'; ?></span>
                                                     <span
-                                                        class="status-badge paid"><?php echo $booking['Check_status'] == "Pending" ? 'รอ Check-in' : 'เกิดข้อผิดพลาด'; ?></span>
+                                                        class="status-badge unpaid"><?php echo $booking['Host_check'] == "pending" || $booking['Refund_status'] == 'pending' ? 'รออนุมัติ' : 'อนุมัติ'; ?></span>
+                                                    <!-- <span
+                                            class="status-badge paid"><?php /*echo $booking['Check_status'] == "Pending" ? 'รอ Check-in' : 'เกิดข้อผิดพลาด';*/ ?></span> -->
                                                 </div>
                                             </div>
                                             <div class="host-info"><i
@@ -799,11 +877,86 @@ include __DIR__ . '/../../api/get_bookings.php';
                                                     </div>
                                                 </div>
                                             </div>
+
                                             <div class="booking-actions">
-                                                <a href="tel:<?php echo htmlspecialchars($booking['Host_phone']); ?>"
-                                                    class="action-btn contact-btn"><i class="fas fa-phone"></i> Contact</a>
-                                                <button class="action-btn cancel-btn"><i class="fas fa-times"></i> Cancel</button>
+                                                <button class="action-btn contact-btn"
+                                                    data-booking-id="<?php echo htmlspecialchars($booking['Booking_id']); ?>"
+                                                    data-amount="<?php echo htmlspecialchars($booking['Total_price']); ?>">
+                                                    <i class="fas fa-sync"></i>Refund</button>
                                             </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <div class="empty-state">
+                                <i class="fas fa-calendar-times"></i>
+                                <h3>ไม่พบรายการยกเลิกการจองของคุณ</h3>
+                                <p>เริ่มค้นหาที่พักแบบโฮมสเตย์และทำการจองครั้งแรกของคุณเพื่อดูที่นี่</p>
+                                <a href="main-menu.php" class="browse-btn">กลับสู่หน้าหลัก</a>
+                            </div>
+                        <?php endif; ?>
+                    </section>
+
+                    <section class="booking-list active" id="bookings-refund-section" style="display: none;">
+                        <?php if (count($refund_booking) > 0): ?>
+                            <?php foreach ($refund_booking  as $booking): ?>
+                                <div class="bookings-grid">
+                                    <!-- Example Booking Card 1 (Paid) -->
+                                    <div class="booking-card">
+                                        <div class="booking-image">
+                                            <img src="../../public/<?php echo htmlspecialchars($booking['Property_image']); ?>"
+                                                alt="<?php echo htmlspecialchars($booking['Property_name']); ?>">
+                                        </div>
+                                        <div class="booking-info">
+                                            <div class="booking-header">
+                                                <h3 class="booking-title">
+                                                    <?php echo htmlspecialchars($booking['Property_name']); ?>
+                                                </h3>
+                                                <div class="status-badges">
+                                                    <span class="status-badge date">ชำระเงิน:
+                                                        <?php echo date('d/m/Y', strtotime($booking['Create_at'])); ?></span>
+                                                    <span
+                                                        class="status-badge <?php echo  $booking['Host_check'] == "approve" ? 'paid' : 'unpaid'; ?>"><?php echo  $booking['Host_check'] == "approve" ? 'สำเร็จ' : 'ไม่สำเร็จ'; ?></span>
+                                                    <span
+                                                        class="status-badge <?php echo $booking['Refund_status'] == "approve" ? 'paid' : 'unpaid'; ?>"><?php echo $booking['Refund_status'] == "approve" ? 'สำเร็จ' : 'ไม่สำเร็จ'; ?></span>
+                                                    <!-- <span
+                                            class="status-badge paid"><?php /*echo $booking['Check_status'] == "Pending" ? 'รอ Check-in' : 'เกิดข้อผิดพลาด';*/ ?></span> -->
+                                                </div>
+                                            </div>
+                                            <div class="host-info"><i
+                                                    class="fas fa-user"></i><?php echo htmlspecialchars($booking['Host_firstname'] . ' ' . $booking['Host_lastname']); ?>
+                                            </div>
+                                            <div class="location-info"><i
+                                                    class="fas fa-map-marker-alt"></i>จ.<?php echo htmlspecialchars($booking['Property_province']); ?>,
+                                                อ.<?php echo htmlspecialchars($booking['Property_district']); ?>,
+                                                ต.<?php echo htmlspecialchars($booking['Property_subdistrict']); ?></div>
+                                            <div class="booking-dates">
+                                                <div>
+                                                    <div class="date-label">Check-in</div>
+                                                    <div class="date-value">
+                                                        <?php echo date('d/m/Y', strtotime($booking['Check_in'])); ?></div>
+                                                </div>
+                                                <div>
+                                                    <div class="date-label">Check-out</div>
+                                                    <div class="date-value">
+                                                        <?php echo date('d/m/Y', strtotime($booking['Check_out'])); ?></div>
+                                                </div>
+                                            </div>
+                                            <div class="booking-details">
+                                                <div>
+                                                    <div class="detail-label">Gusts</div>
+                                                    <div class="detail-value"><?php echo $booking['Guests']; ?></div>
+                                                </div>
+                                                <div>
+                                                    <div class="detail-label">Total Price</div>
+                                                    <div class="detail-value">
+                                                        ฿<?php echo number_format($booking['Total_price']); ?>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
                                         </div>
                                     </div>
                                 </div>
@@ -820,7 +973,21 @@ include __DIR__ . '/../../api/get_bookings.php';
                 </div>
         </div>
     </div>
-
+    <div id="cancelModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>เหตุผลการยกเลิกการจอง</h2>
+            <form id="cancelForm">
+                <input type="number" id="bookingIdInput">
+                <input type="number" id="amountInput">
+                <label for="reason">กรุณากรอกเหตุผล:</label>
+                <textarea id="reason" name="reason" rows="4" placeholder="ระบุเหตุผล..." required></textarea>
+                <br>
+                <button type="submit">ส่งข้อมูล</button>
+                <button type="button" id="closeBtn">ยกเลิก</button>
+            </form>
+        </div>
+    </div>
     <script>
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
@@ -828,69 +995,207 @@ include __DIR__ . '/../../api/get_bookings.php';
             sidebar.classList.toggle("collapsed");
             mainContent.classList.toggle("sidebar-collapsed");
         }
+        document.addEventListener('DOMContentLoaded', function() {
 
-        function cancelBooking(bookingId) {
-            if (confirm('Are you sure you want to cancel this booking?')) {
-                // Send AJAX request to cancel booking
-                fetch('../../controls/cancel_booking.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            booking_id: bookingId
+
+            // Your code here
+
+            const cancelButtons = document.querySelectorAll('.action-btn.cancel-btn');
+            cancelButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const bookingId = this.dataset.bookingId;
+                    cancelBooking(bookingId);
+                });
+            });
+
+            function cancelBooking(bookingId) {
+                if (confirm('Are you sure you want to cancel this booking?')) {
+
+                    // alert('Cancel booking ID: ' + bookingId);
+                    fetch('../../controls/bookings_room.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                            },
+                            body: new URLSearchParams({
+                                booking_id: bookingId,
+                                cancel_btn: true
+                            })
                         })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            location.reload();
-                        } else {
-                            alert('Error canceling booking: ' + data.message);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Error canceling booking');
-                    });
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                location.reload();
+                            } else {
+                                alert('Error canceling booking: ' + data.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('Error canceling booking');
+                        });
+                }
+            }
+        })
+        const tabs = [
+            document.getElementById('bookings-tab'),
+            document.getElementById('history-tab'),
+            document.getElementById('cancel-tab'),
+            document.getElementById('refund-tab')
+        ]
+        const sections = [
+            document.getElementById('bookings-section'),
+            document.getElementById('history-bookings-section'),
+            document.getElementById('bookings-cancel-section'),
+            document.getElementById('bookings-refund-section')
+        ]
+
+        function showTab(TabShow, SectionShow) {
+            tabs.forEach(tab => tab.classList.remove('active'));
+            sections.forEach(section => section.style.display = 'none');
+
+            TabShow.classList.add('active');
+            SectionShow.style.display = 'block';
+        }
+        tabs.forEach((tab, index) => {
+            if (tab) {
+                tab.addEventListener('click', function() {
+                    showTab(tab, sections[index]);
+                })
+            }
+        })
+        // const bookings = document.getElementById('bookings-tab');
+        // const history = document.getElementById('history-tab');
+        // const cancel = document.getElementById('cancel-tab');
+        // const bookingsSection = document.getElementById('bookings-section');
+        // const historySection = document.getElementById('history-bookings-section');
+        // const cancelSection = document.getElementById('bookings-cancel-section')
+
+        // bookings.addEventListener('click', function() {
+        //     bookings.classList.add('active');
+        //     history.classList.remove('active');
+        //     cancel.classList.remove('active');
+        //     bookingsSection.style.display = 'block';
+        //     historySection.style.display = 'none';
+        //     cancelSection.style.display = 'none';
+        // });
+
+        // history.addEventListener('click', function() {
+        //     bookings.classList.remove('active');
+        //     history.classList.add('active');
+        //     cancel.classList.remove('active');
+        //     bookingsSection.style.display = 'none';
+        //     historySection.style.display = 'block';
+        //     cancelSection.style.display = 'none';
+        // });
+        // cancel.addEventListener('click', function() {
+        //     bookings.classList.remove('active');
+        //     history.classList.remove('active');
+        //     cancel.classList.add('active');
+        //     bookingsSection.style.display = 'none';
+        //     historySection.style.display = 'none';
+        //     cancelSection.style.display = 'block';
+        // });
+        const modal = document.getElementById("cancelModal");
+        const refund_btn = document.querySelectorAll('.contact-btn');
+        const span = document.querySelector(".close");
+        const closeBtn = document.getElementById("closeBtn");
+        const form = document.getElementById("cancelForm");
+
+        refund_btn.forEach(btn => {
+
+            btn.onclick = function() {
+
+                const bookingId = this.dataset.bookingId;
+                const amount = this.dataset.amount;
+                document.getElementById('bookingIdInput').value = bookingId;
+                document.getElementById('amountInput').value = amount;
+                modal.style.display = "block";
+            };
+        });
+        span.onclick = () => modal.style.display = "none";
+        closeBtn.onclick = () => modal.style.display = "none";
+        window.onclick = (e) => {
+            if (e.target == modal) {
+                modal.style.display = "none";
             }
         }
-        const bookings = document.getElementById('bookings-tab');
-        const history = document.getElementById('history-tab');
-        const cancel = document.getElementById('cancel-tab');
-        const bookingsSection = document.getElementById('bookings-section');
-        const historySection = document.getElementById('history-bookings-section');
-        const cancelSection = document.getElementById('bookings-cancel-section')
 
-        bookings.addEventListener('click', function() {
-            bookings.classList.add('active');
-            history.classList.remove('active');
-            cancel.classList.remove('active');
-            bookingsSection.style.display = 'block';
-            historySection.style.display = 'none';
-            cancelSection.style.display = 'none';
-        });
+        form.onsubmit = (e) => {
+            e.preventDefault();
 
-        history.addEventListener('click', function() {
-            bookings.classList.remove('active');
-            history.classList.add('active');
-            cancel.classList.remove('active');
-            bookingsSection.style.display = 'none';
-            historySection.style.display = 'block';
-            cancelSection.style.display = 'none';
-        });
-        cancel.addEventListener('click', function() {
-            bookings.classList.remove('active');
-            history.classList.remove('active');
-            cancel.classList.add('active');
-            bookingsSection.style.display = 'none';
-            historySection.style.display = 'none';
-            cancelSection.style.display = 'block';
-        });
+            const reason = document.getElementById("reason").value.trim();
+            const bookingId = document.getElementById('bookingIdInput').value;
+            const amount = document.getElementById('amountInput').value;
+            // ตรวจสอบว่ามีข้อมูลครบถ้วน
+            if (!bookingId || !amount) {
+                alert('เกิดข้อผิดพลาด: ไม่พบข้อมูลการจอง');
+                return;
+            }
+            // ส่งข้อมูลไปยัง Server
+            fetch('../../controls/submit_refund.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    // ใช้ข้อมูลที่ดึงมาจาก hidden input
+                    body: new URLSearchParams({
+                        reason: reason,
+                        booking_id: bookingId,
+                        amount: amount
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        form.reset();
+                        modal.style.display = "none";
+                        window.location.reload();
+                    } else {
+                        alert(data.message);
+                    }
+                    console.log(data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('เกิดข้อผิดพลาดในการขอคืนเงิน');
+                });
+        };
+        //ส่ งข้ อมูลฟอร์ ม
+        // form.onsubmit = (e) => {
+        //     e.preventDefault();
+        //     const reason = document.getElementById("reason").value.trim();
+        //     fetch('../../controls/submit_refund.php', {
+        //             method: 'POST',
+        //             headers: {
+        //                 'Content-Type': 'application/x-www-form-urlencoded',
+        //             },
+        //             body: new URLSearchParams({
+        //                 reason: reason,
+        //                 booking_id: <?php /*echo json_encode($cancel_booking['Booking_id'] ?? null);*/ ?>,
+        //                 amount: <?php /*echo json_encode($cancel_booking['Total_price'] ?? null);*/ ?>
+        //             })
+        //         })
+        //         .then(response => response.json())
+        //         .then(data => {
+        //             if (data.success) {
+        //                 alert(data.message);
+        //                 form.reset();
+        //                 modal.style.display = "none";
+        //                 window.location.reload();
+
+        //             } else {
+        //                 alert(data.message);
+        //             }
+        //             console.log(data);
+        //         })
+        //         .catch(error => {
+        //             console.error('Error:', error);
+        //         });
+        // };
     </script>
-<?php
-            endif;
-?>
+<?php endif; ?>
 </body>
 
 </html>

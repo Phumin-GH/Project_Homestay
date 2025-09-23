@@ -17,13 +17,13 @@ if (!isset($_GET['id'])) {
 $property_id = $_GET['id'];
 if (isset($_POST['approve'])) {
     $result = $verifyHandler->approve_property($property_id);
-    $_SESSION['msg'] = '<div class="alert alert-success">อนุมัติเรียบร้อย</div>';
+    $_SESSION['msg'] = 'อนุมัติเรียบร้อย';
     header("Location: ../views/admin/approve-properties.php");
     exit();
 }
 if (isset($_POST['cancel'])) {
     $result = $verifyHandler->cancel_property($property_id);
-    $_SESSION['error1'] = '<div class="alert alert-danger">เกิดข้อผิดพลาด: </div>';
+    $_SESSION['msg'] = 'เกิดข้อผิดพลาด';
     header("Location: ../views/admin/approve-properties.php");
     exit();
 }

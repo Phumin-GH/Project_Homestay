@@ -23,6 +23,8 @@ if (isset($_SESSION['Admin_email'])) {
         } elseif (isset($_POST['rej_host'])) {
             $reject = 'active';
             $result = $HostmanageHandler->reject_host($reject, $host_id);
+        } elseif (isset($_POST['del_user'])) {
+            $result = $HostmanageHandler->delete_host($host_id);
         } elseif (isset($_POST['edit_host'])) {
             $result = $HostmanageHandler->edit_host($firstname, $lastname, $email, $phone, $host_id);
         } elseif (isset($_POST['ban_host'])) {
@@ -39,14 +41,14 @@ if (isset($_SESSION['Admin_email'])) {
         // $email = $_POST['Email'];
         // $phone = $_POST['Phone'];
 
-        if (isset($_POST['rej_host'])) {
+        if (isset($_POST['rej_user'])) {
             $reject = 'active';
             $result = $manageHandler->reject_host($reject, $host_id);
-        } elseif (isset($_POST['del_host'])) {
+        } elseif (isset($_POST['del_user'])) {
             $result = $manageHandler->delete_host($host_id);
-        } elseif (isset($_POST['edit_host'])) {
+        } elseif (isset($_POST['edit_user'])) {
             $result = $manageHandler->edit_host($firstname, $lastname, $email, $phone, $host_id);
-        } elseif (isset($_POST['ban_host'])) {
+        } elseif (isset($_POST['ban_user'])) {
             $baned = 'ban';
             $result = $manageHandler->ban_host($baned, $host_id);
         }

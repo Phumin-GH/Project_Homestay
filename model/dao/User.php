@@ -7,7 +7,14 @@ class User
     {
         $this->conn = $db_connection;
     }
-
+    public function total_user()
+    {
+        $sql = "SELECT COUNT(*) FROM user ";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        $total_user = $stmt->fetchColumn();
+        return $total_user;
+    }
     // Method สำหรับการลงทะเบียน
     public function register($email, $firstname, $lastname, $phone, $password)
     {

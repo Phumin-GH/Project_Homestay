@@ -1,6 +1,7 @@
 <?php
 session_start();
-include_once __DIR__ . '/../../controls/log_admin.php';
+require_once __DIR__ . '/../../controls/log_admin.php';
+require_once __DIR__ . '/../../api/get_TotalData.php';
 if (!isset($_SESSION["Admin_email"])) {
     header("Location: admin-login.php");
     exit();
@@ -290,15 +291,18 @@ if (!isset($_SESSION["Admin_email"])) {
             </button>
             <ul class="sidebar-menu">
                 <li><a href="admin-dashboard.php" title="หน้าแดชบอร์ด" class="active"><i
-                            class="fas fa-tachometer-alt"></i><span class="menu-label">Dashboard</span></a></li>
+                            class="fa-solid fa-ranking-star"></i><span class="menu-label">Dashboard</span></a></li>
                 <li><a href="profile.php" title="ข้อมูลผู้ใช้งาน"><i class="fas fa-user"></i><span
                             class="menu-label">Profile</span></a></li>
-                <li><a href="approve-properties.php" title="อนุมัติสถานที่พัก"><i class="fas fa-check-circle"></i><span
-                            class="menu-label">Approve Properties</span></a></li>
+                <li><a href="approve-properties.php" title="อนุมัติสถานที่พัก"><i
+                            class="fa-solid fa-house-medical-circle-check"></i><span class="menu-label">Approve
+                            Properties</span></a></li>
                 <li><a href="manage-hosts.php" title="จัดการผู้ใช้งานสถานที่พัก"><i class="fas fa-users"></i><span
                             class="menu-label">Hosts</span></a></li>
                 <li><a href="manage-users.php" title="จัดการผู้ใช้งาน"><i class="fas fa-user-friends"></i><span
                             class="menu-label">Users</span></a></li>
+                <li><a href="manage-refund.php" title="คำร้องขอคืนเงินผู้ใช้งาน"><i
+                            class="fas fa-hand-holding-usd"></i><span class="menu-label">Refund</span></a></li>
                 <li><a href="manage-reviews.php" title="รีวิวจากผู้ใช้งาน"><i class="fas fa-star"></i><span
                             class="menu-label">Reviews</span></a></li>
                 <li><a href="violations.php" title="รายการการละเมิด"><i class="fas fa-exclamation-triangle"></i><span

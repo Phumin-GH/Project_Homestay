@@ -277,7 +277,7 @@ require_once __DIR__ . '/../../api/get_listBook.php';
             try {
                 const satang = Math.round(amountBaht * 100);
                 alert('Sending payment information...');
-                fetch('../../controls/check_credit-cards.php', {
+                fetch('../../controls/check_status.php', {
                         method: 'POST',
                         credentials: 'include',
                         headers: {

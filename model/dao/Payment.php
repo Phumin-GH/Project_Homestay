@@ -74,8 +74,91 @@ class Payment
         }
         define('OMISE_API_VERSION', '2019-05-29');
     }
+    public function cancel_refund($refund_id)
+    {
+        return "ฟังก์ชันนี้ยังไม่พร้อมใช้งาน";
+    }
+    public function get_refund_amount($booking_id)
+    {
+        $sql = "SELECT rp.Refund_percen,SUM(rf.Refund_amount+b.Booking_service+b.Booking_vat ) AS total
+        FROM refund rf
+        INNER JOIN refund_policy rp ON rf.Re_policy_id = rp.Re_policy_id
+        INNER JOIN booking b ON b.Booking_id = rf.Booking_id 
+        WHERE rf.Booking_id = ?
+        GROUP BY rp.Refund_percen";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$booking_id]);
+        $percen = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$percen) {
+            return  "ไม่พบการจอง";
+        }
+        $refund_amount = ($percen['Refund_percen'] / 100) * $percen['total'];
+        return $refund_amount; // คืนค่าจำนวนเงินคืนที่คำนวณแล้ว
+    }
+    public function get_charge_id($booking_id)
+    {
+        $sql = "SELECT Charge_id FROM booking WHERE Booking_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$booking_id]);
+        $charge = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $charge['Charge_id'];
+    }
+    public function Proceed_refund($booking_id)
+    {
+        $this->Omise_API();
+
+        try {
+            $charge_id = $this->get_charge_id($booking_id);
+            // $charge_id = 'chrg_test_653aos8sbo31jo2twhs';
+            (float)$amount = $this->get_refund_amount($booking_id);
+            if (is_string($amount)) {
+                return $amount;
+            } else {
+                $total_amount = intval(round($amount * 100));
+            }
+            // $test = ['charge' => $charge_id, 'total' => $total_amount, 'amount' => $amount];
+            // return $test;
+            $charge = OmiseCharge::retrieve($charge_id);
+            $refund = $charge->refunds()->create([
+                'amount' => $total_amount
+            ]);
+            if ($refund['status'] === 'successful') {
+                // Save the booking information to the database
+                $sql = "UPDATE refund SET Refund_status = ? WHERE Booking_id = ?";
+                $stmt = $this->conn->prepare($sql);
+                $stmt->execute(['approve',  $booking_id]);
+                return true;
+            } else {
+                return $refund['status'];
+            }
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+    public function Submit_refund($booking_id)
+    {
+        if (empty($booking_id)) {
+            return "ข้อมูลสำหรับการคืนเงินไม่ครบถ้วน";
+        }
+        $result = $this->Proceed_refund($booking_id);
+        // if ($result === true) {
+        //     $sql = "SELECT Refund_status FROM refund WHERE Booking_id = ?";
+        //     $stmt = $this->conn->prepare($sql);
+        //     $stmt->execute([$booking_id]);
+        //     $status = $stmt->fetch(PDO::FETCH_ASSOC);
+        //     if (!$status) {
+        //         return "ไม่พบข้อมูลการจอง";
+        //     } else {
+        //         return true;
+        //     }
+        // } else {
+        //     return $result; // ส่งข้อความข้อผิดพลาดกลับไป
+        // }
+        return $result;
+    }
     public function insertCreditCard($booking_id, $name, $number, $exMonth, $exYear, $cvv, $amount)
     {
+        $this->Omise_API();
         if (empty($booking_id) || empty($name) || empty($number) || empty($exMonth) || empty($exYear) || empty($cvv) || empty($amount)) {
             return "ข้อมูลสำหรับการชำระเงินไม่ครบถ้วน";
         }

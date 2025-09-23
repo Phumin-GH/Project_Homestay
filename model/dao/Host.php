@@ -7,6 +7,15 @@ class Host
     {
         $this->conn = $db_connection;
     }
+
+    public function total_host()
+    {
+        $sql = "SELECT COUNT(*) FROM host ";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        $total_host = $stmt->fetchColumn();
+        return $total_host;
+    }
     // Method สำหรับการลงทะเบียน
     public function register($email, $firstname, $lastname, $Id_card, $phone, $password, $confirm_password)
     {
@@ -142,6 +151,13 @@ class Host
         $sql = "UPDATE host SET Host_Status = ? WHERE Host_id = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$baned, $host_id]);
+        return true;
+    }
+    public function delete_host($host_id)
+    {
+        $sql = "DELETE FROM host WHERE Host_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$host_id]);
         return true;
     }
 }

@@ -23,7 +23,7 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: #1e5470;
+  background: linear-gradient(155deg, #1e5470 0%, #74adc9ff 100%);
 }
 
 .profile-avatar {
@@ -48,7 +48,7 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: #1e5470;
+  background: linear-gradient(155deg, #1e5470 0%, #74adc9ff 100%);
   display: flex;
   align-items: center;
   justify-content: center;
