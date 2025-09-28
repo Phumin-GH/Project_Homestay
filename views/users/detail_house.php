@@ -19,6 +19,8 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet" />
     <link rel="website icon" type="png" href="../../public/images/logo.png">
     <title>รายละเอียดที่พัก - <?php echo htmlspecialchars($property['Property_name']); ?></title>
 
@@ -70,7 +72,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
     }
 
     .info .host {
-        color: #1a7f37;
+        color: #1e5470;
         font-weight: 500;
     }
 
@@ -148,7 +150,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
     }
 
     .room-card.selected {
-        border: 2px solid #1a7f37;
+        border: 2px solid #1e5470;
         background: #e6fbe6;
     }
 
@@ -170,7 +172,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
 
     .room-status.Available {
         background: #e6fbe6;
-        color: #1a7f37;
+        color: #19475eff;
     }
 
     .room-status.Booked {
@@ -187,7 +189,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
 
     .room-price {
         font-size: 1.1rem;
-        color: #1a7f37;
+        color: #1e5470;
         font-weight: 500;
         margin-bottom: 0.5rem;
     }
@@ -227,7 +229,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
 
     .calendar .today {
         background: #e6fbe6;
-        color: #1a7f37;
+        color: #1e5470;
         border-radius: 4px;
     }
 
@@ -247,7 +249,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
     }
 
     .book-btn {
-        background: #1a7f37;
+        background: #1e5470;
         color: #fff;
         border: none;
         border-radius: 6px;
@@ -264,8 +266,8 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
 
     .book-btn:hover {
         background: #fff;
-        color: #1a7f37;
-        border: 2px solid #1a7f37;
+        color: #1e5470;
+        border: 2px solid #1e5470;
     }
 
     .book-btn:disabled {
@@ -369,7 +371,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
     }
 
     .payment-button:hover {
-        border-color: #1a7f37;
+        border-color: #1e5470;
         background: #f8fbff;
         transform: translateY(-1px);
         box-shadow: 0 4px 12px rgba(26, 127, 55, 0.15);
@@ -380,13 +382,13 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
     }
 
     .payment-button.selected {
-        border-color: #1a7f37;
-        background: #1a7f37;
+        border-color: #1e5470;
+        background: #1e5470;
         color: white;
     }
 
     .payment-button.selected:hover {
-        background: #148a3c;
+        background: #277297ff;
     }
 
     .payment-button i {
@@ -437,12 +439,12 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
     }
 
     .btn-confirm {
-        background: #1a7f37;
+        background: #1e5470;
         color: white;
     }
 
     .btn-confirm:hover {
-        background: #148a3c;
+        background: #277297ff;
         /* transform: translateY(-1px); */
         box-shadow: 0 4px 12px rgba(26, 127, 55, 0.3);
     }
@@ -525,7 +527,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
     .para {
         font-weight: 1200;
         font-size: 1.1rem;
-        color: #148a3c;
+        color: #1e5470;
     }
 
     .Imgslider {
@@ -586,6 +588,71 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
 
     .next {
         right: 15px;
+    }
+
+    .modal {
+        display: none;
+        /* ซ่อนไว้เป็นค่าเริ่มต้น */
+        position: fixed;
+        /* ทำให้ลอยทับเนื้อหาอื่น */
+        z-index: 1000;
+        /* ให้แสดงอยู่ชั้นบนสุด */
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        /* ทำให้เลื่อนได้ถ้าเนื้อหาล้น */
+        background-color: rgba(0, 0, 0, 0.6);
+        /* สีพื้นหลังโปร่งแสง */
+    }
+
+    /* 2. กล่องเนื้อหาของ Modal */
+    .modal-content {
+        background-color: #ffffff;
+        margin: 8% auto;
+        /* จัดให้อยู่กึ่งกลางแนวตั้งและแนวนอน */
+        padding: 2rem;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        max-width: 650px;
+        /* กำหนดความกว้างสูงสุด */
+        position: relative;
+        animation: fadeIn 0.3s;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    /* 3. ปุ่มปิด (กากบาท) */
+    .close-button {
+        color: #aaa;
+        position: absolute;
+        top: 15px;
+        right: 25px;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .close-button:hover,
+    .close-button:focus {
+        color: #000;
+    }
+
+    /* === Calendar Styles === */
+    #calendar {
+        width: 100%;
+        margin: 0 auto;
     }
     </style>
 </head>
@@ -703,9 +770,17 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                     </div>
                     <?php endforeach; ?>
                 </div>
+
+                <!-- <button id="openCalendarBtn" class="button">เปิดปฏิทิน</button>
+                <div id="calendarModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close-button">&times;</span>
+                        <div id="calendar"></div>
+                    </div>
+                </div> -->
                 <div class="booking-map-flex">
                     <div class="map-section" style="flex:1; min-width:280px;">
-                        <div class="section-title">แผนที่ที่พัก</div>
+                        <!-- <div class="section-title">แผนที่ที่พัก</div> -->
                         <!-- <iframe class="map-frame" src="<?php /* echo $maps_url; */ ?>" allowfullscreen=""></iframe> -->
                         <?php /*if ($maps_url):*/ ?>
                         <div id="map" style="width:100%; height:660px; border-radius:10px; margin-top:0.7rem;"></div>
@@ -713,7 +788,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                         <!-- <div style="color:#888;">ไม่มีข้อมูลแผนที่</div> -->
                         <?php /* endif;*/ ?>
                     </div>
-                    <div class="booking-section" style="flex:1; min-width:300px; max-width:380px;">
+                    <div class="booking-section" style="flex:1; min-width:280px;">
                         <!-- <div class="section-title">ปฏิทินการจอง</div>
                         <div class="calendar" id="calendar"></div> -->
                         <div class="booking-form" id="booking-form"
@@ -736,13 +811,12 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                                 <input type="number" id="room_number" name="room_number" min="1" max="20" value=""
                                     style="width:100%; padding:0.5rem; border-radius:6px; border:1px solid #ccc;"
                                     placeholder="Number" readonly>
-                                <input type="number" id="prices" name="prices" min="1" max="1000" value="">
-                                <input type="number" id="roomid" name="roomid" min="1" max="1000" value="">
-                                <input type="number" id="diffDay" name="diffDay" min="1" max="1000" value="">
-                                <input type="number" id="propertyid" name="propertyid" min="1" max="1000" value="">
-                                <input type="number" id="total_price" name="total_price" min="1" value="">
-                                <input type="number" id="total_service" name="total_service" min="1" value="">
-                                <input type="number" id="total_vat" name="total_vat" min="1" value="">
+                                <input type="hidden" id="prices" name="prices" min="1" max="1000" value="">
+                                <input type="hidden" id="roomid" name="roomid" min="1" max="1000" value="">
+                                <input type="hidden" id="diffDay" name="diffDay" min="1" max="1000" value="">
+                                <input type="hidden" id="propertyid" name="propertyid" min="1" max="1000" value="">
+                                <input type="hidden" id="total_price" name="total_price" min="1" value="">
+
                             </div>
                             <div style="margin-bottom:1rem;">
                                 <label for="guests">จำนวนผู้เข้าพัก</label><br>
@@ -752,12 +826,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                             <h3 style="margin-top:1rem; font-weight:bold;">รวมราคา</h3>
                             <div style="margin-top:1rem; ">
                                 <p>จำนวนคืนที่เข้าพัก : <span class="para" id="nights">1</span> คืน</p>
-                                <p>ค่าบริการ : <span class="para" name="display_service"
-                                        id="display_service">0.00</span>
-                                    บาท
-                                </p>
-                                <p>Vat 7% : <span class="para" name="display_vat" id="display_vat">0.00</span> บาท
-                                </p>
+
                                 <p>ราคารวม : <span class="para" name="display_price" id="display_price">0.00</span> บาท
                                 </p>
                             </div>
@@ -836,7 +905,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                                 <option value="1">1 ★</option>
                             </select>
                         </div>
-                        <button type="submit" name="submit_review" class="book-btn"
+                        <button type="submit" name="submit_review" class="btn btn-confirm"
                             style="padding:0.5rem 1.5rem;">ส่งรีวิว</button>
                     </form>
                 </div>
@@ -844,7 +913,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                 <?php if (count($reviews) > 0): ?>
                 <?php foreach ($reviews as $review): ?>
                 <div style="border-bottom:1px solid #eee; padding:1rem 0;">
-                    <div style="font-weight:600; color:#1a7f37;">
+                    <div style="font-weight:600; color:#1e5470;">
                         <?php echo htmlspecialchars($review['User_email']); ?>
                         <span style="color:#f5b301; font-size:1.1rem; margin-left:0.5rem;">
                             <?php for ($i = 0; $i < (int)$review['Rating']; $i++) echo '<i class="fa-solid fa-star"></i>'; ?>
@@ -855,6 +924,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                         <button
                             style="border: none; background: #fff; padding: 10px; border-radius: 15px; cursor: pointer;   "><i
                                 class="fa-solid fa-ellipsis-vertical"></i></button>
+
                     </div>
                     <div style="margin-top:0.3rem; color:#333;">
                         <?php echo nl2br(htmlspecialchars($review['Comment'])); ?>
@@ -870,6 +940,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
     <footer>
         <p>&copy; 2024 Homestay Booking. All rights reserved.</p>
     </footer>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/main.min.js"></script> -->
 
     <script>
     // Initialize payment button listeners after DOM is loaded
@@ -889,21 +960,17 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
         const nightsDisplay = document.getElementById('nights');
         const diffDayDisplay = document.getElementById('diffDay');
         const total_price = document.getElementById('total_price');
-        const total_service = document.getElementById('total_service');
-        const total_vat = document.getElementById('total_vat');
         const prices_amount = document.getElementById('prices');
         const bookingMessage = document.getElementById('bookingMessage');
         const bookBtn = document.getElementById('bookBtn');
         const totalPriceDisplay = document.getElementById('display_price');
-        const totalServiceDisplay = document.getElementById('display_service');
-        const totalVatDisplay = document.getElementById('display_vat');
+
         // ตรวจสอบ DOM elements
-        if (!bookingMessage || !totalPriceDisplay || !totalServiceDisplay || !totalVatDisplay) {
+        if (!bookingMessage || !totalPriceDisplay) {
             console.error('Missing DOM elements:', {
                 bookingMessage,
-                total_price,
-                total_service,
-                total_vat
+                total_price
+
             });
             return;
         }
@@ -966,10 +1033,6 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                 diffDays < 0) {
                 totalPriceDisplay.innerText = '0.00';
                 total_price.value = '0.00';
-                totalServiceDisplay.innerText = '0.00';
-                total_service.value = '0.00';
-                totalVatDisplay.innerText = '0.00';
-                total_vat.value = '0.00';
                 bookingMessage.innerText = 'กรุณาเลือกห้องพักและวันที่เช็คอิน/เช็คเอาท์';
                 bookingMessage.style.color = '#c0392b';
                 bookingMessage.style.fontWeight = 'bold';
@@ -986,13 +1049,12 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                         'Content-Type': 'application/x-www-form-urlencoded' // หรือ 'application/json' แล้วแปลง body เป็น JSON.stringify(...)
                     },
                     body: new URLSearchParams({
-                        room_id: selectedRoomId,
                         property_id: selectedPropertyId,
+                        room_id: selectedRoomId,
                         nights: diffDays,
                         guests: guestsInput.value,
-                        check_in_date: checkinDate,
-                        check_out_date: checkoutDate
-
+                        check_in_date: checkinInput.value,
+                        check_out_date: checkoutInput.value
                     })
                 })
                 .then(response => {
@@ -1001,26 +1063,21 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                 })
                 .then(data => {
                     console.log('Fetch response:', data);
-                    if (data.success === true) {
+                    if (data.check_success === false) {
+                        alert(data.message);
+                        resetForm()
+                    } else if (data.success === true) {
                         // จัดการผลลัพธ์สำเร็จ
-                        totalServiceDisplay.innerText = data.service;
-                        totalVatDisplay.innerText = data.vat;
+
                         totalPriceDisplay.innerText = data.total_price;
-                        total_service.value = data.service;
-                        total_vat.value = data.vat;
                         total_price.value = data.total_price;
                         // prices_amount.value = data.price;
                         bookBtn.disabled = false;
                     } else {
                         // จัดการ error
-                        alert(data.check_msg);
                         console.log(data.message);
                         totalPriceDisplay.innerText = '0.00';
-                        totalServiceDisplay.innerText = '0.00';
-                        totalVatDisplay.innerText = '0.00';
                         total_price.value = '0.00';
-                        total_service.value = '0.00';
-                        total_vat.value = '0.00';
                         bookingMessage.innerText = data.message;
                         bookingMessage.style.color = '#c0392b';
                         bookBtn.disabled = true;
@@ -1031,11 +1088,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                     console.error('Fetch error:', error);
 
                     totalPriceDisplay.innerText = '0.00';
-                    totalServiceDisplay.innerText = '0.00';
-                    totalVatDisplay.innerText = '0.00';
                     total_price.value = '0.00';
-                    total_service.value = '0.00';
-                    total_vat.value = '0.00';
                     bookingMessage.innerText = 'เกิดข้อผิดพลาด: ' + error;
                     bookingMessage.style.color = '#c0392b';
                     bookBtn.disabled = true;
@@ -1084,17 +1137,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                 });
             });
         }
-        // payButtons.forEach(btn => {
-        //     btn.addEventListener('click', function() {
-        //         selectedMethod = btn.dataset.method; // credit-card หรือ qrcode
-        //         console.log('Selected method:', selectedMethod);
-        //         alert('Selected method: ' + selectedMethod);
 
-        //         // เพิ่ม class selected
-        //         payButtons.forEach(b => b.classList.remove('selected'));
-        //         btn.classList.add('selected');
-        //     });
-        // });
         const ConfirmBtn = document.getElementById('confirmBtn');
         ConfirmBtn.addEventListener('click', function(e) {
 
@@ -1114,8 +1157,6 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                             nights: diffDayDisplay.value,
                             guests: guestsInput.value,
                             total_price: prices_amount.value,
-                            vat_values: total_vat.value,
-                            service_values: total_service.value,
                             submit_onl: true
                         })
                     })
@@ -1181,11 +1222,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
             guestsInput.value = '1';
             nightsDisplay.innerText = '';
             totalPriceDisplay.innerText = '0.00';
-            totalServiceDisplay.innerText = '0.00';
-            totalVatDisplay.innerText = '0.00';
             total_price.value = '';
-            total_service.value = '';
-            total_vat.value = '';
             roomid.value = '';
             property.value = '';
             room_number.value = '';
@@ -1355,8 +1392,8 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
         }).then(data => {
             console.log('Fetch response:', data);
             if (data.success === true) {
-                alert('ขอบคุณสำหรับรีวิวของคุณ!');
                 window.location.reload();
+                alert('ขอบคุณสำหรับรีวิวของคุณ!');
             } else {
                 console.log(data.message);
                 alert('เกิดข้อผิดพลาด : ' + data.message);
@@ -1367,6 +1404,48 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
 
         });
     });
+    // document.addEventListener('DOMContentLoaded', function() {
+    //     // --- ส่วนควบคุม Modal ---
+    //     const modal = document.getElementById("calendarModal");
+    //     const openBtn = document.getElementById("openCalendarBtn");
+    //     const closeBtn = document.querySelector(".close-button");
+
+    //     // เมื่อกดปุ่ม "เปิดปฏิทิน"
+    //     openBtn.onclick = function() {
+    //         modal.style.display = "block";
+    //         // ต้อง render ปฏิทินใหม่หลังจากที่ Modal แสดงผลแล้ว
+    //         // เพื่อให้ขนาดของปฏิทินถูกต้อง
+    //         calendar.render();
+    //     }
+
+    //     // เมื่อกดปุ่มปิด (กากบาท)
+    //     closeBtn.onclick = function() {
+    //         modal.style.display = "none";
+    //     }
+
+    //     // เมื่อคลิกที่พื้นที่สีเทานอก Modal
+    //     window.onclick = function(event) {
+    //         if (event.target == modal) {
+    //             modal.style.display = "none";
+    //         }
+    //     }
+
+    //     // --- ส่วนของ FullCalendar ---
+    //     var calendarEl = document.getElementById('calendar');
+    //     var calendar = new FullCalendar.Calendar(calendarEl, {
+    //         initialView: 'dayGridMonth',
+    //         locale: 'th',
+    //         headerToolbar: {
+    //             left: 'prev,next today',
+    //             center: 'title',
+    //             right: 'dayGridMonth,timeGridWeek,listWeek'
+    //         },
+    //         events: '../../controls/get_room.php' // ดึงข้อมูลจากไฟล์ PHP ของคุณ
+    //     });
+
+    //     // ไม่ต้อง render ตอนโหลดหน้าเว็บครั้งแรก แต่จะไป render ตอนเปิด Modal
+    //     // calendar.render(); 
+    // });
     </script>
 </body>
 

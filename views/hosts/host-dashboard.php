@@ -5,7 +5,7 @@ if (!isset($_SESSION["Host_email"])) {
     exit();
 }
 require_once  __DIR__ . "/../../controls/log_hosts.php";
-
+require_once  __DIR__ . "/../../api/get_ListHomestay.php";
 
 ?>
 
@@ -405,14 +405,14 @@ require_once  __DIR__ . "/../../controls/log_hosts.php";
                         <div class="stat-icon properties">
                             <i class="fas fa-home"></i>
                         </div>
-                        <div class="stat-number"><?php echo $approved_properties; ?></div>
+                        <div class="stat-number"><?php echo $total_properties; ?></div>
                         <div class="stat-label">Approved Properties</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon bookings">
                             <i class="fas fa-calendar-check"></i>
                         </div>
-                        <div class="stat-number"><?php echo $bookings_result->rowCount(); ?></div>
+                        <div class="stat-number"><?php echo $total_bookings; ?></div>
                         <div class="stat-label">Total Bookings</div>
                     </div>
                     <div class="stat-card">
@@ -426,7 +426,7 @@ require_once  __DIR__ . "/../../controls/log_hosts.php";
                         <div class="stat-icon reviews">
                             <i class="fas fa-star"></i>
                         </div>
-                        <div class="stat-number"><?php echo $reviews_result->rowCount(); ?></div>
+                        <div class="stat-number"><?php echo $total_reviews; ?></div>
                         <div class="stat-label">Reviews</div>
                     </div>
                 </div>

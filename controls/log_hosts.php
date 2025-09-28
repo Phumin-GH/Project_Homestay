@@ -20,14 +20,14 @@ if (isset($_POST['host_signup'])) {
     $phone = trim($_POST['phone']);
     $password = trim($_POST['password']);
     $confirm_password = trim($_POST['confirm-password']);
-    $result = $hostHandler->register($email, $firstname, $lastname, $Id_card, $phone, $password, $Id_card);
+    $result = $hostHandler->register($email, $firstname, $lastname, $Id_card, $phone, $password, $confirm_password);
     if ($result === true) {
         $hostHandler->login($email, $password);
         $_SESSION['message'] = "Login เรียบร้อย";
         header("Location: ../views/hosts/host-dashboard.php");
         exit();
     } else {
-        $_SESSION['error'] = $result;
+        $_SESSION['error'] = [$result['pwd'], $result['con_pwd']];
         header("Location: ../views/hosts/host-login.php?tab=signup");
         exit();
     }

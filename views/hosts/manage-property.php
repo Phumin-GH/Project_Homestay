@@ -84,10 +84,10 @@ if (!isset($_SESSION["Host_email"])) {
             color: #1e5470;
         }
 
-        .book-btn {
+        /* .book-btn {
             display: inline-block;
             padding: 0.5rem 1rem;
-            background: #3480a7ff;
+            background: #1e5470;
             color: white;
             border-radius: 6px;
             text-decoration: none;
@@ -96,8 +96,34 @@ if (!isset($_SESSION["Host_email"])) {
             transition: background-color 0.2s ease;
         }
 
+
         .book-btn:hover {
-            background: #9cdeffff;
+        } */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-add {
+            background: #1e5470;
+            color: white;
+
+        }
+
+        .btn-add:hover {
+            background: #029ab2ff;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1)
         }
 
         .favorite-btn {
@@ -381,14 +407,14 @@ if (!isset($_SESSION["Host_email"])) {
                                         <form action="edit-property.php" method="POST" style='display:inline;'>
                                             <input type="hidden" name="Property_id"
                                                 value="<?= htmlspecialchars($house['Property_id']) ?>">
-                                            <button type='submit' class="book-btn">
+                                            <button type='submit' class="btn btn-add">
                                                 แก้ไขข้อมูล
                                             </button>
                                         </form>
                                         <form action="views_property.php" method="POST" style='display:inline;'>
                                             <input type="hidden" name="house_id"
                                                 value="<?= htmlspecialchars($house['Property_id']) ?>">
-                                            <button type='submit' class="book-btn">
+                                            <button type='submit' class="btn btn-add">
                                                 ดูรีวิวบ้านพัก
                                             </button>
                                         </form>

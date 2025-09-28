@@ -16,6 +16,134 @@ class Property
         $total_property = $stmt->fetchColumn();
         return $total_property;
     }
+    public function Total_properties($email)
+    {
+        $host_id = $this->get_host_id($email);
+        $sql = "SELECT COUNT(*) FROM property WHERE Host_id = ? AND Property_status = 'approve'";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$host_id]);
+        $total_properties = $stmt->fetchColumn();
+        return  $total_properties;
+    }
+    public function Total_income($email)
+    {
+        $host_id = $this->get_host_id($email);
+        $sql = "SELECT SUM(Host_payout) FROM transactions t
+        INNER JOIN booking b ON t.Booking_id = b.Booking_id
+        INNER JOIN property p ON b.Property_id = p.Property_id
+        INNER JOIN host h ON p.host_id = h.host_id
+        WHERE p.Host_id =? AND p.Property_status = 'approve'";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$host_id]);
+        $total_booking = $stmt->fetchColumn();
+        return $total_booking;
+    }
+    public function Total_reviews($email)
+    {
+        $host_id = $this->get_host_id($email);
+        $sql = "SELECT COUNT(*) FROM review rv INNER JOIN  property p ON rv.Property_id = p.Property_id
+        INNER JOIN host h ON p.Host_id = h.Host_id 
+        WHERE p.Host_id =? ";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$host_id]);
+        $total_reviews = $stmt->fetchColumn();
+        return $total_reviews;
+    }
+    public function Total_booking($email)
+    {
+        $host_id = $this->get_host_id($email);
+        $sql = "SELECT COUNT(*) FROM booking b LEFT JOIN  property p ON b.Property_id = p.Property_id
+        INNER JOIN host h ON h.Host_id = p.Host_id 
+        WHERE p.Host_id =? AND p.Property_status = 'approve'";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$host_id]);
+        $total_booking = $stmt->fetchColumn();
+        return $total_booking;
+    }
+    public function get_host_id($email)
+    {
+        $sql = "SELECT Host_id FROM host WHERE Host_email = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$email]);
+        $host_id = $stmt->fetchColumn();
+        return  $host_id;
+    }
+    public function room_calendar($property_id)
+    {
+        $sql = "SELECT Booking_id,Room_number, User_id, Check_in, Check_out 
+        FROM booking 
+        WHERE Property_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$property_id]);
+        $bookings_from_db = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $events = [];
+        foreach ($bookings_from_db as $booking) {
+            $events[] = [
+                'title'  => 'ห้อง' . $booking['Room_number'],
+                'start'  => $booking['Check_in'],
+                'end'    => $booking['Check_out'],
+                'allDay' => true,
+
+            ];
+        }
+        return $events;
+        // if ($roomId <= 0 || $year <= 0 || $month <= 0 || $month > 12) {
+
+        //     return 'invalid params';
+        // }
+
+        // // Calculate month range
+        // $monthStart = new DateTime(sprintf('%04d-%02d-01', $year, $month));
+        // $monthEnd = clone $monthStart;
+        // $monthEnd->modify('last day of this month');
+
+        // // Fetch bookings overlapping the month (pending or checked_in considered occupied)
+        // $sql = "SELECT Check_in, Check_out FROM booking
+        //     WHERE Room_id = ?
+        //       AND (Check_status = 'Pending' OR Check_status = 'Checked_in')
+        //       AND Booking_status = 'successful'
+        //       AND (
+        //             (Check_in <= :endDate AND Check_out > :startDate)
+        //          OR (Check_in < :endDate AND Check_out >= :startDate)
+        //          OR (Check_in >= :startDate AND Check_out <= :endDate)
+        //       )";
+
+        // $stmt = $this->conn->prepare($sql);
+        // $stmt->execute([
+        //     $roomId,
+        //     ':endDate' => $monthEnd->format('Y-m-d'),
+        //     ':startDate' => $monthStart->format('Y-m-d')
+        // ]);
+        // $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // // Expand to individual dates (inclusive of check-in, exclusive of check-out typical)
+        // $bookedDates = [];
+        // foreach ($rows as $row) {
+        //     $start = new DateTime($row['Check_in']);
+        //     $end = new DateTime($row['Check_out']);
+
+        //     // Clamp to month window
+        //     if ($start < $monthStart) {
+        //         $start = clone $monthStart;
+        //     }
+        //     if ($end > (clone $monthEnd)->modify('+1 day')) {
+        //         $end = (clone $monthEnd)->modify('+1 day');
+        //     }
+
+        //     for ($d = clone $start; $d < $end; $d->modify('+1 day')) {
+        //         $bookedDates[$d->format('Y-m-d')] = true;
+        //     }
+        // }
+
+        // $result = [
+        //     'success' => true,
+        //     'year' => $year,
+        //     'month' => $month,
+        //     'booked' => array_keys($bookedDates)
+        // ];
+        // return $result;
+    }
 
     public function get_manageProperty($email)
     {
@@ -125,7 +253,7 @@ class Property
         //เช็กว่าอัปโหลดรูปมาหรือยัง
         if (isset($_FILES['singleImage']) && $_FILES['singleImage']['error'] === 0) {
             $image = $_FILES['singleImage'];
-            $uploadDir = __DIR__ . '/../images/';
+            $uploadDir = __DIR__ . '/../../public/images/';
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0777, true);
             }
@@ -177,7 +305,7 @@ class Property
                         $stmt->execute([$num, $price, $cap, $uten, $NewProperty]);
                     }
                     if (isset($_FILES['multi_image'])) {
-                        $uploadDir = __DIR__ . '/../images/';
+                        $uploadDir = __DIR__ . '/../../public/images/';
                         if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
                         foreach ($_FILES['multi_image']['tmp_name'] as $key => $tmpName) {
                             $fileName = $_FILES['multi_image']['name'][$key];

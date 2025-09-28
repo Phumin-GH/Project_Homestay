@@ -71,20 +71,6 @@ require_once __DIR__ . "/../../api/get_ListHomestay.php";
         margin-top: 2rem;
     }
 
-    .btn {
-        padding: 0.75rem 1.5rem;
-        border: none;
-        border-radius: 8px;
-        font-size: 1rem;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
     .btn-primary {
         background: #1e5470;
         color: white;
@@ -102,6 +88,47 @@ require_once __DIR__ . "/../../api/get_ListHomestay.php";
 
     .btn-secondary:hover {
         background: #e0e7ff;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        /* display: inline-flex; */
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-primary {
+        background: #1e5470;
+        color: white;
+
+    }
+
+    .btn-primary:hover {
+        background: #029ab2ff;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1)
+    }
+
+    .btn-secondary {
+        background: whitesmoke;
+        color: #1e5470;
+        border: 1.5px solid #1e5470;
+
+    }
+
+    .btn-secondary:hover {
+        background: #029ab2ff;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1)
     }
 
     .input-group {
@@ -163,7 +190,7 @@ require_once __DIR__ . "/../../api/get_ListHomestay.php";
         <div class="main-with-sidebar">
             <div class="form-container">
                 <div class="form-title"><i class="fas fa-user-plus"></i> เพิ่มการจอง Walk-in</div>
-                <form>
+                <form id="Form-Walkin">
                     <h3 id="bookingMessage"></h3>
                     <div class="form-group">
                         <label class="form-label">เลือกบ้านพัก <span style="color:red">*</span></label>
@@ -254,6 +281,7 @@ require_once __DIR__ . "/../../api/get_ListHomestay.php";
     const guests = document.getElementById('guests');
     const propertySelect = document.getElementById('propertySelect');
     const propertyId = document.getElementById('propertyId');
+
     propertySelect.addEventListener('change', function() {
         const selectedOption = propertySelect.options[propertySelect.selectedIndex];
         propertyId.value = selectedOption.dataset.propertyId || '';
@@ -284,11 +312,11 @@ require_once __DIR__ . "/../../api/get_ListHomestay.php";
         }
     });
     [propertySelect, roomSelect, checkinInput, checkoutInput, guests].forEach(el => {
-        el.addEventListener('change', calculateDays);
-        el.addEventListener('input', calculateDays);
+        el.addEventListener('change', calculatePrice);
+        el.addEventListener('input', calculatePrice);
     });
 
-    function calculateDays() {
+    function calculatePrice() {
         const checkinDate = new Date(checkinInput.value);
         const checkoutDate = new Date(checkoutInput.value);
         const timeDiff = checkoutDate - checkinDate;
@@ -304,6 +332,7 @@ require_once __DIR__ . "/../../api/get_ListHomestay.php";
             total_days.value = 0;
             return;
         }
+        console.log(propertyId.value, roomId.value, dayDiff, guests.value, checkinInput.value, checkoutInput.value);
         total_days.value = dayDiff;
         fetch('../../controls/bookings_room.php', {
                 method: 'POST',
@@ -311,9 +340,12 @@ require_once __DIR__ . "/../../api/get_ListHomestay.php";
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
                 body: new URLSearchParams({
+                    property_id: propertyId.value,
                     room_id: roomId.value,
                     nights: dayDiff,
-                    guests: guests.value
+                    guests: guests.value,
+                    check_in_date: checkinInput.value,
+                    check_out_date: checkoutInput.value
 
                 })
             })
@@ -324,14 +356,17 @@ require_once __DIR__ . "/../../api/get_ListHomestay.php";
             })
             .then(data => {
                 console.log('Fetch response :', data);
-                if (data.success) {
+                if (data.check_success === false) {
+                    alert(data.message);
+                    resetForm()
+
+                } else if (data.success === true) {
                     total_price.value = data.total_price;
-                    console.log(data.message);
                 } else {
                     total_price.value = '0.00';
                     bookingMessage.innerText = data.message;
                     bookingMessage.style.color = '#c0392b';
-                    console.log('Error' + data.message);
+                    console.err('Error' + data.message);
                 }
             })
             .catch(error => {
@@ -339,81 +374,76 @@ require_once __DIR__ . "/../../api/get_ListHomestay.php";
                 bookingMessage.innerText = 'เกิดข้อผิดพลาด: ' + error;
                 bookingMessage.style.color = '#c0392b';
                 total_price.value = '0.00';
-                console.log('Error' + error);
+                console.err('Error' + error);
             });
 
     }
     const bookBtn = document.getElementById('bookBtn');
     bookBtn.addEventListener('click', function(e) {
         e.preventDefault();
-        fetch('../../controls/bookings_room.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: new URLSearchParams({
-                    room_id: roomId.value,
-                    property_id: propertyId.value,
-                    check_in_date: checkinInput.value,
-                    check_out_date: checkoutInput.value,
-                    firstName: f_name.value,
-                    lastName: l_name.value,
-                    guestsPhone: g_phone.value,
-                    nights: total_days.value,
-                    total_price: total_price.value,
-                    guests: guests.value,
-                    submit_wki: true
+        if (confirm('คุณยืนยันต้องการจองใช่ไหม?')) {
+            fetch('../../controls/bookings_room.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams({
+                        room_id: roomId.value,
+                        property_id: propertyId.value,
+                        check_in_date: checkinInput.value,
+                        check_out_date: checkoutInput.value,
+                        firstName: f_name.value,
+                        lastName: l_name.value,
+                        guestsPhone: g_phone.value,
+                        nights: total_days.value,
+                        total_price: total_price.value,
+                        guests: guests.value,
+                        submit_wki: true
+                    })
                 })
-            })
-            .then(response => {
-                if (!response.ok) throw new Error('Network response was not ok');
-                return response.json();
-            })
-            .then(data => {
-                console.log('Fetch response :', data);
-                if (data.success === true) {
-                    bookingMessage.innerText = data.message;
-                    bookingMessage.style.color = 'green';
-                    window.location.reload();
-                    alert(data.message);
-                } else {
-                    // bookBtn.disabled = true;
-                    bookingMessage.innerText = data.message;
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Fetch response :', data);
+                    if (data.success === true) {
+                        bookingMessage.innerText = data.message;
+                        bookingMessage.style.color = 'green';
+                        window.location.reload();
+                        alert(data.message);
+                    } else {
+                        // bookBtn.disabled = true;
+                        bookingMessage.innerText = data.message;
+                        bookingMessage.style.color = '#c0392b';
+                        alert(data.message);
+                        window.location.reload();
+                    }
+                })
+                .catch(error => {
+                    console.log('Failed to parse JSON :', error);
+                    bookingMessage.innerText = 'เกิดข้อผิดพลาด: Response ไม่ถูกต้อง';
+                    alert(error);
                     bookingMessage.style.color = '#c0392b';
-                    alert(data.message);
-                    window.location.reload();
-                }
-            })
-            .catch(error => {
-                console.log('Failed to parse JSON :', error);
-                bookingMessage.innerText = 'เกิดข้อผิดพลาด: Response ไม่ถูกต้อง';
-                alert(error);
-                bookingMessage.style.color = '#c0392b';
-                // bookBtn.disabled = false;
-            });
+                    // bookBtn.disabled = false;
+                });
+        }
+
     })
 
     function resetForm() {
-        checkinInput.value = '';
-        checkoutInput.value = '';
-        guests.value = '1';
-        total_price.value = '0.00';
-        roomid.value = '';
-        property.value = '';
-        room_number.value = '';
-        dayDiff.value = '';
-        selectedRoomId = null;
-        selectedPropertyId = null;
-        selectedRoomPrice = 0;
         bookingMessage.innerText = 'กรุณาเลือกห้องพักและวันที่เช็คอิน/เช็คเอาท์';
         bookingMessage.style.color = '#c0392b';
         bookingMessage.style.fontWeight = 'bold';
         bookingMessage.style.textAlign = 'center';
         bookingMessage.style.padding = '1rem';
         bookBtn.disabled = true;
+        const form = document.getElementById("Form-Walkin");
+        form.reset();
     }
-    checkinInput.addEventListener('change', calculateDays);
-    checkoutInput.addEventListener('change', calculateDays);
+
+    checkinInput.addEventListener('change', calculatePrice);
+    checkoutInput.addEventListener('change', calculatePrice);
     propertySelect.addEventListener('change', function() {
         const propertyId = propertySelect.value; // ดึงค่า value
         // ถ้าเลือกบ้านพักว่าง ให้เคลียร์ห้องพัก

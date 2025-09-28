@@ -175,46 +175,6 @@ require_once __DIR__ . '/../../api/get_ListVerify.php';
         user-select: none;
     }
 
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 9999;
-        left: 0;
-        top: 0;
-        width: 100vw;
-        height: 100vh;
-        background: rgba(0, 0, 0, 0.4);
-        align-items: center;
-        justify-content: center;
-    }
-
-    .modal-content {
-        background: #fff;
-        border-radius: 12px;
-        max-width: 1200px;
-        width: 100%;
-        padding: 2rem;
-        position: relative;
-        box-shadow: 0 2px 16px rgba(0, 0, 0, 0.15);
-    }
-
-    .modal-close {
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-        background: none;
-        border: none;
-        font-size: 1.5rem;
-        color: #888;
-        cursor: pointer;
-    }
-
-    .modal-header {
-        font-size: 1.3rem;
-        font-weight: bold;
-        margin-bottom: 1rem;
-    }
-
     .auth-tabs {
         display: flex;
         background: #f8f9fa;
@@ -300,16 +260,20 @@ require_once __DIR__ . '/../../api/get_ListVerify.php';
         background: rgba(0, 0, 0, 0.4);
         align-items: center;
         justify-content: center;
+
     }
 
     .modal-content {
         background: #fff;
         border-radius: 12px;
-        max-width: 1200px;
+        max-width: 500px;
         width: 100%;
         padding: 2rem;
         position: relative;
         box-shadow: 0 2px 16px rgba(0, 0, 0, 0.15);
+        margin: 10rem 0rem 0 30rem;
+        overflow-y: auto;
+        flex-direction: column;
     }
 
     .modal-close {
@@ -327,6 +291,59 @@ require_once __DIR__ . '/../../api/get_ListVerify.php';
         font-size: 1.3rem;
         font-weight: bold;
         margin-bottom: 1rem;
+    }
+
+    .modal-input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        margin-bottom: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .modal-input:focus {
+        border-color: #4A90E2;
+        box-shadow: 0 0 6px rgba(74, 144, 226, 0.4);
+        outline: none;
+    }
+
+    .close {
+        position: absolute;
+        right: 15px;
+        top: 10px;
+        font-size: 24px;
+        cursor: pointer;
+    }
+
+    .closeBtn {
+        background-color: #ccc;
+        margin-left: 10px;
+    }
+
+
+    .contact-btn {
+        background-color: #1e5470;
+        color: white;
+    }
+
+    .contact-btn:hover {
+        background-color: #2a6f97;
+    }
+
+    .action-btn {
+        padding: 0.6rem 1.2rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 500;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
     }
     </style>
 </head>
@@ -427,24 +444,18 @@ require_once __DIR__ . '/../../api/get_ListVerify.php';
                                 <td>
 
 
-                                    <button type="button" class="btn btn-edit" title="แก้ไข" onclick="OpenModal()"><i
+                                    <button type="button" class="btn btn-edit" title="แก้ไข"
+                                        data-user-id="<?php echo htmlspecialchars($user['User_id']); ?>"
+                                        data-firstname="<?php echo htmlspecialchars($user['Firstname']); ?>"
+                                        data-lastname="<?php echo htmlspecialchars($user['Lastname']); ?>"
+                                        data-phone="<?php echo htmlspecialchars($user['Phone']); ?>" name="edit-btn"><i
                                             class="fas fa-edit"></i></button>
-
-                                    <!-- <form method="post" action="delete-user.php" style="display:inline;"
-                                                onsubmit="return confirm('คุณต้องการลบผู้ใช้นี้หรือไม่?');">
-                                                <input type="hidden" name="user_id" value="<?php echo $user['User_id']; ?>">
-                                                <button type="submit" class="btn btn-delete" title="ลบ"><i
-                                                        class="fas fa-trash"></i></button>
-                                            </form> -->
-                                    <form method="post" action="toggle-ban-user.php" style="display:inline;">
+                                    <form method="post" action="../../controls/manage_toggle.php"
+                                        style="display:inline;"
+                                        onsubmit="return confirm('คุณต้องการแบนผู้ใช้นี้หรือไม่?');">
                                         <input type="hidden" name="user_id" value="<?php echo $user['User_id']; ?>">
-
-                                        <button type="submit" class="btn btn-ban" title="แบน"><i
+                                        <button type="submit" class="btn btn-ban" title="แบน" name="ban_user"><i
                                                 class="fas fa-ban"></i></button>
-
-                                        <!-- <button type="submit" class="btn btn-unban" title="ปลดแบน"><i
-                                                class="fas fa-undo"></i></button> -->
-
                                     </form>
                                 </td>
                             </tr>
@@ -491,26 +502,12 @@ require_once __DIR__ . '/../../api/get_ListVerify.php';
                                         class="<?php echo $statusClass; ?>"><?php echo htmlspecialchars($status); ?></span>
                                 </td>
                                 <td>
-                                    <!-- <form method="post" action="edit-user.php" style="display:inline;">
+                                    <form method="post" action="../../controls/manage_toggle.php"
+                                        style="display:inline;"
+                                        onsubmit="return confirm('คุณต้องการปลดแบนผู้ใช้นี้หรือไม่?');">
                                         <input type="hidden" name="user_id" value="<?php echo $user['User_id']; ?>">
-                                        <button type="submit" class="btn btn-edit" title="แก้ไข"><i
-                                                class="fas fa-edit"></i></button>
-                                    </form> -->
-                                    <form method="post" action="delete-user.php" style="display:inline;"
-                                        onsubmit="return confirm('คุณต้องการลบผู้ใช้นี้หรือไม่?');">
-                                        <input type="hidden" name="user_id" value="<?php echo $user['User_id']; ?>">
-                                        <button type="submit" class="btn btn-delete" title="ลบ"><i
-                                                class="fas fa-trash"></i></button>
-                                    </form>
-                                    <form method="post" action="toggle-ban-user.php" style="display:inline;">
-                                        <input type="hidden" name="user_id" value="<?php echo $user['User_id']; ?>">
-
-                                        <button type="submit" class="btn btn-ban" title="แบน"><i
+                                        <button type="submit" class="btn btn-ban" title="แบน" name="rej_user"><i
                                                 class="fas fa-ban"></i></button>
-
-                                        <!-- <button type="submit" class="btn btn-unban" title="ปลดแบน"><i
-                                                class="fas fa-undo"></i></button> -->
-
                                     </form>
                                 </td>
                             </tr>
@@ -557,25 +554,14 @@ require_once __DIR__ . '/../../api/get_ListVerify.php';
                                         class="<?php echo $statusClass; ?>"><?php echo htmlspecialchars($status); ?></span>
                                 </td>
                                 <td>
-                                    <!-- <form method="post" action="edit-user.php" style="display:inline;">
-                                                <input type="hidden" name="user_id" value="<?php echo $user['User_id']; ?>">
-                                                <button type="submit" class="btn btn-edit" title="แก้ไข" id="edit-btn"><i
-                                                        class="fas fa-edit"></i></button>
-                                            </form> -->
-                                    <form method="post" action="delete-user.php" style="display:inline;"
-                                        onsubmit="return confirm('คุณต้องการลบผู้ใช้นี้หรือไม่?');">
-                                        <input type="hidden" name="user_id" value="<?php echo $user['User_id']; ?>">
-                                        <button type="submit" class="btn btn-delete" title="ลบ" id="del-btn"><i
-                                                class="fas fa-trash"></i></button>
-                                    </form>
-                                    <form method="post" action="toggle-ban-user.php" style="display:inline;">
+
+                                    <form method="post" action="../../controls/manage_toggle.php"
+                                        style="display:inline;">
                                         <input type="hidden" name="user_id" value="<?php echo $user['User_id']; ?>">
 
-                                        <button type="submit" class="btn btn-ban" title="แบน" id="ban-btn"><i
-                                                class="fas fa-ban"></i></button>
+                                        <button type="submit" class="btn btn-ban" title="แบน" id="ban-btn"
+                                            name="rej_user"><i class="fas fa-ban"></i></button>
 
-                                        <!-- <button type="submit" class="btn btn-unban" title="ปลดแบน"><i
-                                                class="fas fa-undo"></i></button> -->
 
                                     </form>
                                 </td>
@@ -594,7 +580,20 @@ require_once __DIR__ . '/../../api/get_ListVerify.php';
             </div>
         </div>
     </div>
-
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 class="modal-header">การแก้ไขข้อมูลผู้ใช้</h2>
+            <form id="editForm">
+                <input type="hidden" id="userIdInput">
+                <input type="text" class="modal-input" name="Firstname" id="firstname">
+                <input type="text" class="modal-input" name="Lastname" id="lastname">
+                <input type="number" class="modal-input" name="Phone" id="phone">
+                <button type="submit" class="action-btn contact-btn">ส่งข้อมูล</button>
+                <button type="button" id="closeBtn" class="btn btn-delete">ยกเลิก</button>
+            </form>
+        </div>
+    </div>
 
     <script>
     function toggleSidebar() {
@@ -605,56 +604,100 @@ require_once __DIR__ . '/../../api/get_ListVerify.php';
     }
     document.addEventListener("DOMContentLoaded", function() {
 
-        const edit_btn = document.getElementById("edit-btn");
-        const del_btn = document.getElementById("del-btn");
-        const ban_btn = document.getElementById("ban-btn");
-
-        const userActiveTab = document.getElementById('user-active-tab');
-        const userBannedTab = document.getElementById('user-banned-tab');
-        const userInactiveTab = document.getElementById('user-inactive-tab');
-        const userActiveSection = document.getElementById('user-active-section');
-        const userBannedSection = document.getElementById('user-banned-section');
-        const userInactiveSection = document.getElementById('user-inactive-section');
-
-        userActiveTab.addEventListener('click', function() {
-            userActiveTab.classList.add('active');
-            userBannedTab.classList.remove('active');
-            userInactiveTab.classList.remove('active');
-            userActiveSection.style.display = 'block';
-            userBannedSection.style.display = 'none';
-            userInactiveSection.style.display = 'none';
+        // const ban_btn = document.getElementById("ban-btn");
+        const modal = document.getElementById("editModal");
+        const edit_btn = document.getElementsByName('edit-btn');
+        const span = document.querySelector(".close");
+        const closeBtn = document.getElementById("closeBtn");
+        const editform = document.getElementById("editForm");
+        edit_btn.forEach(btn => {
+            btn.onclick = function() {
+                const userId = this.dataset.userId;
+                const firstname = this.dataset.firstname;
+                const lastname = this.dataset.lastname;
+                const phone = this.dataset.phone;
+                document.getElementById("userIdInput").value = userId;
+                document.getElementById('firstname').value = firstname;
+                document.getElementById('lastname').value = lastname;
+                document.getElementById('phone').value = phone;
+                modal.style.display = "block";
+            };
         });
-        userBannedTab.addEventListener('click', function() {
-            userBannedTab.classList.add('active');
-            userActiveTab.classList.remove('active');
-            userInactiveTab.classList.remove('active');
-            userBannedSection.style.display = 'block';
-            userActiveSection.style.display = 'none';
-            userInactiveSection.style.display = 'none';
-        });
-        userInactiveTab.addEventListener('click', function() {
-            userInactiveTab.classList.add('active');
-            userActiveTab.classList.remove('active');
-            userBannedTab.classList.remove('active');
-            userInactiveSection.style.display = 'block';
-            userActiveSection.style.display = 'none';
-            userBannedSection.style.display = 'none';
-        });
-
-        function OpenModal() {
-            document.getElementById('OpenModal').style.display = 'flex';
-        }
-
-        function closeModal() {
-            document.getElementById('OpenModal').style.display = 'none';
-        }
-
-        window.onclick = function(event) {
-            const modal = document.getElementById('OpenModal');
-
-            if (event.target === modal) {
-                closeModal();
+        span.onclick = () => modal.style.display = "none";
+        closeBtn.onclick = () => modal.style.display = "none";
+        window.onclick = (e) => {
+            if (e.target == modal) {
+                modal.style.display = "none";
             }
+        }
+        editform.onsubmit = (e) => {
+            e.preventDefault();
+
+            const firstname = document.getElementById("firstname").value;
+            const lastname = document.getElementById('lastname').value;
+            const phone = document.getElementById('phone').value;
+            const user_id = document.getElementById('userIdInput').value;
+            // ตรวจสอบว่ามีข้อมูลครบถ้วน
+            if (!firstname || !lastname || !phone) {
+                alert('เกิดข้อผิดพลาด: ไม่พบข้อมูลที่แก้ไข');
+                return;
+            }
+            // ส่งข้อมูลไปยัง Server
+            fetch('../../controls/edit_users.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    // ใช้ข้อมูลที่ดึงมาจาก hidden input
+                    body: new URLSearchParams({
+                        firstname: firstname,
+                        lastname: lastname,
+                        phone: phone,
+                        user_id: user_id,
+                        edit_user: true
+
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+
+                        modal.style.display = "none";
+                        window.location.reload();
+                    } else {
+                        alert(data.message);
+                    }
+                    console.log(data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('เกิดข้อผิดพลาดในการแก้ไขข้อมูล');
+                });
+        };
+    });
+    const tabs = [
+        document.getElementById('user-active-tab'),
+        document.getElementById('user-banned-tab'),
+        document.getElementById('user-inactive-tab')
+    ];
+    const tables = [
+        document.getElementById('user-active-section'),
+        document.getElementById('user-banned-section'),
+        document.getElementById('user-inactive-section')
+    ];
+
+    function showTab(tabToShow, tableToShow) {
+        tabs.forEach(tab => tab.classList.remove('active'));
+        tables.forEach(table => table.style.display = 'none');
+        tabToShow.classList.add('active');
+        tableToShow.style.display = 'block';
+    }
+    tabs.forEach((tab, index) => {
+        if (tab) {
+            tab.addEventListener('click', function() {
+                showTab(tab, tables[index]);
+            });
         }
     });
     </script>

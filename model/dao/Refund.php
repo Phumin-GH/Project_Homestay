@@ -59,7 +59,10 @@ class Refund
             return $user_id;
         }
         $check_refund = $this->check_refund($booking_id, $user_id);
-        if ($check_refund > 0) {
+        $gateway = $this->check_gateway($booking_id);
+        if ($gateway === 'Qrcode') {
+            return "รายการคุณเลือกไม่สามารถทำการขอคืนเงินได้";
+        } elseif ($check_refund > 0) {
             return "คุณได้ทำการขอคืนเงินสำหรับการจองนี้แล้ว";
         }
         $insertSQL = "INSERT INTO refund (User_id,Booking_id, Refund_reason) VALUES (?, ?, ?)";
@@ -90,14 +93,6 @@ class Refund
             return "เกิดข้อผิดพลาดในการส่งคำขอคืนเงิน: " . $e->getMessage();
         }
     }
-    public function check_refund($booking_id, $user_id)
-    {
-        $sql = "SELECT COUNT(*) FROM refund WHERE Booking_id = ? AND User_id = ?";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$booking_id, $user_id]);
-        $refund = $stmt->fetchColumn();
-        return $refund;
-    }
     public function percen($percen)
     {
         $sql = "SELECT Re_Policy_id FROM refund_policy WHERE Refund_percen = ?";
@@ -105,17 +100,6 @@ class Refund
         $stmt->execute([$percen]);
         $policy = $stmt->fetch(PDO::FETCH_ASSOC);
         return $policy['Re_Policy_id'];
-    }
-    public function get_id($email)
-    {
-        $sql = "SELECT User_id FROM user WHERE User_email = ?";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$email]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
-        if (!$user) {
-            return  "ไม่พบผู้ใช้";
-        }
-        return $user['User_id'];
     }
     public function Check_policy($nights)
     {
@@ -130,37 +114,84 @@ class Refund
         }
         return 0;
     }
-
-    public function approve_refund($refund_id)
+    public function check_refund($booking_id, $user_id)
     {
-        if (!$refund_id) {
+        $sql = "SELECT COUNT(*) FROM refund WHERE Booking_id = ? AND User_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        try {
+            $stmt->execute([$booking_id, $user_id]);
+            $refund = $stmt->fetchColumn();
+            return $refund;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+    public function check_gateway($booking_id)
+    {
+        $sql = "SELECT Payment_gateway FROM refund WHERE Booking_id = ? ";
+        $stmt = $this->conn->prepare($sql);
+        try {
+            $stmt->execute([$booking_id]);
+            $gateway = $stmt->fetchColumn();
+            return $gateway;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public function get_id($email)
+    {
+        $sql = "SELECT User_id FROM user WHERE User_email = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$email]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$user) {
+            return  "ไม่พบผู้ใช้";
+        }
+        return $user['User_id'];
+    }
+
+
+    public function approve_refund($email, $refund_id)
+    {
+        $host = $this->get_Host_id($email);
+        if (!$refund_id || !$host) {
             return "ข้อมูลไม่ครบถ้วน!!!";
         }
-        $updateSQL = "UPDATE refund SET Host_Check = 'approve' WHERE Booking_id = ?";
+        $updateSQL = "UPDATE refund SET Host_id=?, Host_Check = 'approve' WHERE Booking_id = ?";
         $stmt = $this->conn->prepare($updateSQL);
         try {
-            $stmt->execute([$refund_id]);
+            $stmt->execute([$host, $refund_id]);
             return true;
         } catch (PDOException $e) {
             return "เกิดข้อผิดพลาดในการอนุมัติคำขอคืนเงิน: " . $e->getMessage();
         }
     }
-
-    public function reject_refund($refund_id)
+    public function get_Host_id($email)
     {
-        if (!$refund_id) {
-            return "ข้อมูลไม่ครบถ้วน!";
+        $sql = "SELECT Host_id FROM host WHERE Host_email = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$email]);
+        $host = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $host['Host_id'];
+    }
+
+    public function reject_refund($email, $refund_id)
+    {
+        $host = $this->get_Host_id($email);
+        if (!$refund_id || !$host) {
+            return "ข้อมูลไม่ครบถ้วน!!!";
         }
-        $updateSQL = "UPDATE refund SET Host_Check = 'cancel' WHERE Refund_id = ?";
+        $updateSQL = "UPDATE refund SET Host_id=?,Host_Check = 'cancel' WHERE Refund_id = ?";
         $stmt = $this->conn->prepare($updateSQL);
         try {
-            $stmt->execute([$refund_id]);
+            $stmt->execute([$host, $refund_id]);
             return true;
         } catch (PDOException $e) {
             return "เกิดข้อผิดพลาดในการปฏิเสธคำขอคืนเงิน: " . $e->getMessage();
         }
     }
-    public function get_verify_refund()
+    public function get_pending_refund()
     {
         $sql = "SELECT r.Refund_id,b.Booking_id,b.Charge_id,p.Property_name,
         u.Firstname,u.Lastname,h.Host_firstname,h.Host_lastname,
@@ -180,13 +211,15 @@ class Refund
     {
         $sql = "SELECT r.Refund_id,b.Booking_id,b.Charge_id,p.Property_name,
         u.Firstname,u.Lastname,h.Host_firstname,h.Host_lastname,
-        r.Refund_amount,r.Refund_reason,r.Refund_status,r.Refund_date 
+        r.Refund_reason,r.Refund_status,r.Refund_date,r.Refund_amount
         FROM refund r 
         INNER JOIN booking b ON r.Booking_id = b.Booking_id
-        INNER JOIN user u ON r.User_id = u.User_id
         INNER JOIN property p ON b.Property_id = p.Property_id
+        INNER JOIN user u ON r.User_id = u.User_id
         INNER JOIN host h ON p.Host_id = h.Host_id
-         WHERE r.Host_Check = 'approve' AND r.Refund_status = 'approve'";
+        WHERE r.Host_Check = 'approve' AND r.Refund_status = 'approve'
+
+        ";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         $refunds = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -198,7 +231,7 @@ class Refund
         if (!$booking_id) {
             return "ข้อมูลไม่ครบถ้วน!";
         }
-        $updateSQL = "UPDATE booking SET Booking_status = 'failed' WHERE Booking_id = ?";
+        $updateSQL = "UPDATE booking SET Booking_status = 'cancel' WHERE Booking_id = ?";
         $stmt = $this->conn->prepare($updateSQL);
         try {
             $stmt->execute([$booking_id]);

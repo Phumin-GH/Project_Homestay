@@ -9,7 +9,8 @@ class Booking
     }
     public function total_income()
     {
-        $sql = "SELECT SUM(Booking_service + Booking_vat)AS Total FROM booking WHERE Payment_status = 'paid' AND Booking_status = 'successful'";
+        // $sql = "SELECT SUM(Booking_service + Booking_vat)AS Total FROM booking WHERE Payment_status = 'paid' AND Booking_status = 'successful'";
+        $sql = "SELECT SUM(Platform_fee) AS Total FROM transactions WHERE Transaction_status ='paid'";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         $total_income = $stmt->fetchColumn();
@@ -24,19 +25,19 @@ class Booking
         return $total_booking;
     }
     // Method สำหรับการเข้าสู่ระบบ
-    public function book_online($email, $property_id, $room_id, $check_in_date, $check_out_date,  $nights, $guests, $total_price, $service, $vat)
+    public function book_online($email, $property_id, $room_id, $check_in_date, $check_out_date,  $nights, $guests, $total_price)
     {
         $stmt = $this->conn->prepare("SELECT User_id FROM user WHERE User_email = ?");
         $stmt->execute([$email]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
-        if (!$user || !$service || !$vat) {
-            return  "ไม่พบข้อมูลผู้ใช้หรือค่าบริการ/ภาษีไม่ถูกต้อง";
+        if (!$user) {
+            return  "ไม่พบข้อมูลผู้ใช้";
         }
         $insertSQL = "INSERT INTO booking 
-            (User_id, Property_id, Room_id, Check_in, Check_out, Guests, Night, Total_price,Booking_service,Booking_vat) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            (User_id, Property_id, Room_id, Check_in, Check_out, Guests, Night, Total_price) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $this->conn->prepare($insertSQL);
-        $stmt->execute([$user['User_id'], $property_id, $room_id, $check_in_date, $check_out_date, $guests, $nights, $total_price, $service, $vat]);
+        $stmt->execute([$user['User_id'], $property_id, $room_id, $check_in_date, $check_out_date, $guests, $nights, $total_price]);
         $booking_id = $this->conn->lastInsertId();
 
         return $booking_id;
@@ -50,10 +51,7 @@ class Booking
         if (!$property_id || !$room_id || !$f_name || !$l_name || !$phone) {
             return "กรุณากรอกข้อมูล บ้านพัก ห้องและชื่อผู้เข้าพัก";
         }
-        $today = date('Y-m-d');
-        if ($check_in_date < $today || empty($check_in_date) || empty($check_out_date) || strtotime($check_out_date) <= strtotime($check_in_date)) {
-            return "กรุณากรอกวันที่ให้ถูกต้อง";
-        }
+
         $insertSQL = "INSERT INTO walkin ( Property_id, Room_id,Firstname,Lastname, Phone,Check_in,Check_out,Night,Guests,Total_price,Payment_status) 
                   VALUES (?, ?, ?, ?, ?, ?, ?,?,?,?,?)";
         $stmt = $this->conn->prepare($insertSQL);
@@ -72,13 +70,13 @@ class Booking
             return "ไม่พบข้อมูลห้องพักที่เลือก";
         }
         $price_per_night = $room['Room_price'];
-        $base_guests = 4;
-        $extra_guest_fee = 200;
+        // $base_guests = 4;
+        // $extra_guest_fee = 200;
         // $service_fee = 100;
         $total_price = $nights * $price_per_night;
-        if ($guests > $base_guests) {
-            $total_price += ($guests - $base_guests) * $extra_guest_fee * $nights;
-        }
+        // if ($guests > $base_guests) {
+        //     $total_price += ($guests - $base_guests) * $extra_guest_fee * $nights;
+        // }
         // $total_price += $service_fee;
         if ($total_price < 0) {
             $total_price = 0;
@@ -104,6 +102,7 @@ class Booking
         $stmt->execute([$booking_id]);
         return true;
     }
+
     public function PaymentStatus($charge_id, $payment_status, $qrcode, $booking_id, $booking_status)
     {
         if (!$charge_id || !$payment_status || !$qrcode || !$booking_id || !$booking_status) {
@@ -158,44 +157,58 @@ class Booking
         $stmt->execute([$email]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        $stmt = $this->conn->prepare("SELECT b.User_id,p.Property_name,
-        p.Property_province,p.Property_district,p.Property_subdistrict,p.Property_image
-        ,b.Booking_id,h.Host_firstname,h.Host_lastname,h.Host_phone,b.Check_in,b.Check_out
-        ,b.Guests,b.Night,b.Booking_status,b.Total_price
-        ,b.Payment_status,b.Create_at,b.Check_status,rf.Refund_status,rf.Host_check FROM booking b 
-        INNER JOIN property p ON b.Property_id = p.Property_id 
-        INNER JOIN host h ON p.Host_id = h.Host_id
-        INNER JOIN refund rf ON rf.Host_id = h.Host_id
-        WHERE b.User_id = ? && b.Booking_status= 'failed' && Payment_status = 'paid'
-        ORDER BY b.Create_at DESC");
+        $stmt = $this->conn->prepare("SELECT b.User_id, p.Property_name, p.Property_province, p.Property_district, p.Property_subdistrict, p.Property_image, b.Booking_id, h.Host_firstname, h.Host_lastname,
+         h.Host_phone, b.Check_in, b.Check_out, b.Guests, b.Night, b.Booking_status, b.Total_price,
+          b.Payment_status, b.Create_at, b.Check_status, rf.Refund_status, rf.Host_check ,b.Payment_gateway
+          FROM booking b 
+          INNER JOIN property p ON b.Property_id = p.Property_id 
+          INNER JOIN host h ON p.Host_id = h.Host_id 
+          LEFT JOIN refund rf ON b.Booking_id = rf.Booking_id 
+          WHERE b.User_id = ? AND b.Booking_status = 'cancel' AND b.Payment_status = 'paid' 
+          ORDER BY b.Create_at DESC;");
         $stmt->execute([$user['User_id']]);
         $cancel_booking = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $cancel_booking;
     }
-    public function  check_Calender($property_id, $room_id, $check_in, $check_out)
+    public function check_Calender($property_id, $room_id, $check_in, $check_out)
     {
-        // if (!$room_id || !$check_in || !$check_out) {
-        //     return "กรุณาเลือกห้องพักและวันที่";
-        // }
-        // $stmt = $this->conn->prepare("SELECT COUNT(*) FROM booking 
-        // WHERE Room_id = ? AND Property_id = ? AND
-        // ( (Check_in <= ? AND Check_out > ?) OR 
-        //   (Check_in < ? AND Check_out >= ?) OR 
-        //   (Check_in >= ? AND Check_out <= ?) ) AND 
-        // Booking_status = 'successful' AND Check_status != 'Cancelled'");
-        $stmt = $this->conn->prepare("SELECT COUNT(*) FROM booking 
-        WHERE Room_id = ? AND Property_id = ? AND
-        ( (Check_in <= ? AND Check_out > ?) OR 
-          (Check_in < ? AND Check_out >= ?) OR 
-          (Check_in >= ? AND Check_out <= ?) )");
-        $stmt->execute([$room_id, $property_id, $check_in, $check_in, $check_out, $check_out, $check_in, $check_out]);
-        $count = $stmt->fetchColumn();
+        $stmt = $this->conn->prepare("SELECT SUM(conflict_count) AS total_conflicts FROM (
+            SELECT COUNT(*) as conflict_count
+            FROM booking
+            WHERE 
+                Room_id = ?
+                AND Property_id = ?
+                AND (Booking_status = 'Pending' OR Check_status = 'Checked_in')
+                AND Check_in < ?  
+                AND Check_out > ? 
+            UNION ALL
+            SELECT COUNT(*) as conflict_count
+            FROM walkin
+            WHERE 
+                Room_id = ?
+                AND Property_id = ?
+                AND (Walkin_status = 'successful' OR Check_status = 'Checked_in' OR Check_status = 'Pending' ) 
+                AND Check_in < ?
+                AND Check_out > ?
+        ) AS combined_bookings
+
+        ");
+        $stmt->execute([
+            $room_id,
+            $property_id,
+            $check_out,
+            $check_in,
+            $room_id,
+            $property_id,
+            $check_out,
+            $check_in
+        ]);
+        $count = (int)$stmt->fetchColumn();
         if ($count > 0) {
-            return "ห้องพักไม่ว่างในช่วงวันที่เลือก";
+            return false;
         }
         return true;
     }
-
     public function get_Refund_Book($email)
     {
         $stmt = $this->conn->prepare("SELECT User_id FROM user WHERE User_email = ?  ");
@@ -206,12 +219,16 @@ class Booking
         p.Property_province,p.Property_district,p.Property_subdistrict,p.Property_image
         ,b.Booking_id,h.Host_firstname,h.Host_lastname,h.Host_phone,b.Check_in,b.Check_out
         ,b.Guests,b.Night,b.Booking_status,b.Total_price
-        ,b.Payment_status,b.Create_at,b.Check_status,rf.Refund_status,rf.Host_check FROM booking b 
+        ,b.Payment_status,b.Create_at,b.Check_status,rf.Refund_status,rf.Refund_date,rf.Host_check FROM booking b 
         INNER JOIN property p ON b.Property_id = p.Property_id 
         INNER JOIN host h ON p.Host_id = h.Host_id
-        INNER JOIN refund rf ON rf.Host_id = h.Host_id
-        WHERE b.User_id = ? && b.Booking_status= 'failed' && Payment_status = 'paid' && rf.Refund_status='approve'
-        ORDER BY b.Create_at DESC");
+        INNER JOIN refund rf ON rf.Booking_id = b.Booking_id
+        WHERE b.User_id = ? && b.Booking_status= 'cancel' && Payment_status = 'paid' &&
+        ((rf.Host_check='approve'  AND rf.Refund_status='approve')OR
+        (rf.Host_check='pending'  AND rf.Refund_status='pending')OR
+        (rf.Host_check='approve'  AND rf.Refund_status='pending')
+        )
+        ORDER BY rf.Refund_date DESC");
         $stmt->execute([$user['User_id']]);
         $refund_booking = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $refund_booking;
@@ -315,13 +332,31 @@ FROM (
         if (!$booking_id) {
             return "ไม่มีข้อมูลการจอง";
         }
-        $updateSQL = "UPDATE booking SET Booking_status = 'failed', Check_status = 'Cancelled' WHERE Booking_id = ?";
+        $updateSQL = "UPDATE booking SET Booking_status = 'cancel', Check_status = 'Cancelled' WHERE Booking_id = ?";
         $stmt = $this->conn->prepare($updateSQL);
         try {
             $stmt->execute([$booking_id]);
-            return true;
+            $type = 'cancel';
+            $status = 'cancel';
+            $transaction = $this->update_transaction($type, $status, $booking_id);
+            if ($transaction === true) {
+                return true;
+            } else {
+                return $transaction;
+            }
         } catch (PDOException $e) {
             return "เกิดข้อผิดพลาดในการยกเลิกการจอง: " . $e->getMessage();
+        }
+    }
+    public function update_transaction($type, $status, $booking_id)
+    {
+        $updateSQL = "UPDATE transactions SET Transaction_status = ?, Transaction_type = ? WHERE Booking_id = ?";
+        $stmt = $this->conn->prepare($updateSQL);
+        try {
+            $stmt->execute([$status, $type, $booking_id]);
+            return true;
+        } catch (Exception $e) {
+            return $e->getMessage();
         }
     }
 }

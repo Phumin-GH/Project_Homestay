@@ -14,6 +14,7 @@ if (isset($_SESSION['Admin_email'])) {
         // $lastname = $_POST['Lastname'];
         // $email = $_POST['Email'];
         // $phone = $_POST['Phone'];
+
         if (isset($_POST['approve_host'])) {
             $approved = 'active';
             $result = $HostmanageHandler->approve_host($approved, $host_id);
@@ -43,16 +44,17 @@ if (isset($_SESSION['Admin_email'])) {
 
         if (isset($_POST['rej_user'])) {
             $reject = 'active';
-            $result = $manageHandler->reject_host($reject, $host_id);
-        } elseif (isset($_POST['del_user'])) {
-            $result = $manageHandler->delete_host($host_id);
+            $result = $UsermanageHandler->reject_user($reject, $user_id);
+        } elseif (isset($_POST['rej_user'])) {
+            $reject = 'active';
+            $result = $UsermanageHandler->reject_user($user_id, $reject);
         } elseif (isset($_POST['edit_user'])) {
-            $result = $manageHandler->edit_host($firstname, $lastname, $email, $phone, $host_id);
+            $result = $UsermanageHandler->edit_user($firstname, $lastname, $email, $phone, $user_id);
         } elseif (isset($_POST['ban_user'])) {
-            $baned = 'ban';
-            $result = $manageHandler->ban_host($baned, $host_id);
+            $baned = 'banned';
+            $result = $UsermanageHandler->ban_user($baned, $user_id);
         }
-        header("Location: ../views/admin/manage-hosts.php");
+        header("Location: ../views/admin/manage-users.php");
         exit();
     }
 }

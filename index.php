@@ -137,8 +137,8 @@ require_once __DIR__ . "/api/get_ListHomestay.php";
             </div>
             <div class="menu">
                 <ul>
-                    <li><a href="#" class="active">Home</a></li>
-                    <li><a href="#">About</a></li>
+                    <li><a id="scollHome" class="active">Home</a></li>
+                    <li><a id="scrollToReviewsBtn">About</a></li>
                     <li><a href="#">Contact</a></li>
 
                     <li class="dropdown">
@@ -159,7 +159,7 @@ require_once __DIR__ . "/api/get_ListHomestay.php";
         </nav>
     </header>
     <main>
-        <div class="banner-slider">
+        <div class="banner-slider" id="image_banner">
             <img src="public/images/logo/banner1.jpg" class="active" alt="Banner">
             <img src="public/images/logo/banner2.jpg" alt="Banner">
             <img src="public/images/logo/banner3.jpg" alt="Banner">
@@ -201,7 +201,7 @@ require_once __DIR__ . "/api/get_ListHomestay.php";
                             <span style="color:#f5b301; font-size:1.1rem; margin-left:0.5rem;">
                                 <i class="fa-solid fa-star"></i>
                             </span>
-                            <?php echo isset($house['Rating']) ? round($house['Rating'], 1): 'ไม่มีคะแนนรีวิว'; ?>
+                            <?php echo isset($house['Rating']) ? round($house['Rating'], 1) : 'ไม่มีคะแนนรีวิว'; ?>
                         </div>
                         <p>
                             <?= htmlspecialchars($house['Host_firstname'] . ' ' . $house['Host_lastname']) ?>
@@ -221,7 +221,7 @@ require_once __DIR__ . "/api/get_ListHomestay.php";
         </section>
     </main>
 
-    <footer>
+    <footer id="reviews-container">
         <p>&copy; 2024 Homestay Booking. All rights reserved.</p>
     </footer>
 
@@ -229,6 +229,25 @@ require_once __DIR__ . "/api/get_ListHomestay.php";
 
     <script src=" public/js/Barscript.js"></script>
     <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const scrollButton = document.getElementById('scrollToReviewsBtn');
+        const targetDiv = document.getElementById('reviews-container');
+        const img = document.getElementById('image_banner');
+        const scoll = document.getElementById('scollHome');
+        scrollButton.onclick = function() {
+
+            targetDiv.scrollIntoView({
+                behavior: 'smooth', // ทำให้การเลื่อนนุ่มนวล
+                block: 'start' // จัดให้ส่วนบนของ div อยู่ด้านบนของจอ
+            });
+        };
+        scoll.addEventListener('click', function() {
+            img.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            })
+        });
+    });
     const slides = document.querySelectorAll(".banner-slider img");
     const prevBtn = document.querySelector(".prev");
     const nextBtn = document.querySelector(".next");

@@ -8,5 +8,5 @@ $refundHandler = new Refund($conn);
 $refund = $refundHandler->get_listRefund();
 $refund_complete = $refundHandler->get_listComplete();
 $refund_failed = $refundHandler->get_listFailed();
-$refunds = $refundHandler->get_verify_refund();
+$refunds = $refundHandler->get_pending_refund();
 $refund_com = $refundHandler->get_complete_refund();

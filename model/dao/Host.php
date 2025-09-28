@@ -25,7 +25,9 @@ class Host
             return "รูปแบบอีเมลไม่ถูกต้อง.";
         }
         if ($password !== $confirm_password) {
-            return "รหัสผ่านไม่ตรงกัน.";
+            // return "รหัสผ่านไม่ตรงกัน.";
+            $arr = ['pwd' => $password, 'con_pwd' => $confirm_password];
+            return $arr;
         }
         // ตรวจสอบว่าอีเมลซ้ำหรือไม่
         $checkStmt = $this->conn->prepare("SELECT COUNT(*) FROM host WHERE Host_email = ?");
@@ -46,7 +48,13 @@ class Host
             return "เกิดข้อผิดพลาดในการลงทะเบียน";
         }
     }
-
+    public function admin_edit_host($firstname, $lastname, $phone, $host_id)
+    {
+        $sql = "UPDATE host SET Host_firstname = ?, Host_lastname = ?,Host_phone = ? WHERE Host_id =?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$firstname, $lastname, $phone, $host_id]);
+        return true;
+    }
     // Method สำหรับการเข้าสู่ระบบ
     public function login($email, $password)
     {

@@ -5,10 +5,8 @@ if (session_status() === PHP_SESSION_NONE) {
 include_once __DIR__ . '/../model/config/db_connect.php';
 require_once __DIR__ . '/../model/dao/Property.php';
 require_once __DIR__ . '/../model/dao/Review.php';
-require_once __DIR__ . '/../model/dao/Payment.php';
 $reviewsHandler = new Review($conn);
 $propertyHandle = new Property($conn);
-$paymentHandle = new Payment($conn);
 // บ้านพักที่อนุมัติแล้ว โชว์บน Menu
 $homestay = $propertyHandle->show_House();
 
@@ -19,9 +17,6 @@ if (isset($_SESSION['Host_email'])) {
     $list_house = $propertyHandle->get_manageProperty($email);
     $properties = $propertyHandle->get_ListProperty($email);
     $total_properties = $propertyHandle->Total_properties($email);
-    $total_bookings = $propertyHandle->Total_booking($email);
-    $total_income = $propertyHandle->Total_income($email);
-    $total_reviews = $propertyHandle->Total_reviews($email);
 }
 
 //รับ house_id มาจาก main-menu.php
@@ -43,6 +38,10 @@ if (isset($_POST['house_id'])) {
 
     $images = $propertyHandle->get_Image($property_id);
     $rooms = $propertyHandle->get_rooms($property_id);
+    $events = $propertyHandle->room_calendar($property_id);
+    // $SESION['event'] = $events;
+    // header("Location: detail_house.php");
+    // exit();
 }
 //edit-property.php
 if (isset($_POST['Property_id'])) {

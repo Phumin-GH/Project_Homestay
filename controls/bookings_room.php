@@ -4,8 +4,10 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 require_once __DIR__ . '/../model/config/db_connect.php';
 require_once __DIR__ . '/../model/dao/Booking.php';
+require_once __DIR__ . '/../model/dao/Payment.php';
 header('Content-Type: application/json');
 $BookingHandler = new Booking($conn);
+$PaymentHandler = new Payment($conn);
 // $price = (int)($_POST['price'] ?? 0);
 try {
 
@@ -32,10 +34,9 @@ try {
             $nights = (int)($_POST['nights'] ?? 0);
             $total_price = (float)($_POST['total_price']) ?? 0;
             $guests = (int)($_POST['guests'] ?? 0);
-            $vat = (float)($_POST['vat_values'] ?? 0);
-            $service = (int)($_POST['service_values'] ?? 0);
+
             if (isset($_SESSION['User_email'])) {
-                $result = $BookingHandler->book_online($email, $property_id, $room_id, $check_in_date, $check_out_date,  $nights, $guests, $total_price, $service, $vat);
+                $result = $BookingHandler->book_online($email, $property_id, $room_id, $check_in_date, $check_out_date,  $nights, $guests, $total_price);
                 if (is_numeric($result)) {
                     $booking_id = $result;
                     echo json_encode(
@@ -107,30 +108,22 @@ try {
         $property_id = (int)($_POST['property_id'] ?? 0);
         $nights = (int)($_POST['nights'] ?? 0);
         $guests = (int)($_POST['guests'] ?? 0);
-        $check_in = (int)($_POST['check_in_date'] ?? 0);
-        $check_out = (int)($_POST['check_out_date'] ?? 0);
+        $check_in = ($_POST['check_in_date'] ?? '');
+        $check_out = ($_POST['check_out_date'] ?? '');
         // $price = (int)($_POST['price'] ?? 0);
         $check_date = $BookingHandler->check_Calender($property_id, $room_id, $check_in, $check_out);
-        if (is_string($check_date)) {
+        if ($check_date === false) {
             echo json_encode([
                 'check_success' => false,
-                'check_msg' => $check_date
+                'message' => "ห้องพักไม่ว่างในช่วงวันที่เลือก"
             ]);
             exit();
         } else {
             $prices = $BookingHandler->calcuratePrice($room_id, $nights, $guests);
             if (is_numeric($prices)) {
-                $service = 0.1;
-                $vat_tax = 0.07;
-                $service_amount = $prices * $service;
-                $tax_amount = $service_amount * $vat_tax;
-                $total_price = $prices + $tax_amount + $service_amount;
                 echo json_encode([
                     'success' => true,
-
-                    'total_price' => round($total_price, 2),
-                    'service' => round($service_amount, 2),
-                    'vat' => round($tax_amount, 2)
+                    'total_price' => round($prices, 2)
                 ]);
                 exit();
             } else {
@@ -142,7 +135,6 @@ try {
             }
         }
     }
-
     if ($_POST['charge_id']) {
         $charge_id = $_POST['charge_id'] ?? 0;
         if (isset($charge_id)) {
@@ -156,11 +148,11 @@ try {
             exit();
         }
     } elseif ($_GET['charge_id']) {
-        $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../'); // path ไป root ของโปรเจกต์
-        $dotenv->load();
-
-        define('OMISE_PUBLIC_KEY', $_ENV['OMISE_PUBLIC_KEY']);
-        define('OMISE_SECRET_KEY', $_ENV['OMISE_SECRET_KEY']);
+        // $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../'); // path ไป root ของโปรเจกต์
+        // $dotenv->load();
+        // define('OMISE_PUBLIC_KEY', $_ENV['OMISE_PUBLIC_KEY']);
+        // define('OMISE_SECRET_KEY', $_ENV['OMISE_SECRET_KEY']);
+        $this->$PaymentHandler->Omise_API();
         $charge_id = $_GET['charge_id'] ?? '';
         if (!$charge_id) {
 
@@ -168,7 +160,6 @@ try {
             exit;
         } else {
             try {
-
                 $charge = OmiseCharge::retrieve($charge_id);
                 echo json_encode([
                     'status' => $charge['status'],

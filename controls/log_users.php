@@ -29,7 +29,7 @@ if (isset($_POST['save_signup'])) {
     $confirm_password = trim($_POST['confirm-password']);
 
     //เรียกใช้ Method register() จาก Object
-    $result = $userHandler->register($email, $firstname, $lastname, $phone, $password);
+    $result = $userHandler->register($email, $firstname, $lastname, $phone, $password, $confirm_password);
     if ($result === "Sign in เรียบร้อย.") {
         // ลงทะเบียนสำเร็จ, ทำการล็อกอินเลย
         $userHandler->login($email, $password);

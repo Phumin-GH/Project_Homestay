@@ -88,13 +88,13 @@ if (isset($_GET['logout'])) {
                     </div>
                     <?php if (!empty($users)): ?>
 
-                        <h1 class="profile-name">
-                            <?php echo htmlspecialchars($users['Firstname'] . ' ' . $users['Lastname']); ?>
-                        </h1>
-                        <p class="profile-email"><?php echo htmlspecialchars($users['User_email']); ?></p>
+                    <h1 class="profile-name">
+                        <?php echo htmlspecialchars($users['Firstname'] . ' ' . $users['Lastname']); ?>
+                    </h1>
+                    <p class="profile-email"><?php echo htmlspecialchars($users['User_email']); ?></p>
 
                     <?php else: ?>
-                        <h1 class="profile-name">ไม่พบข้อมูลผู้ใช้</h1>
+                    <h1 class="profile-name">ไม่พบข้อมูลผู้ใช้</h1>
                     <?php endif; ?>
                     <button class="edit-btn" onclick="editProfile()">
                         <i class="fas fa-edit"></i> แก้ไขโปรไฟล์
@@ -153,13 +153,13 @@ if (isset($_GET['logout'])) {
                                 <div class="info-label">เบอร์โทรศัพท์</div>
                                 <div class="info-value">
                                     <?php if ($users['Phone']): ?>
-                                        <span class="phone-display">
+                                    <span class="phone-display">
 
-                                            <span
-                                                class="phone-number"><?php echo htmlspecialchars($users['Phone']); ?></span>
-                                        </span>
+                                        <span
+                                            class="phone-number"><?php echo htmlspecialchars($users['Phone']); ?></span>
+                                    </span>
                                     <?php else: ?>
-                                        <span class="no-phone">ไม่ระบุ</span>
+                                    <span class="no-phone">ไม่ระบุ</span>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -189,16 +189,16 @@ if (isset($_GET['logout'])) {
         <p>&copy; 2024 Homestay Booking. All rights reserved.</p>
     </footer>
     <script>
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const mainContent = document.querySelector('.main-with-sidebar');
-            sidebar.classList.toggle("collapsed");
-            mainContent.classList.toggle("sidebar-collapsed");
-        }
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.querySelector('.main-with-sidebar');
+        sidebar.classList.toggle("collapsed");
+        mainContent.classList.toggle("sidebar-collapsed");
+    }
 
-        function editProfile() {
-            window.location.href = 'edit-profile.php';
-        }
+    function editProfile() {
+        window.location.href = 'edit-profile.php';
+    }
     </script>
 </body>
 

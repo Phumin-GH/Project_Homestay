@@ -26,146 +26,146 @@ require_once __DIR__ . '/../../api/get_refund.php';
     <link rel="stylesheet" href="../../public/css/main-menu.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        .admin-container {
-            max-width: 1300px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
+    .admin-container {
+        max-width: 1300px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
 
-        .page-header {
-            background: #1e5470;
-            color: white;
-            padding: 2rem;
-            border-radius: 16px;
-            margin-bottom: 2rem;
-            text-align: center;
-        }
+    .page-header {
+        background: #1e5470;
+        color: white;
+        padding: 2rem;
+        border-radius: 16px;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
 
-        .refund-section {
-            background: #fff;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            padding: 2rem;
-        }
+    .refund-section {
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        padding: 2rem;
+    }
 
-        .section-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-        }
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+    }
 
-        .refund-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.9rem;
-        }
+    .refund-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+    }
 
-        .refund-table th,
-        .refund-table td {
-            padding: 1rem 0.75rem;
-            text-align: left;
-            border-bottom: 1px solid #e5e5e5;
-        }
+    .refund-table th,
+    .refund-table td {
+        padding: 1rem 0.75rem;
+        text-align: left;
+        border-bottom: 1px solid #e5e5e5;
+    }
 
-        .refund-table th {
-            background-color: #f8f9fa;
-            font-weight: 600;
-        }
+    .refund-table th {
+        background-color: #f8f9fa;
+        font-weight: 600;
+    }
 
-        .refund-table tr:hover {
-            background-color: #f1f3f5;
-        }
+    .refund-table tr:hover {
+        background-color: #f1f3f5;
+    }
 
-        .status-pending {
-            color: #fd7e14;
-            font-weight: bold;
-        }
+    .status-pending {
+        color: #fd7e14;
+        font-weight: bold;
+    }
 
-        .btn {
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.2s ease;
-        }
+    .btn {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
 
-        .btn-approve {
-            background: #10b981;
-            color: white;
-        }
+    .btn-approve {
+        background: #10b981;
+        color: white;
+    }
 
-        .btn-approve:hover {
-            background: #059669;
-        }
+    .btn-approve:hover {
+        background: #059669;
+    }
 
-        .btn-reject {
-            background: #ef4444;
-            color: white;
-        }
+    .btn-reject {
+        background: #ef4444;
+        color: white;
+    }
 
-        .btn-reject:hover {
-            background: #dc2626;
-        }
+    .btn-reject:hover {
+        background: #dc2626;
+    }
 
-        .empty-state {
-            text-align: center;
-            padding: 4rem 2rem;
-            color: #666;
-        }
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #666;
+    }
 
-        .refund-tabs {
-            display: flex;
-            background: #f8f9fa;
-            border-bottom: 1px solid #e5e5e5;
-            margin: 1.5rem 0 0 0;
+    .refund-tabs {
+        display: flex;
+        background: #f8f9fa;
+        border-bottom: 1px solid #e5e5e5;
+        margin: 1.5rem 0 0 0;
 
-        }
+    }
 
-        .tab {
-            flex: 1;
-            padding: 1rem;
-            text-align: center;
-            cursor: pointer;
-            font-weight: 500;
-            color: #666666;
-            background: #ddf1faff;
-            border-radius: 20px 30px 0 0;
-            transition: all 0.2s ease;
-            position: relative;
-            filter: blur(1px);
-            opacity: 0.9;
-            z-index: 500;
-            transform: translateY(10px);
-            transition: opacity 0.4s ease, transform 0.4s ease;
+    .tab {
+        flex: 1;
+        padding: 1rem;
+        text-align: center;
+        cursor: pointer;
+        font-weight: 500;
+        color: #666666;
+        background: #ddf1faff;
+        border-radius: 20px 30px 0 0;
+        transition: all 0.2s ease;
+        position: relative;
+        filter: blur(1px);
+        opacity: 0.9;
+        z-index: 500;
+        transform: translateY(10px);
+        transition: opacity 0.4s ease, transform 0.4s ease;
 
-        }
+    }
 
-        .tab:hover {
-            filter: none;
-            opacity: 1;
-            color: #1e5470;
+    .tab:hover {
+        filter: none;
+        opacity: 1;
+        color: #1e5470;
 
-        }
+    }
 
-        .tab.active {
-            color: #1e5470;
-            background: #cdecf9ff;
-            filter: none;
-            opacity: 1;
-            border-radius: 20px 30px 0 0;
-            transform: translateY(0);
-        }
+    .tab.active {
+        color: #1e5470;
+        background: #cdecf9ff;
+        filter: none;
+        opacity: 1;
+        border-radius: 20px 30px 0 0;
+        transform: translateY(0);
+    }
 
-        .tab.active::after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: #1e5470;
-        }
+    .tab.active::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: #1e5470;
+    }
     </style>
 </head>
 
@@ -227,103 +227,106 @@ require_once __DIR__ . '/../../api/get_refund.php';
                 <div class="refund-section active" id="refund-section">
                     <h2 class="section-title">รายการที่รอการตรวจสอบ (<?php echo count($refunds); ?>)</h2>
                     <?php if (count($refunds) > 0): ?>
-                        <div style="overflow-x:auto;">
-                            <table class="refund-table">
-                                <thead>
-                                    <tr>
-                                        <th>Booking ID</th>
-                                        <th>ชื่อที่พัก</th>
-                                        <th>ผู้ขอคืนเงิน</th>
-                                        <th>เจ้าของที่พัก</th>
-                                        <th>จำนวนเงิน (บาท)</th>
-                                        <th>เหตุผล</th>
-                                        <th>วันที่ส่งคำขอ</th>
-                                        <th>สถานะ</th>
-                                        <th>จัดการ</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php foreach ($refunds as $refund): ?>
-                                        <tr>
-                                            <td><?php echo htmlspecialchars($refund['Booking_id']); ?></td>
-                                            <td><?php echo htmlspecialchars($refund['Property_name']); ?></td>
-                                            <td><?php echo htmlspecialchars($refund['Firstname'] . '' . $refund['Lastname']); ?>
-                                            </td>
-                                            <td><?php echo htmlspecialchars($refund['Host_firstname'] . '' . $refund['Host_lastname']); ?>
-                                            </td>
-                                            <td><?php echo number_format($refund['Refund_amount'], 2); ?></td>
-                                            <td style="max-width: 250px;">
-                                                <?php echo htmlspecialchars($refund['Refund_reason']); ?>
-                                            </td>
-                                            <td><?php echo htmlspecialchars($refund['Refund_date']); ?></td>
-                                            <td><span
-                                                    class="status-pending"><?php echo ucfirst($refund['Refund_status']); ?></span>
-                                            </td>
-                                            <td>
-                                                <form action="../../controls/refund_actions.php" method="POST"
-                                                    style="display:inline;">
-                                                    <input type="hidden" name="booking_id"
-                                                        value="<?php echo $refund['Booking_id']; ?>">
-                                                    <button type="submit" name="approve" value="approve"
-                                                        class="btn btn-approve">อนุมัติ</button>
-                                                </form>
-                                                <form action="../../controls/refund_actions.php" method="POST"
-                                                    style="display:inline;">
-                                                    <input type="hidden" name="booking_id"
-                                                        value="<?php echo $refund['Booking_id']; ?>">
-                                                    <button type="submit" name="cancel" value="reject"
-                                                        class="btn btn-reject">ปฏิเสธ</button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        </div>
+                    <div style="overflow-x:auto;">
+                        <table class="refund-table">
+                            <thead>
+                                <tr>
+                                    <th>Refund ID</th>
+                                    <th>Charge ID</th>
+                                    <th>ชื่อที่พัก</th>
+                                    <th>ผู้ขอคืนเงิน</th>
+                                    <th>เจ้าของที่พัก</th>
+                                    <th>จำนวนเงิน (บาท)</th>
+                                    <th>เหตุผล</th>
+                                    <th>วันที่ส่งคำขอ</th>
+                                    <th>สถานะ</th>
+                                    <th>จัดการ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($refunds as $refund): ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($refund['Refund_id']); ?></td>
+                                    <td><?php echo htmlspecialchars($refund['Charge_id']); ?></td>
+                                    <td><?php echo htmlspecialchars($refund['Property_name']); ?></td>
+                                    <td><?php echo htmlspecialchars($refund['Firstname'] . '' . $refund['Lastname']); ?>
+                                    </td>
+                                    <td><?php echo htmlspecialchars($refund['Host_firstname'] . '' . $refund['Host_lastname']); ?>
+                                    </td>
+                                    <td><?php echo number_format($refund['Refund_amount'], 2); ?></td>
+                                    <td style="max-width: 250px;">
+                                        <?php echo htmlspecialchars($refund['Refund_reason']); ?>
+                                    </td>
+                                    <td><?php echo htmlspecialchars($refund['Refund_date']); ?></td>
+                                    <td><span
+                                            class="status-pending"><?php echo ucfirst($refund['Refund_status']); ?></span>
+                                    </td>
+                                    <td>
+                                        <form action="../../controls/refund_actions.php" method="POST"
+                                            style="display:inline;"
+                                            onsubmit="return confirm('คุณต้องอนุมัติรายการคืนเงินนี้ใช่หรือไม่?');">
+                                            <input type="hidden" name="booking_id"
+                                                value="<?php echo $refund['Booking_id']; ?>">
+                                            <button type="submit" name="admin_approve" value="approve"
+                                                class="btn btn-approve">อนุมัติ</button>
+                                        </form>
+                                        <form action="../../controls/refund_actions.php" method="POST"
+                                            style="display:inline;">
+                                            <input type="hidden" name="booking_id"
+                                                value="<?php echo $refund['Booking_id']; ?>">
+                                            <button type="submit" name="admin_reject" value="reject"
+                                                class="btn btn-reject">ปฏิเสธ</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
                     <?php else: ?>
-                        <div class="empty-state">
-                            <i class="fas fa-check-circle"></i>
-                            <h3>ไม่พบคำขอคืนเงินที่รอการอนุมัติ</h3>
-                            <p>ไม่มีรายการที่ต้องดำเนินการในขณะนี้</p>
-                        </div>
+                    <div class="empty-state">
+                        <i class="fas fa-check-circle"></i>
+                        <h3>ไม่พบคำขอคืนเงินที่รอการอนุมัติ</h3>
+                        <p>ไม่มีรายการที่ต้องดำเนินการในขณะนี้</p>
+                    </div>
                     <?php endif; ?>
                 </div>
                 <div class="refund-section" id="refund-section-processed" style="display: none; ">
                     <h2 class="section-title">รายการที่รอการตรวจสอบ (<?php echo count($refunds); ?>)</h2>
                     <?php if (count($refund_com) > 0): ?>
-                        <div style="overflow-x:auto;">
-                            <table class="refund-table">
-                                <thead>
-                                    <tr>
-                                        <th>Booking ID</th>
-                                        <th>ชื่อที่พัก</th>
-                                        <th>ผู้ขอคืนเงิน</th>
-                                        <th>เจ้าของที่พัก</th>
-                                        <th>จำนวนเงิน (บาท)</th>
-                                        <th>เหตุผล</th>
-                                        <th>วันที่ส่งคำขอ</th>
-                                        <th>สถานะ</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php foreach ($refund_com as $refund): ?>
-                                        <tr>
-                                            <td><?php echo htmlspecialchars($refund['Booking_id']); ?></td>
-                                            <td><?php echo htmlspecialchars($refund['Property_name']); ?></td>
-                                            <td><?php echo htmlspecialchars($refund['Firstname'] . '' . $refund['Lastname']); ?>
-                                            </td>
-                                            <td><?php echo htmlspecialchars($refund['Host_firstname'] . '' . $refund['Host_lastname']); ?>
-                                            </td>
-                                            <td><?php echo number_format($refund['Refund_amount'], 2); ?></td>
-                                            <td style="max-width: 250px;">
-                                                <?php echo htmlspecialchars($refund['Refund_reason']); ?>
-                                            </td>
-                                            <td><?php echo htmlspecialchars($refund['Refund_date']); ?></td>
-                                            <td><span
-                                                    class="status-pending"><?php echo ucfirst($refund['Refund_status']); ?></span>
-                                            </td>
-                                            <td>
-                                                <!-- <form action="../../controls/refund_actions.php" method="POST"
+                    <div style="overflow-x:auto;">
+                        <table class="refund-table">
+                            <thead>
+                                <tr>
+                                    <th>Booking ID</th>
+                                    <th>ชื่อที่พัก</th>
+                                    <th>ผู้ขอคืนเงิน</th>
+                                    <th>เจ้าของที่พัก</th>
+                                    <th>จำนวนเงิน (บาท)</th>
+                                    <th>เหตุผล</th>
+                                    <th>วันที่ส่งคำขอ</th>
+                                    <th>สถานะ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($refund_com as $refund): ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($refund['Booking_id']); ?></td>
+                                    <td><?php echo htmlspecialchars($refund['Property_name']); ?></td>
+                                    <td><?php echo htmlspecialchars($refund['Firstname'] . '' . $refund['Lastname']); ?>
+                                    </td>
+                                    <td><?php echo htmlspecialchars($refund['Host_firstname'] . '' . $refund['Host_lastname']); ?>
+                                    </td>
+                                    <td><?php echo number_format($refund['Refund_amount'], 2); ?></td>
+                                    <td style="max-width: 250px;">
+                                        <?php echo htmlspecialchars($refund['Refund_reason']); ?>
+                                    </td>
+                                    <td><?php echo htmlspecialchars($refund['Refund_date']); ?></td>
+                                    <td><span
+                                            class="status-pending"><?php echo ucfirst($refund['Refund_status']); ?></span>
+                                    </td>
+                                    <td>
+                                        <!-- <form action="../../controls/refund_actions.php" method="POST"
                                             style="display:inline;">
                                             <input type="hidden" name="booking_id"
                                                 value="<?php /*echo $refund['Booking_id'];*/ ?>">
@@ -337,47 +340,47 @@ require_once __DIR__ . '/../../api/get_refund.php';
                                             <button type="submit" name="cancel" value="reject"
                                                 class="btn btn-reject">ปฏิเสธ</button>
                                         </form> -->
-                                            </td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        </div>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
                     <?php else: ?>
-                        <div class="empty-state">
-                            <i class="fas fa-check-circle"></i>
-                            <h3>ไม่พบคำขอคืนเงินที่รอการอนุมัติ</h3>
-                            <p>ไม่มีรายการที่ต้องดำเนินการในขณะนี้</p>
-                        </div>
+                    <div class="empty-state">
+                        <i class="fas fa-check-circle"></i>
+                        <h3>ไม่พบคำขอคืนเงินที่รอการอนุมัติ</h3>
+                        <p>ไม่มีรายการที่ต้องดำเนินการในขณะนี้</p>
+                    </div>
                     <?php endif; ?>
                 </div>
             </div>
         </div>
     </div>
     <script>
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const mainContent = document.querySelector('.main-with-sidebar');
-            sidebar.classList.toggle("collapsed");
-            mainContent.classList.toggle("sidebar-collapsed");
-        }
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.querySelector('.main-with-sidebar');
+        sidebar.classList.toggle("collapsed");
+        mainContent.classList.toggle("sidebar-collapsed");
+    }
 
-        const refundTab = document.getElementById('refund-tab');
-        const completeTab = document.getElementById('complete-tab');
-        const refundSection = document.getElementById('refund-section');
-        const refundSectionProcessed = document.getElementById('refund-section-processed');
-        refundTab.addEventListener('click', () => {
-            refundTab.classList.add('active');
-            completeTab.classList.remove('active');
-            refundSection.style.display = 'block';
-            refundSectionProcessed.style.display = 'none';
-        });
-        completeTab.addEventListener('click', () => {
-            completeTab.classList.add('active');
-            refundTab.classList.remove('active');
-            refundSection.style.display = 'none';
-            refundSectionProcessed.style.display = 'block';
-        });
+    const refundTab = document.getElementById('refund-tab');
+    const completeTab = document.getElementById('complete-tab');
+    const refundSection = document.getElementById('refund-section');
+    const refundSectionProcessed = document.getElementById('refund-section-processed');
+    refundTab.addEventListener('click', () => {
+        refundTab.classList.add('active');
+        completeTab.classList.remove('active');
+        refundSection.style.display = 'block';
+        refundSectionProcessed.style.display = 'none';
+    });
+    completeTab.addEventListener('click', () => {
+        completeTab.classList.add('active');
+        refundTab.classList.remove('active');
+        refundSection.style.display = 'none';
+        refundSectionProcessed.style.display = 'block';
+    });
     </script>
 </body>
 

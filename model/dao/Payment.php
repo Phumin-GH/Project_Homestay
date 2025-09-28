@@ -80,53 +80,55 @@ class Payment
     }
     public function get_refund_amount($booking_id)
     {
-        $sql = "SELECT rp.Refund_percen,SUM(rf.Refund_amount+b.Booking_service+b.Booking_vat ) AS total
+        $sql = "SELECT rp.Refund_percen,rf.Refund_amount
         FROM refund rf
         INNER JOIN refund_policy rp ON rf.Re_policy_id = rp.Re_policy_id
         INNER JOIN booking b ON b.Booking_id = rf.Booking_id 
-        WHERE rf.Booking_id = ?
-        GROUP BY rp.Refund_percen";
+        WHERE rf.Booking_id = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$booking_id]);
         $percen = $stmt->fetch(PDO::FETCH_ASSOC);
         if (!$percen) {
             return  "ไม่พบการจอง";
         }
-        $refund_amount = ($percen['Refund_percen'] / 100) * $percen['total'];
-        return $refund_amount; // คืนค่าจำนวนเงินคืนที่คำนวณแล้ว
+
+        return $percen; // คืนค่าจำนวนเงินคืนที่คำนวณแล้ว
     }
     public function get_charge_id($booking_id)
     {
         $sql = "SELECT Charge_id FROM booking WHERE Booking_id = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$booking_id]);
-        $charge = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $charge['Charge_id'];
+        $charge = $stmt->fetchColumn();
+        return $charge;
     }
     public function Proceed_refund($booking_id)
     {
         $this->Omise_API();
-
         try {
             $charge_id = $this->get_charge_id($booking_id);
             // $charge_id = 'chrg_test_653aos8sbo31jo2twhs';
-            (float)$amount = $this->get_refund_amount($booking_id);
-            if (is_string($amount)) {
-                return $amount;
-            } else {
-                $total_amount = intval(round($amount * 100));
-            }
-            // $test = ['charge' => $charge_id, 'total' => $total_amount, 'amount' => $amount];
-            // return $test;
+            $percen = $this->get_refund_amount($booking_id);
+            $amount = $percen['Refund_amount'] * 100;
+
             $charge = OmiseCharge::retrieve($charge_id);
             $refund = $charge->refunds()->create([
-                'amount' => $total_amount
+                'amount' => $amount
             ]);
-            if ($refund['status'] === 'successful') {
+            if ($refund['status'] === 'closed') {
                 // Save the booking information to the database
                 $sql = "UPDATE refund SET Refund_status = ? WHERE Booking_id = ?";
                 $stmt = $this->conn->prepare($sql);
-                $stmt->execute(['approve',  $booking_id]);
+                try {
+                    $stmt->execute(['approve',  $booking_id]);
+                    $refund_amount = $percen['Refund_amount'] * $percen['Refund_percen'];
+                    $plat = $percen['Refund_amount'] * 0.15;
+                    $host_payout = $percen['Refund_amount'] - $plat;
+                    $sql = "UPDATE trasactions SET Transaction_type='refunded',Total_amount =?,Platform_fee=?,Host_payout=? WHERE Booking_id=?";
+                    $stmt = $this->conn->prepare($sql);
+                    $stmt->execute([$refund_amount, $plat, $host_payout, $booking_id]);
+                } catch (Exception $e) {
+                }
                 return true;
             } else {
                 return $refund['status'];
@@ -141,20 +143,19 @@ class Payment
             return "ข้อมูลสำหรับการคืนเงินไม่ครบถ้วน";
         }
         $result = $this->Proceed_refund($booking_id);
-        // if ($result === true) {
-        //     $sql = "SELECT Refund_status FROM refund WHERE Booking_id = ?";
-        //     $stmt = $this->conn->prepare($sql);
-        //     $stmt->execute([$booking_id]);
-        //     $status = $stmt->fetch(PDO::FETCH_ASSOC);
-        //     if (!$status) {
-        //         return "ไม่พบข้อมูลการจอง";
-        //     } else {
-        //         return true;
-        //     }
-        // } else {
-        //     return $result; // ส่งข้อความข้อผิดพลาดกลับไป
-        // }
-        return $result;
+        if ($result === true) {
+            $sql = "SELECT Refund_status FROM refund WHERE Booking_id = ?";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$booking_id]);
+            $status = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$status) {
+                return "ไม่พบข้อมูลการจอง";
+            } else {
+                return true;
+            }
+        } else {
+            return $result; // ส่งข้อความข้อผิดพลาดกลับไป
+        }
     }
     public function insertCreditCard($booking_id, $name, $number, $exMonth, $exYear, $cvv, $amount)
     {
@@ -162,6 +163,38 @@ class Payment
         if (empty($booking_id) || empty($name) || empty($number) || empty($exMonth) || empty($exYear) || empty($cvv) || empty($amount)) {
             return "ข้อมูลสำหรับการชำระเงินไม่ครบถ้วน";
         }
+        $charge = $this->create_TokenCard($name, $number, $exMonth, $exYear, $cvv, $amount);
+        if ($charge['status'] === 'successful') {
+            $number_card = null;
+            if ($number == '4242424242424242') {
+                $number_card = 'Visa';
+            } elseif ($number == '5555555555554444') {
+                $number_card = 'MasterCard';
+            }
+            $sql = "UPDATE booking SET Payment_status = ?, Payment_gateway = ?, Booking_status = ?, Charge_id = ? WHERE Booking_id = ?";
+            $stmt = $this->conn->prepare($sql);
+            try {
+                $stmt->execute(['paid', $number_card, 'successful', $charge['id'], $booking_id]);
+
+                $amount = (float)$amount;
+                $platform_raw = $amount * 0.15;
+                $comm_raw = $amount - $platform_raw;
+                $platform = round($platform_raw, 2);
+                $comm = round($comm_raw, 2);
+
+                $sql = "INSERT INTO transactions (Booking_id,Total_amount,Platform_fee,Host_payout,Transaction_type,Transaction_status) VALUES(?, ?, ?, ?, ?, ?)";
+                $stmt = $this->conn->prepare($sql);
+                $stmt->execute([$booking_id, $amount, $platform, $comm, 'booking', 'paid']);
+                return true;
+            } catch (Exception $e) {
+                return $e->getMessage();
+            }
+        } else {
+            return "Payment failed";
+        }
+    }
+    public function create_TokenCard($name, $number, $exMonth, $exYear, $cvv, $amount)
+    {
         try {
             $token = OmiseToken::create([
                 'card' => [
@@ -178,21 +211,7 @@ class Payment
                 'card' => $token['id'],
                 'description' => 'Test Payment via '
             ]);
-            if ($charge['status'] === 'successful') {
-                // Save the booking information to the database
-                $number_card = null;
-                if ($number == '4242424242424242') {
-                    $number_card = 'Visa';
-                } elseif ($number == '5555555555554444') {
-                    $number_card = 'MasterCard';
-                }
-                $sql = "UPDATE booking SET Payment_status = ?, Payment_gateway = ?, Booking_status = ?, Charge_id = ? WHERE Booking_id = ?";
-                $stmt = $this->conn->prepare($sql);
-                $stmt->execute(['paid', $number_card, 'successful', $charge['id'], $booking_id]);
-                return true;
-            } else {
-                return "Payment failed";
-            }
+            return $charge;
         } catch (Exception $e) {
             return $e->getMessage();
         }
@@ -227,8 +246,6 @@ class Payment
             return $e->getMessage();
         }
     }
-
-
     public function CheckStatus($charge_id, $booking_id, $qrCode)
     {
         $this->Omise_API();
@@ -247,8 +264,13 @@ class Payment
             ];
 
             if ($payment_st['success'] === true && $payment_st['paid'] === true && $payment_st['expired'] === false) {
-                $status = $this->update_payment_status($charge_id, $booking_id, $qrCode);
-                return true;
+                $booking = $this->update_payment_booking($charge_id, $booking_id, $qrCode);
+                $transaction = $this->update_payment_transaction($booking_id);
+                if ($booking === true && $transaction === true) {
+                    return true;
+                } else {
+                    return false;
+                }
             }
             // else {
             //     $status = "ชำระเงินไม่สำเร็จ. สถานะ: " . $payment_st['status'];
@@ -258,12 +280,9 @@ class Payment
         }
     }
 
-    public function update_payment_status($charge_id, $booking_id, $qrCode)
+    public function update_payment_booking($charge_id, $booking_id, $qrCode)
     {
-        // if (!$charge_id  || !$qrCode || !$booking_id) {
-        //     return "ไม่มีข้อมูลการจอง";
-        // }
-        // SQL บันทึกข้อมูล
+
         $sql = "UPDATE booking SET Charge_id = ?,Booking_status = 'successful',Payment_gateway = 'Qrcode',
     Payment_status = 'paid',Booking_qrcode = ? WHERE Booking_id = ?";
         try {
@@ -272,6 +291,34 @@ class Payment
                 $charge_id,
                 $qrCode,
                 $booking_id,
+            ]);
+            return true;
+        } catch (PDOException $e) {
+            return $e->getMessage();
+        }
+    }
+    public function update_payment_transaction($booking_id)
+    {
+        $sql = "SELECT Total_price FROM booking WHERE Booking_id =?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$booking_id]);
+        $price = $stmt->fetchColumn();
+        $price = (float)$price;
+
+        $platform_fee_raw = $price * 0.15;
+        $commraw = $price - $platform_fee_raw;
+        $platform_fee = round($platform_fee_raw, 2);
+        $comm = round($commraw, 2);
+        try {
+            $sql = "INSERT INTO transactions (Booking_id,Total_amount,Platform_fee,Host_payout,Transaction_type,Transaction_status) VALUES(?, ?, ?, ?, ?, ?)";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([
+                $booking_id,
+                $price,
+                $platform_fee,
+                $comm,
+                'booking',
+                'paid'
             ]);
             return true;
         } catch (PDOException $e) {

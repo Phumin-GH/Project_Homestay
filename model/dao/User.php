@@ -16,9 +16,9 @@ class User
         return $total_user;
     }
     // Method สำหรับการลงทะเบียน
-    public function register($email, $firstname, $lastname, $phone, $password)
+    public function register($email, $firstname, $lastname, $phone, $password, $confirm_password)
     {
-        if (empty($email) || empty($Id_card) || empty($firstname) || empty($lastname) || empty($phone) || empty($password) || empty($confirm_password)) {
+        if (empty($email)  || empty($firstname) || empty($lastname) || empty($phone) || empty($password) || empty($confirm_password)) {
             return "กรุณากรอกข้อมูลให้ครบ.";
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return "รูปแบบอีเมลไม่ถูกต้อง.";
@@ -103,13 +103,6 @@ class User
         $users = $stmt->fetch(PDO::FETCH_ASSOC);
         return $users;
     }
-    public function delete_host($user_id)
-    {
-        $sql = "DELETE FROM  user  WHERE User_id = ?";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$user_id]);
-        return true;
-    }
     public function edit_user($firstname, $lastname, $email, $phone, $user_id)
     {
         $sql = "UPDATE user SET Firstname = ? , Lastname = ?, User_email = ? , Phone = ? WHERE User_id = ?";
@@ -130,6 +123,13 @@ class User
         $sql = "UPDATE user SET User_status = ? WHERE User_id = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$baned, $user_id]);
+        return true;
+    }
+    public function admin_edit_user($firstname, $lastname, $phone, $id)
+    {
+        $sql = "UPDATE user SET Firstname = ?, Lastname = ?,Phone = ? WHERE User_id =?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$firstname, $lastname, $phone, $id]);
         return true;
     }
 }
