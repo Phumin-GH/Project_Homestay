@@ -58,22 +58,19 @@ class Review
         if (!empty($user_email) && empty($host_email)) {
             $user_id = $this->get_user_id($user_email);
             $result = $this->check_report_user($user_id, $review_id);
-            if (COUNT($result) > 0) {
+            if ($result > 0) {
                 return "ไม่สามารถดำเนินการซ้ำได้";
             }
         } elseif (!empty($host_email) && empty($user_email)) {
             $host_id = $this->get_host_id($host_email);
             $result = $this->check_report_host($host_id, $review_id);
-            if (COUNT($result) > 0) {
+            if ($result > 0) {
                 return "ไม่สามารถดำเนินการซ้ำได้";
             }
         }
-
-
         $sql = "INSERT INTO review_reports (Review_id,User_id,Host_id,Report_reason) VALUES (?,?,?,?)";
         $stmt = $this->conn->prepare($sql);
         try {
-
             $stmt->execute([$review_id, $user_id, $host_id, $reason]);
             return true;
         } catch (Exception $e) {
@@ -100,6 +97,17 @@ class Review
             $stmt->execute([$host_id, $review_id]);
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             return $result;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+    public function deleteReview($review_id)
+    {
+        $sql = "DELETE FROM review WHERE Review_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        try {
+            $stmt->execute([$review_id]);
+            return true;
         } catch (Exception $e) {
             return $e->getMessage();
         }

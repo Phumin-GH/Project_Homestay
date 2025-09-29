@@ -1635,6 +1635,8 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
             const span = document.querySelector(".close-report");
             const closeBtn = document.getElementById("closeBtn");
             const formReport = document.getElementById("reportForm");
+            const reason_raw = document.getElementById('reason');
+            const review_id_raw = document.getElementById('reviewIdInput');
             report_btn.forEach(btn => {
                 btn.onclick = function() {
                     const reviewId = this.dataset.reviewId;
@@ -1643,19 +1645,27 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                     this.closest('.dropdown-menu').classList.remove('show');
                 }
             })
-            span.onclick = () => modal.style.display = "none";
-            closeBtn.onclick = () => modal.style.display = "none";
+            span.onclick = () => {
+                modal.style.display = "none";
+                reason.value = '';
+
+            }
+            closeBtn.onclick = () => {
+                modal.style.display = "none";
+                reason.value = '';
+            }
             window.onclick = (e) => {
                 if (e.target == modal) {
                     modal.style.display = "none";
+                    reason.value = '';
                 }
             }
             formReport.onsubmit = (e) => {
                 e.preventDefault();
-                const reason = document.getElementById('reason').value.trim();
-                const review_id = document.getElementById('reviewIdInput').value;
+                const reason = reason_raw.value.trim();
+                const review_id = review_id_raw.value;
 
-                fetch('../../controls/notify.php', {
+                fetch('../../controls/report_action.php', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded'

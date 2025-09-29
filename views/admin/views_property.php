@@ -206,7 +206,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
         position: relative;
     }
 
-    .close-report {
+    .close-delete {
         position: absolute;
         right: 15px;
         top: 10px;
@@ -359,9 +359,9 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                                 <i class="fa-solid fa-ellipsis-vertical"></i>
                             </button>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item report-review-btn"
+                                <a class="dropdown-item report-review-btn" name="delete"
                                     data-review-id="<?php echo $review['Review_id'] ?>">
-                                    <i class="fa-solid fa-flag"></i> รายงานรีวิวที่ไม่เหมาะสม
+                                    <i class="fa-solid fa-flag"></i> ลบรีวิว
                                 </a>
                             </div>
                         </div>
@@ -375,20 +375,6 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                 <div style="color:#888;">ยังไม่มีรีวิวสำหรับที่พักนี้</div>
                 <?php endif; ?>
             </div>
-        </div>
-    </div>
-    <div id="reportModal" class="modal-report">
-        <div class="modal-report-content">
-            <span class="close-report">&times;</span>
-            <h2>เหตุผลการเรื่องร้องเรียน</h2>
-            <form id="reportForm">
-                <input type="hidden" id="reviewIdInput">
-                <label for="reason">กรุณากรอกเหตุผล:</label>
-                <textarea id="reason" name="reason" rows="4" placeholder="ระบุเหตุผล..." required></textarea>
-                <br>
-                <button type="submit" class="action-btn contact-btn">ส่งข้อมูล</button>
-                <button type="button" id="closeBtn" class="action-btn cancel-btn">ยกเลิก</button>
-            </form>
         </div>
     </div>
     <footer>
@@ -419,57 +405,98 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                 }
             });
         });
-        const modal = document.getElementById("reportModal");
-        const report_btn = document.querySelectorAll('.report-review-btn');
-        const span = document.querySelector(".close-report");
-        const closeBtn = document.getElementById("closeBtn");
-        const formReport = document.getElementById("reportForm");
-        report_btn.forEach(btn => {
-            btn.onclick = function() {
+        const report_btns = document.querySelectorAll('.report-review-btn');
+        // const report_btn = document.getElementsByName('delete');
+        report_btns.forEach(function(btn) {
+            btn.addEventListener('click', function() {
                 const reviewId = this.dataset.reviewId;
-                document.getElementById('reviewIdInput').value = reviewId;
-                modal.style.display = "block";
-                this.closest('.dropdown-menu').classList.remove('show');
-            }
-        })
-        span.onclick = () => modal.style.display = "none";
-        closeBtn.onclick = () => modal.style.display = "none";
-        window.onclick = (e) => {
-            if (e.target == modal) {
-                modal.style.display = "none";
-            }
-        }
-        formReport.onsubmit = (e) => {
-            e.preventDefault();
-            const reason = document.getElementById('reason').value.trim();
-            const review_id = document.getElementById('reviewIdInput').value;
-            fetch('../../controls/notify.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: new URLSearchParams({
-                        review_id: review_id,
-                        reason: reason,
-                        submit_rv: true
-                    })
-                })
-                .then(res => {
-                    if (!res.ok) throw new Error('network response was not ok');
-                    return res.json();
-                })
-                .then(data => {
-                    if (data.success === true) {
-                        alert(data.message);
-                        window.location.reload();
-                    } else {
-                        alert(data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error.message);
-                });
-        };
+
+                if (!reviewId) {
+                    alert('ไม่พบ review ID');
+                    return;
+                }
+
+                if (confirm("คุณยืนยันที่จะลบรีวิวใช่หรือไม่")) {
+                    // ปิดปุ่มขณะประมวลผล
+                    btn.disabled = true;
+                    btn.textContent = 'กำลังลบ...';
+
+                    fetch('../../controls/report_action.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: new URLSearchParams({
+                                review_id: reviewId,
+                                submit_del_rv: true
+                            })
+                        })
+                        .then(res => {
+                            if (!res.ok) throw new Error('Network response was not ok');
+                            return res.json();
+                        })
+                        .then(data => {
+                            if (data.success === true) {
+                                alert(data.message);
+                                window.location.reload();
+                            } else {
+                                alert(data.message);
+                                // เปิดปุ่มกลับ
+                                btn.disabled = false;
+                                btn.textContent = 'ลบรีวิว';
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('เกิดข้อผิดพลาด: ' + error.message);
+                            // เปิดปุ่มกลับ
+                            btn.disabled = false;
+                            btn.textContent = 'ลบรีวิว';
+                        });
+                }
+
+                // ปิด dropdown
+                const dropdown = this.closest('.dropdown-menu');
+                if (dropdown) {
+                    dropdown.classList.remove('show');
+                }
+            });
+        });
+        // report_btn.forEach(btn => {
+        //     btn.onclick = function() {
+        //         const reviewId = this.dataset.reviewId;
+        //         // document.getElementById('reviewIdInput').value = reviewId;
+        //         alert(reviewId);
+        //         if (confirm("คุณยืนยันที่จะลบรีวิวใช่หรือไม่")) {
+        //             fetch('../../controls/report_action.php', {
+        //                     method: 'POST',
+        //                     headers: {
+        //                         'Content-Type': 'application/x-www-form-urlencoded'
+        //                     },
+        //                     body: new URLSearchParams({
+        //                         review_id: reviewId,
+        //                         submit_del_rv: true
+        //                     })
+        //                 })
+        //                 .then(res => {
+        //                     if (!res.ok) throw new Error('network response was not ok');
+        //                     return res.json();
+        //                 })
+        //                 .then(data => {
+        //                     if (data.success === true) {
+        //                         alert(data.message);
+        //                         window.location.reload();
+        //                     } else {
+        //                         alert(data.message);
+        //                     }
+        //                 })
+        //                 .catch(error => {
+        //                     console.error('Error:', error.message);
+        //                 });
+        //         }
+        //         this.closest('.dropdown-menu').classList.remove('show');
+        //     }
+        // })
     });
     </script>
 </body>

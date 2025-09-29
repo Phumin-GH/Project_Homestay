@@ -114,6 +114,7 @@ class Refund
         }
         return 0;
     }
+
     public function check_refund($booking_id, $user_id)
     {
         $sql = "SELECT COUNT(*) FROM refund WHERE Booking_id = ? AND User_id = ?";

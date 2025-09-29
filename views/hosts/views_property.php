@@ -454,7 +454,6 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
             if (e.target == modal) {
                 modal.style.display = "none";
                 reason.value = '';
-
             }
         }
         formReport.onsubmit = (e) => {
@@ -462,7 +461,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
             const reason = reason_raw.value.trim();
             const review_id = review_id_raw.value;
 
-            fetch('../../controls/notify.php', {
+            fetch('../../controls/report_action.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
@@ -473,6 +472,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                         submit_rv_host: true
                     })
                 })
+
                 .then(res => {
                     if (!res.ok) throw new Error('network response was not ok');
                     return res.json();
@@ -480,6 +480,8 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                 .then(data => {
                     if (data.success === true) {
                         alert(data.message);
+                        modal.style.display = "none";
+                        reason.value = '';
                         window.location.reload();
                     } else {
                         alert(data.message);
