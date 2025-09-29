@@ -35,37 +35,71 @@ class Review
         $violation = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $violation;
     }
-    public function get_user_id($email)
+    public function get_user_id($user_email)
     {
         $sql = "SELECT User_id FROM user WHERE User_email=?";
         $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$email]);
+        $stmt->execute([$user_email]);
         $user_id = $stmt->fetchColumn();
         return $user_id;
     }
-    public function get_host_id($email)
+    public function get_host_id($host_email)
     {
         $sql = "SELECT Host_id FROM host WHERE Host_email=?";
         $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$email]);
+        $stmt->execute([$host_email]);
         $host_id = $stmt->fetchColumn();
         return $host_id;
     }
     public function violation($review_id, $user_email, $host_email, $reason)
     {
+        $host_id = null;
+        $user_id = null;
         if (!empty($user_email) && empty($host_email)) {
             $user_id = $this->get_user_id($user_email);
-            $host_id = null;
+            $result = $this->check_report_user($user_id, $review_id);
+            if (COUNT($result) > 0) {
+                return "ไม่สามารถดำเนินการซ้ำได้";
+            }
         } elseif (!empty($host_email) && empty($user_email)) {
-            $host_id = $this->get_host_id($user_email);
-            $user_id = null;
+            $host_id = $this->get_host_id($host_email);
+            $result = $this->check_report_host($host_id, $review_id);
+            if (COUNT($result) > 0) {
+                return "ไม่สามารถดำเนินการซ้ำได้";
+            }
         }
+
+
         $sql = "INSERT INTO review_reports (Review_id,User_id,Host_id,Report_reason) VALUES (?,?,?,?)";
         $stmt = $this->conn->prepare($sql);
         try {
 
             $stmt->execute([$review_id, $user_id, $host_id, $reason]);
             return true;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+    public function check_report_user($user_id, $review_id)
+    {
+        $sql = "SELECT COUNT(*) FROM review_reports WHERE  User_id=? AND Review_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        try {
+            $stmt->execute([$user_id, $review_id]);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+    public function check_report_host($host_id, $review_id)
+    {
+        $sql = "SELECT COUNT(*) FROM review_reports WHERE Host_id =? AND Review_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        try {
+            $stmt->execute([$host_id, $review_id]);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result;
         } catch (Exception $e) {
             return $e->getMessage();
         }

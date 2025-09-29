@@ -1,7 +1,7 @@
 <?php
 session_start();
-if (!isset($_SESSION["Admin_email"])) {
-    header("Location: admin-login.php");
+if (!isset($_SESSION["Host_email"])) {
+    header("Location: host-login.php");
     exit();
 }
 require_once  __DIR__ . "/../../controls/log_hosts.php";
@@ -184,6 +184,87 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
     .dropdown-item.report-review-btn:hover i {
         color: #d93025;
     }
+
+    .modal-report {
+        display: none;
+        /* เริ่มต้นซ่อน */
+        position: fixed;
+        z-index: 500;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-report-content {
+        background-color: #fff;
+        margin: 10% auto;
+        padding: 20px;
+        border-radius: 8px;
+        width: 400px;
+        position: relative;
+    }
+
+    .close-report {
+        position: absolute;
+        right: 15px;
+        top: 10px;
+        font-size: 24px;
+        cursor: pointer;
+    }
+
+    textarea {
+        width: 100%;
+        padding: 10px;
+        margin-top: 8px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        resize: vertical;
+    }
+
+    textarea:focus {
+        border: #1e5470 2px solid;
+        box-shadow: 0 0 6px rgba(89, 166, 254, 1);
+        outline: none;
+    }
+
+    .contact-btn {
+        background-color: #1e5470;
+        color: white;
+    }
+
+    .contact-btn:hover {
+        background-color: #2a6f97;
+    }
+
+    .cancel-btn {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .cancel-btn:hover {
+        background-color: #c82333;
+    }
+
+    .action-btn {
+        padding: 0.6rem 1.2rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 500;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .action-btn:hover {
+        transform: translateY(-1px);
+    }
     </style>
 </head>
 
@@ -233,7 +314,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                 <div>
                     <i class="fas fa-user-circle"></i>
                     <span class="menu-label"
-                        title="footer"><?php echo htmlspecialchars($_SESSION['Admin_email']); ?></span>
+                        title="footer"><?php echo htmlspecialchars($_SESSION['Host_email']); ?></span>
                 </div>
             </div>
         </aside>
@@ -290,6 +371,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                                 </a>
                             </div>
                         </div>
+
                     </div>
                     <div style="margin-top:0.3rem; color:#333;">
                         <?php echo nl2br(htmlspecialchars($review['Comment'])); ?>
@@ -302,10 +384,30 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
             </div>
         </div>
     </div>
+    <div id="reportModal" class="modal-report">
+        <div class="modal-report-content">
+            <span class="close-report">&times;</span>
+            <h2>เหตุผลการเรื่องร้องเรียน</h2>
+            <form id="reportForm">
+                <input type="hidden" id="reviewIdInput">
+                <label for="reason">กรุณากรอกเหตุผล:</label>
+                <textarea id="reason" name="reason" rows="4" placeholder="ระบุเหตุผล..." required></textarea>
+                <br>
+                <button type="submit" class="action-btn contact-btn">ส่งข้อมูล</button>
+                <button type="button" id="closeBtn" class="action-btn cancel-btn">ยกเลิก</button>
+            </form>
+        </div>
+    </div>
     <footer>
         <p>&copy; 2024 Homestay Booking. All rights reserved.</p>
     </footer>
     <script>
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.querySelector('.main-with-sidebar');
+        sidebar.classList.toggle("collapsed");
+        mainContent.classList.toggle("sidebar-collapsed");
+    }
     document.addEventListener('DOMContentLoaded', function() {
         const allDropdownToggles = document.querySelectorAll('.dropdown-toggle');
         allDropdownToggles.forEach(toggle => {
@@ -315,6 +417,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                 dropdownMenu.classList.toggle('show');
             });
         });
+
         window.addEventListener('click', function(event) {
             const openDropdowns = document.querySelectorAll('.dropdown-menu.show');
             openDropdowns.forEach(menu => {
@@ -323,57 +426,70 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                 }
             });
         });
-    });
-    const modal = document.getElementById("reportModal");
-    const report_btn = document.querySelectorAll('.report-review-btn');
-    const span = document.querySelector(".close-report");
-    const closeBtn = document.getElementById("closeBtn");
-    const formReport = document.getElementById("reportForm");
-    report_btn.forEach(btn => {
-        btn.onclick = function() {
-            const reviewId = this.dataset.reviewId;
-            document.getElementById('reviewIdInput').value = reviewId;
-            modal.style.display = "block";
-        }
-    })
-    span.onclick = () => modal.style.display = "none";
-    closeBtn.onclick = () => modal.style.display = "none";
-    window.onclick = (e) => {
-        if (e.target == modal) {
+        const modal = document.getElementById("reportModal");
+        const report_btn = document.querySelectorAll('.report-review-btn');
+        const span = document.querySelector(".close-report");
+        const closeBtn = document.getElementById("closeBtn");
+        const formReport = document.getElementById("reportForm");
+        const reason_raw = document.getElementById('reason');
+        const review_id_raw = document.getElementById('reviewIdInput');
+        report_btn.forEach(btn => {
+            btn.onclick = function() {
+                const reviewId = this.dataset.reviewId;
+                document.getElementById('reviewIdInput').value = reviewId;
+                modal.style.display = "block";
+                this.closest('.dropdown-menu').classList.remove('show');
+            }
+        })
+        span.onclick = () => {
             modal.style.display = "none";
+            reason.value = '';
+
         }
-    }
-    formReport.onsubmit = (e) => {
-        e.preventDefault();
-        const reason = document.getElementById('reason').value.trim();
-        const review_id = document.getElementById('reviewIdInput').value;
-        fetch('../../controls/notify.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: new URLSearchParams({
-                    review_id: review_id,
-                    reason: reason,
-                    submit_rv: true
+        closeBtn.onclick = () => {
+            modal.style.display = "none";
+            reason.value = '';
+        }
+        window.onclick = (e) => {
+            if (e.target == modal) {
+                modal.style.display = "none";
+                reason.value = '';
+
+            }
+        }
+        formReport.onsubmit = (e) => {
+            e.preventDefault();
+            const reason = reason_raw.value.trim();
+            const review_id = review_id_raw.value;
+
+            fetch('../../controls/notify.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams({
+                        review_id: review_id,
+                        reason: reason,
+                        submit_rv_host: true
+                    })
                 })
-            })
-            .then(res => {
-                if (!res.ok) throw new Error('network response was not ok');
-                return res.json();
-            })
-            .then(data => {
-                if (data.success = true) {
-                    alert(data.message);
-                    window.location.reload();
-                } else {
-                    alert(data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error.message);
-            });
-    };
+                .then(res => {
+                    if (!res.ok) throw new Error('network response was not ok');
+                    return res.json();
+                })
+                .then(data => {
+                    if (data.success === true) {
+                        alert(data.message);
+                        window.location.reload();
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error.message);
+                });
+        };
+    });
     </script>
 </body>
 

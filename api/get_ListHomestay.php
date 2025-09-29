@@ -14,7 +14,7 @@ $homestay = $propertyHandle->show_House();
 
 
 
-if (isset($_SESSION['Host_email'])) {
+if (!empty($_SESSION['Host_email'])) {
     $email = $_SESSION['Host_email'];
     $list_house = $propertyHandle->get_manageProperty($email);
     $properties = $propertyHandle->get_ListProperty($email);
@@ -23,7 +23,7 @@ if (isset($_SESSION['Host_email'])) {
     $total_income = $propertyHandle->Total_income($email);
     $total_reviews = $propertyHandle->Total_reviews($email);
 }
-if (isset($_SESSION['Admin_email'])) {
+if (!empty($_SESSION['Admin_email'])) {
     $AllProperty = $propertyHandle->get_AllProperty();
 }
 

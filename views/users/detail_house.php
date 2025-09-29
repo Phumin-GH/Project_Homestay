@@ -706,7 +706,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
 
     .dropdown-toggle:hover,
     .dropdown-toggle:focus {
-        background-color: #f1f1f1;
+        /* background-color: #f1f1f1; */
         outline: none;
 
     }
@@ -757,9 +757,9 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
         transition: color 0.2s ease;
     }
 
-    .dropdown-item:hover {
+    /* .dropdown-item:hover {
         background-color: #f5f5f5;
-    }
+    } */
 
     .dropdown-item.report-review-btn:hover {
         background-color: #fff1f1;
@@ -1101,586 +1101,589 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                             style="padding:0.5rem 1.5rem;">ส่งรีวิว</button>
                     </form>
                 </div>
-                <div class="section-title">รีวิวจากผู้เข้าพัก</div>
-                <?php if (count($reviews) > 0): ?>
-                <?php foreach ($reviews as $review): ?>
-                <div style="border-bottom:1px solid #eee; padding:1rem 0;">
-                    <div style="font-weight:600; color:#1e5470;">
-                        <?php echo htmlspecialchars($review['User_email']); ?>
-                        <span style="color:#f5b301; font-size:1.1rem; margin-left:0.5rem;">
-                            <?php for ($i = 0; $i < (int)$review['Rating']; $i++) echo '<i class="fa-solid fa-star"></i>'; ?>
-                        </span>
-                        <span style="color:#888; font-size:0.95rem; margin-left:1rem;">
-                            <?php echo date('d/m/Y', strtotime($review['Create_at'])); ?>
-                        </span>
-                        <!-- <button
+                <div class="section-title">รีวิวจากผู้เข้าพัก
+                    <?php if (count($reviews) > 0): ?>
+                    <?php foreach ($reviews as $review): ?>
+                    <div style="border-bottom:1px solid #eee; padding:1rem 0;">
+                        <div style="font-weight:600; color:#1e5470;">
+                            <?php echo htmlspecialchars($review['User_email']); ?>
+                            <span style="color:#f5b301; font-size:1.1rem; margin-left:0.5rem;">
+                                <?php for ($i = 0; $i < (int)$review['Rating']; $i++) echo '<i class="fa-solid fa-star"></i>'; ?>
+                            </span>
+                            <span style="color:#888; font-size:0.95rem; margin-left:1rem;">
+                                <?php echo date('d/m/Y', strtotime($review['Create_at'])); ?>
+                            </span>
+                            <!-- <button
                             style="border: none; background: #fff; padding: 10px; border-radius: 15px; cursor: pointer;   "><i
                                 class="fa-solid fa-ellipsis-vertical"></i></button> -->
-                        <div class="dropdown">
-                            <button class="dropdown-toggle" aria-label="ตัวเลือกเพิ่มเติม">
-                                <i class="fa-solid fa-ellipsis-vertical"></i>
-                            </button>
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item report-review-btn"
-                                    data-review-id="<?php echo $review['Review_id'] ?>">
-                                    <i class="fa-solid fa-flag"></i> รายงานรีวิวที่ไม่เหมาะสม
-                                </a>
+                            <div class="dropdown">
+                                <button class="dropdown-toggle" aria-label="ตัวเลือกเพิ่มเติม">
+                                    <i class="fa-solid fa-ellipsis-vertical"></i>
+                                </button>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item report-review-btn"
+                                        data-review-id="<?php echo $review['Review_id'] ?>">
+                                        <i class="fa-solid fa-flag"></i> รายงานรีวิวที่ไม่เหมาะสม
+                                    </a>
+                                </div>
                             </div>
-                        </div>
 
+                        </div>
+                        <div style="margin-top:0.3rem; color:#333;">
+                            <?php echo nl2br(htmlspecialchars($review['Comment'])); ?>
+                        </div>
                     </div>
-                    <div style="margin-top:0.3rem; color:#333;">
-                        <?php echo nl2br(htmlspecialchars($review['Comment'])); ?>
-                    </div>
+                    <?php endforeach; ?>
+                    <?php else: ?>
+                    <div style="color:#888;">ยังไม่มีรีวิวสำหรับที่พักนี้</div>
+                    <?php endif; ?>
                 </div>
-                <?php endforeach; ?>
-                <?php else: ?>
-                <div style="color:#888;">ยังไม่มีรีวิวสำหรับที่พักนี้</div>
-                <?php endif; ?>
             </div>
         </div>
-    </div>
-    <div id="reportModal" class="modal-report">
-        <div class="modal-report-content">
-            <span class="close-report">&times;</span>
-            <h2>เหตุผลการเรื่องร้องเรียน</h2>
-            <form id="reportForm">
-                <input type="hidden" id="reviewIdInput">
-                <label for="reason">กรุณากรอกเหตุผล:</label>
-                <textarea id="reason" name="reason" rows="4" placeholder="ระบุเหตุผล..." required></textarea>
-                <br>
-                <button type="submit" class="action-btn contact-btn">ส่งข้อมูล</button>
-                <button type="button" id="closeBtn" class="action-btn cancel-btn">ยกเลิก</button>
-            </form>
+        <div id="reportModal" class="modal-report">
+            <div class="modal-report-content">
+                <span class="close-report">&times;</span>
+                <h2>เหตุผลการเรื่องร้องเรียน</h2>
+                <form id="reportForm">
+                    <input type="hidden" id="reviewIdInput">
+                    <label for="reason">กรุณากรอกเหตุผล:</label>
+                    <textarea id="reason" name="reason" rows="4" placeholder="ระบุเหตุผล..." required></textarea>
+                    <br>
+                    <button type="submit" class="action-btn contact-btn">ส่งข้อมูล</button>
+                    <button type="button" id="closeBtn" class="action-btn cancel-btn">ยกเลิก</button>
+                </form>
+            </div>
         </div>
-    </div>
-    <footer>
-        <p>&copy; 2024 Homestay Booking. All rights reserved.</p>
-    </footer>
-    <!-- <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/main.min.js"></script> -->
+        <footer>
+            <p>&copy; 2024 Homestay Booking. All rights reserved.</p>
+        </footer>
+        <!-- <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/main.min.js"></script> -->
 
-    <script>
-    // Initialize payment button listeners after DOM is loaded
-    document.addEventListener('DOMContentLoaded', function() {
-        const rooms = document.querySelectorAll('.room-card');
-        let selectedRoomId = null;
-        let selectedPropertyId = null;
-        let selectedRoomPrice = 0;
+        <script>
+        // Initialize payment button listeners after DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            const rooms = document.querySelectorAll('.room-card');
+            let selectedRoomId = null;
+            let selectedPropertyId = null;
+            let selectedRoomPrice = 0;
 
 
-        const room_number = document.getElementById('room_number');
-        const roomid = document.getElementById('roomid');
-        const property = document.getElementById('propertyid');
-        const checkinInput = document.getElementById('checkin');
-        const checkoutInput = document.getElementById('checkout');
-        const guestsInput = document.getElementById('guests');
-        const nightsDisplay = document.getElementById('nights');
-        const diffDayDisplay = document.getElementById('diffDay');
-        const total_price = document.getElementById('total_price');
-        const prices_amount = document.getElementById('prices');
-        const bookingMessage = document.getElementById('bookingMessage');
-        const bookBtn = document.getElementById('bookBtn');
-        const totalPriceDisplay = document.getElementById('display_price');
+            const room_number = document.getElementById('room_number');
+            const roomid = document.getElementById('roomid');
+            const property = document.getElementById('propertyid');
+            const checkinInput = document.getElementById('checkin');
+            const checkoutInput = document.getElementById('checkout');
+            const guestsInput = document.getElementById('guests');
+            const nightsDisplay = document.getElementById('nights');
+            const diffDayDisplay = document.getElementById('diffDay');
+            const total_price = document.getElementById('total_price');
+            const prices_amount = document.getElementById('prices');
+            const bookingMessage = document.getElementById('bookingMessage');
+            const bookBtn = document.getElementById('bookBtn');
+            const totalPriceDisplay = document.getElementById('display_price');
 
-        // ตรวจสอบ DOM elements
-        if (!bookingMessage || !totalPriceDisplay) {
-            console.error('Missing DOM elements:', {
-                bookingMessage,
-                total_price
+            // ตรวจสอบ DOM elements
+            if (!bookingMessage || !totalPriceDisplay) {
+                console.error('Missing DOM elements:', {
+                    bookingMessage,
+                    total_price
 
-            });
-            return;
-        }
-
-        rooms.forEach(card => {
-            if (card.dataset.status !== 'Available') {
-                card.classList.add('disabled');
+                });
+                return;
             }
-        });
 
-        rooms.forEach(card => {
-            card.addEventListener('click', function() {
-                if (card.dataset.status !== 'Available') return;
-                rooms.forEach(c => c.classList.remove('selected'));
-                card.classList.add('selected');
-                selectedRoomId = card.dataset.roomId;
-                selectedPropertyId = card.dataset.roomProperty;
-                selectedRoomPrice = parseFloat(card.dataset.roomPrice);
-                roomid.value = selectedRoomId;
-                property.value = selectedPropertyId;
-                prices.value = selectedRoomPrice;
-                room_number.value = card.dataset.roomNumber;
-                calculatePrice();
-            });
-        });
-        checkinInput.addEventListener('change', function() {
-            if (checkinInput.value) {
-                // แปลงค่าวันที่เช็คอินเป็น Date object
-                let checkinDate = new Date(checkinInput.value);
-                checkinDate.setDate(checkinDate.getDate() + 1);
-                let year = checkinDate.getFullYear();
-                let month = String(checkinDate.getMonth() + 1).padStart(2, '0');
-                let day = String(checkinDate.getDate()).padStart(2, '0');
-                let minCheckoutDate = `${year}-${month}-${day}`;
-                // กำหนด min ของวันที่เช็คเอาท์
-                checkoutInput.min = minCheckoutDate;
-                // ถ้าวันที่เช็คเอาท์ปัจจุบันน้อยกว่าค่านี้ ให้ล้างค่าวันที่เช็คเอาท์
-                if (checkoutInput.value < minCheckoutDate) {
-                    checkoutInput.value = '';
+            rooms.forEach(card => {
+                if (card.dataset.status !== 'Available') {
+                    card.classList.add('disabled');
                 }
-            }
-        });
-        [checkinInput, checkoutInput, guestsInput].forEach(el => {
-            el.addEventListener('change', calculatePrice);
-            el.addEventListener('input', calculatePrice);
-        });
-
-        function calculatePrice() {
-            console.log('calculatePrice:', {
-                selectedRoomId,
-                checkin: checkinInput.value,
-                checkout: checkoutInput.value,
-                guests: guestsInput.value
             });
-            const checkinDate = new Date(checkinInput.value);
-            const checkoutDate = new Date(checkoutInput.value);
-            const diffTime = checkoutDate - checkinDate;
-            const diffDays = diffTime / (1000 * 60 * 60 * 24);
-            if (!selectedRoomId || isNaN(checkinDate) || isNaN(checkoutDate) || checkoutDate <= checkinDate ||
-                diffDays < 0) {
+
+            rooms.forEach(card => {
+                card.addEventListener('click', function() {
+                    if (card.dataset.status !== 'Available') return;
+                    rooms.forEach(c => c.classList.remove('selected'));
+                    card.classList.add('selected');
+                    selectedRoomId = card.dataset.roomId;
+                    selectedPropertyId = card.dataset.roomProperty;
+                    selectedRoomPrice = parseFloat(card.dataset.roomPrice);
+                    roomid.value = selectedRoomId;
+                    property.value = selectedPropertyId;
+                    prices.value = selectedRoomPrice;
+                    room_number.value = card.dataset.roomNumber;
+                    calculatePrice();
+                });
+            });
+            checkinInput.addEventListener('change', function() {
+                if (checkinInput.value) {
+                    // แปลงค่าวันที่เช็คอินเป็น Date object
+                    let checkinDate = new Date(checkinInput.value);
+                    checkinDate.setDate(checkinDate.getDate() + 1);
+                    let year = checkinDate.getFullYear();
+                    let month = String(checkinDate.getMonth() + 1).padStart(2, '0');
+                    let day = String(checkinDate.getDate()).padStart(2, '0');
+                    let minCheckoutDate = `${year}-${month}-${day}`;
+                    // กำหนด min ของวันที่เช็คเอาท์
+                    checkoutInput.min = minCheckoutDate;
+                    // ถ้าวันที่เช็คเอาท์ปัจจุบันน้อยกว่าค่านี้ ให้ล้างค่าวันที่เช็คเอาท์
+                    if (checkoutInput.value < minCheckoutDate) {
+                        checkoutInput.value = '';
+                    }
+                }
+            });
+            [checkinInput, checkoutInput, guestsInput].forEach(el => {
+                el.addEventListener('change', calculatePrice);
+                el.addEventListener('input', calculatePrice);
+            });
+
+            function calculatePrice() {
+                console.log('calculatePrice:', {
+                    selectedRoomId,
+                    checkin: checkinInput.value,
+                    checkout: checkoutInput.value,
+                    guests: guestsInput.value
+                });
+                const checkinDate = new Date(checkinInput.value);
+                const checkoutDate = new Date(checkoutInput.value);
+                const diffTime = checkoutDate - checkinDate;
+                const diffDays = diffTime / (1000 * 60 * 60 * 24);
+                if (!selectedRoomId || isNaN(checkinDate) || isNaN(checkoutDate) || checkoutDate <=
+                    checkinDate ||
+                    diffDays < 0) {
+                    totalPriceDisplay.innerText = '0.00';
+                    total_price.value = '0.00';
+                    bookingMessage.innerText = 'กรุณาเลือกห้องพักและวันที่เช็คอิน/เช็คเอาท์';
+                    bookingMessage.style.color = '#c0392b';
+                    bookingMessage.style.fontWeight = 'bold';
+                    bookingMessage.style.textAlign = 'center';
+                    bookingMessage.style.padding = '1rem';
+                    bookBtn.disabled = true;
+                    return;
+                }
+                diffDayDisplay.value = diffDays;
+                nightsDisplay.innerText = diffDays;
+                fetch('../../controls/bookings_room.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded' // หรือ 'application/json' แล้วแปลง body เป็น JSON.stringify(...)
+                        },
+                        body: new URLSearchParams({
+                            property_id: selectedPropertyId,
+                            room_id: selectedRoomId,
+                            nights: diffDays,
+                            guests: guestsInput.value,
+                            check_in_date: checkinInput.value,
+                            check_out_date: checkoutInput.value
+                        })
+                    })
+                    .then(response => {
+                        if (!response.ok) throw new Error('Network response was not ok');
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Fetch response:', data);
+                        if (data.check_success === false) {
+                            alert(data.message);
+                            resetForm()
+                        } else if (data.success === true) {
+                            // จัดการผลลัพธ์สำเร็จ
+
+                            totalPriceDisplay.innerText = data.total_price;
+                            total_price.value = data.total_price;
+                            // prices_amount.value = data.price;
+                            bookBtn.disabled = false;
+                        } else {
+                            // จัดการ error
+                            console.log(data.message);
+                            totalPriceDisplay.innerText = '0.00';
+                            total_price.value = '0.00';
+                            bookingMessage.innerText = data.message;
+                            bookingMessage.style.color = '#c0392b';
+                            bookBtn.disabled = true;
+                        }
+                    })
+                    .catch(error => {
+
+                        console.error('Fetch error:', error);
+
+                        totalPriceDisplay.innerText = '0.00';
+                        total_price.value = '0.00';
+                        bookingMessage.innerText = 'เกิดข้อผิดพลาด: ' + error;
+                        bookingMessage.style.color = '#c0392b';
+                        bookBtn.disabled = true;
+                        console.log(error);
+                    });
+            }
+
+            // Add ripple effect to buttons
+            document.querySelectorAll('.btn').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    addRipple(this, e);
+                });
+            });
+
+            function addRipple(button, event) {
+                const ripple = document.createElement('span');
+                const rect = button.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = event.clientX - rect.left - size / 2;
+                const y = event.clientY - rect.top - size / 2;
+                ripple.classList.add('ripple');
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                button.appendChild(ripple);
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            }
+            let selectedPayment = null;
+            const payButtons = document.querySelectorAll('.payment-button');
+            if (payButtons.length === 0) {
+                console.error('No payment buttons found!');
+            } else {
+                payButtons.forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        // เอา class selected ออกจากทุกปุ่ม
+                        payButtons.forEach(btn => btn.classList.remove('selected'));
+                        // ใส่ class ให้ปุ่มที่เลือก
+                        this.classList.add('selected');
+                        // เก็บค่าที่เลือก
+                        selectedPayment = this.dataset.method;
+
+                        // Ripple effect
+                        addRipple(this, e);
+                    });
+                });
+            }
+
+            const ConfirmBtn = document.getElementById('confirmBtn');
+            ConfirmBtn.addEventListener('click', function(e) {
+
+                if (confirm('คุณยืนยันต้องการชำระใช่ไหม?')) {
+                    //ตรวจสอบ room_id และ วันที่เช็คอิน,วันที่เช็คเอ้าท์ แล้วไม่เป็นค่าว่าง 
+                    fetch('../../controls/bookings_room.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            //ส่งข้อมูลใน body ไปที่โฟลเดอร์ controls/bookings_room.php
+                            body: new URLSearchParams({
+                                room_id: selectedRoomId,
+                                property_id: selectedPropertyId,
+                                check_in_date: checkinInput.value,
+                                check_out_date: checkoutInput.value,
+                                nights: diffDayDisplay.value,
+                                guests: guestsInput.value,
+                                total_price: prices_amount.value,
+                                submit_onl: true
+                            })
+                        })
+                        //ผลลัพธ์
+                        .then(response => {
+                            //ตรวจสอบค่าผลลัพธ์ที่เกี่ยวNetwork ถ้ามีปัญหาให้แจ้ง network response was not ok
+                            if (!response.ok) throw new Error('network response was not ok');
+                            //คืนค่าเป็น json
+                            return response.json();
+                        })
+                        //รับข้อมูลได้ ไม่มี error
+                        .then(data => {
+                            console.log('Fetch response :', data);
+                            if (data.success === true) {
+                                e.preventDefault();
+                                const latestTotalPrice = parseFloat(total_price.value);
+                                const bookingId = data.booking_id;
+                                if (!isNaN(latestTotalPrice) && latestTotalPrice > 0) {
+                                    fetch('../../controls/bookings_room.php', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/x-www-form-urlencoded'
+                                            },
+                                            body: 'total_price=' + encodeURIComponent(
+                                                    latestTotalPrice) +
+                                                '&booking_id=' + encodeURIComponent(
+                                                    bookingId) +
+                                                '&method=' + encodeURIComponent(
+                                                    selectedPayment) + '&submit_onl=' +
+                                                encodeURIComponent(true)
+                                        })
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            if (data.gateway === "qrcode") {
+
+                                                window.location.href = 'qr-payment.php';
+                                            } else if (data.gateway === "credit-card") {
+
+                                                window.location.href = 'credit-card.php';
+                                            } else {
+                                                alert(data.err);
+                                            }
+                                        })
+                                        .catch(err => console.error(err));
+                                }
+                            }
+                        })
+                        //รับข้อมูลไม่ได้ มี error
+                        .catch(error => {
+                            console.error('Failed to parse JSON:', error);
+                            bookingMessage.innerText = 'เกิดข้อผิดพลาด: Response ไม่ถูกต้อง';
+                            bookingMessage.style.color = '#c0392b';
+                            ConfirmBtn.disabled = false;
+                            bookBtn.disabled = false;
+                            document.getElementById('Confirm_booking').style.display = 'none';
+                        })
+                }
+            });
+            //reset from การจอง
+            function resetForm() {
+                checkinInput.value = '';
+                checkoutInput.value = '';
+                guestsInput.value = '1';
+                nightsDisplay.innerText = '';
                 totalPriceDisplay.innerText = '0.00';
-                total_price.value = '0.00';
+                total_price.value = '';
+                roomid.value = '';
+                property.value = '';
+                room_number.value = '';
+                prices_amount.value = '';
+                rooms.forEach(c => c.classList.remove('selected'));
+                selectedRoomId = null;
+                selectedPropertyId = null;
+                selectedRoomPrice = 0;
                 bookingMessage.innerText = 'กรุณาเลือกห้องพักและวันที่เช็คอิน/เช็คเอาท์';
                 bookingMessage.style.color = '#c0392b';
                 bookingMessage.style.fontWeight = 'bold';
                 bookingMessage.style.textAlign = 'center';
                 bookingMessage.style.padding = '1rem';
                 bookBtn.disabled = true;
-                return;
             }
-            diffDayDisplay.value = diffDays;
-            nightsDisplay.innerText = diffDays;
-            fetch('../../controls/bookings_room.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded' // หรือ 'application/json' แล้วแปลง body เป็น JSON.stringify(...)
-                    },
-                    body: new URLSearchParams({
-                        property_id: selectedPropertyId,
-                        room_id: selectedRoomId,
-                        nights: diffDays,
-                        guests: guestsInput.value,
-                        check_in_date: checkinInput.value,
-                        check_out_date: checkoutInput.value
-                    })
-                })
-                .then(response => {
-                    if (!response.ok) throw new Error('Network response was not ok');
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Fetch response:', data);
-                    if (data.check_success === false) {
-                        alert(data.message);
-                        resetForm()
-                    } else if (data.success === true) {
-                        // จัดการผลลัพธ์สำเร็จ
+            //ปุ่มreset form
+            const resetBtn = document.getElementById('resetBtn');
+            resetBtn.type = 'button';
+            resetBtn.innerText = 'Reset';
+            resetBtn.onclick = resetForm;
+            const bookingForm = document.getElementById('booking-form');
+            if (bookingForm) {
+                bookingForm.appendChild(resetBtn);
+            } else {
+                console.error('Element with id "booking-form" not found');
+            }
+            //ปุ่มFavorite
+            const favoriteBtn = <?php echo json_encode($fav_btn); ?>;
+            const buttons = document.querySelectorAll(".favorite-btn");
 
-                        totalPriceDisplay.innerText = data.total_price;
-                        total_price.value = data.total_price;
-                        // prices_amount.value = data.price;
-                        bookBtn.disabled = false;
-                    } else {
-                        // จัดการ error
-                        console.log(data.message);
-                        totalPriceDisplay.innerText = '0.00';
-                        total_price.value = '0.00';
-                        bookingMessage.innerText = data.message;
-                        bookingMessage.style.color = '#c0392b';
-                        bookBtn.disabled = true;
-                    }
-                })
-                .catch(error => {
+            buttons.forEach(button => {
+                const houseId = button.dataset.propertyId;
+                if (favoriteBtn.includes(parseInt(houseId))) {
+                    button.classList.add('active');
+                } else {
+                    button.classList.remove('active');
+                }
+                button.addEventListener("click", async () => {
+                    const action = button.dataset.method;
+                    fetch("../../controls/list_fav.php", {
+                            method: "POST",
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: new URLSearchParams({
+                                property_id: houseId,
+                                action: action
+                            })
 
-                    console.error('Fetch error:', error);
+                        })
+                        .then(response => response.json())
+                        .then(result => {
 
-                    totalPriceDisplay.innerText = '0.00';
-                    total_price.value = '0.00';
-                    bookingMessage.innerText = 'เกิดข้อผิดพลาด: ' + error;
-                    bookingMessage.style.color = '#c0392b';
-                    bookBtn.disabled = true;
-                    console.log(error);
+                            if (result.success) {
+                                // toggle icon
+                                if (result.action === 'added') {
+                                    button.classList.add("active");
+                                    window.location.reload();
+                                } else if (result.action === 'removed') {
+                                    button.classList.remove("active");
+                                    window.location.reload();
+                                }
+                            } else {
+                                alert("เกิดข้อผิดพลาด: " + result.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert("เกิดข้อผิดพลาด: " + error.message);
+                        });
                 });
-        }
-
-        // Add ripple effect to buttons
-        document.querySelectorAll('.btn').forEach(button => {
-            button.addEventListener('click', function(e) {
-                addRipple(this, e);
             });
         });
-
-        function addRipple(button, event) {
-            const ripple = document.createElement('span');
-            const rect = button.getBoundingClientRect();
-            const size = Math.max(rect.width, rect.height);
-            const x = event.clientX - rect.left - size / 2;
-            const y = event.clientY - rect.top - size / 2;
-            ripple.classList.add('ripple');
-            ripple.style.width = ripple.style.height = size + 'px';
-            ripple.style.left = x + 'px';
-            ripple.style.top = y + 'px';
-            button.appendChild(ripple);
-            setTimeout(() => {
-                ripple.remove();
-            }, 600);
+        </script>
+        <script>
+        //เปิด-ปิด Sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.querySelector('.main-with-sidebar');
+            sidebar.classList.toggle("collapsed");
+            mainContent.classList.toggle("sidebar-collapsed");
         }
-        let selectedPayment = null;
-        const payButtons = document.querySelectorAll('.payment-button');
-        if (payButtons.length === 0) {
-            console.error('No payment buttons found!');
-        } else {
-            payButtons.forEach(button => {
-                button.addEventListener('click', function(e) {
-                    // เอา class selected ออกจากทุกปุ่ม
-                    payButtons.forEach(btn => btn.classList.remove('selected'));
-                    // ใส่ class ให้ปุ่มที่เลือก
-                    this.classList.add('selected');
-                    // เก็บค่าที่เลือก
-                    selectedPayment = this.dataset.method;
 
-                    // Ripple effect
-                    addRipple(this, e);
+        function openConfirm_Booking() {
+            document.getElementById('Confirm_booking').style.display = 'flex';
+        }
+
+        function closeConfirm_Booking() {
+            document.getElementById('Confirm_booking').style.display = 'none';
+        }
+        window.onclick = function(event) {
+            const modal = document.getElementById('Confirm_booking');
+            if (event.target === modal) {
+                closeConfirm_Booking();
+            }
+        }
+        const slides = document.querySelectorAll(".Imgslider img");
+        const prevBtn = document.querySelector(".prev");
+        const nextBtn = document.querySelector(".next");
+        let index = 0;
+        let interval = setInterval(nextSlide, 5000); // ปรับเวลาเป็น 5 วินาที
+
+        function showSlide(i) {
+            slides.forEach(slide => slide.classList.remove("active"));
+            slides[i].classList.add("active");
+        }
+
+        function nextSlide() {
+            index = (index + 1) % slides.length;
+            showSlide(index);
+        }
+
+        function prevSlide() {
+            index = (index - 1 + slides.length) % slides.length;
+            showSlide(index);
+        }
+
+        nextBtn.addEventListener("click", () => {
+            nextSlide();
+            resetInterval();
+        });
+
+        prevBtn.addEventListener("click", () => {
+            prevSlide();
+            resetInterval();
+        });
+
+        function resetInterval() {
+            clearInterval(interval);
+            interval = setInterval(nextSlide, 8000); // ให้เวลานานขึ้นหลังกดเอง
+        }
+        //สคิปต์ดึงค่าละติจูดและลองจิจูดมาแสดง
+        const lat = <?php echo isset($house['Property_latitude']) ? floatval($house['Property_latitude']) : 13.7563; ?>;
+        const lng =
+            <?php echo isset($house['Property_longitude']) ? floatval($house['Property_longitude']) : 100.5018; ?>;
+        const map = L.map('map').setView([lat, lng], 20);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        L.marker([lat, lng]).addTo(map);
+
+        const propertyId = "<?php echo $property['Property_id']; ?>";
+        const formReviews = document.getElementById('reviewForm');
+        formReviews.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(formReviews);
+            formData.append('property_id', propertyId);
+            formData.append('submit_review', true);
+            fetch('../../controls/reviews_house.php', {
+                method: 'POST',
+                body: formData
+            }).then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            }).then(data => {
+                console.log('Fetch response:', data);
+                if (data.success === true) {
+                    window.location.reload();
+                    alert('ขอบคุณสำหรับรีวิวของคุณ!');
+                } else {
+                    console.log(data.message);
+                    alert('เกิดข้อผิดพลาด : ' + data.message);
+                }
+            }).catch(error => {
+                console.error('Fetch error:', error);
+                alert('เกิดข้อผิดพลาด: ' + error);
+
+            });
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const allDropdownToggles = document.querySelectorAll('.dropdown-toggle');
+            allDropdownToggles.forEach(toggle => {
+                toggle.addEventListener('click', function(event) {
+                    event.stopPropagation();
+                    const dropdownMenu = this.nextElementSibling;
+                    dropdownMenu.classList.toggle('show');
                 });
             });
-        }
 
-        const ConfirmBtn = document.getElementById('confirmBtn');
-        ConfirmBtn.addEventListener('click', function(e) {
+            window.addEventListener('click', function(event) {
+                const openDropdowns = document.querySelectorAll('.dropdown-menu.show');
+                openDropdowns.forEach(menu => {
+                    if (!menu.parentElement.contains(event.target)) {
+                        menu.classList.remove('show');
+                    }
+                });
+            });
+            const modal = document.getElementById("reportModal");
+            const report_btn = document.querySelectorAll('.report-review-btn');
+            const span = document.querySelector(".close-report");
+            const closeBtn = document.getElementById("closeBtn");
+            const formReport = document.getElementById("reportForm");
+            report_btn.forEach(btn => {
+                btn.onclick = function() {
+                    const reviewId = this.dataset.reviewId;
+                    document.getElementById('reviewIdInput').value = reviewId;
+                    modal.style.display = "block";
+                    this.closest('.dropdown-menu').classList.remove('show');
+                }
+            })
+            span.onclick = () => modal.style.display = "none";
+            closeBtn.onclick = () => modal.style.display = "none";
+            window.onclick = (e) => {
+                if (e.target == modal) {
+                    modal.style.display = "none";
+                }
+            }
+            formReport.onsubmit = (e) => {
+                e.preventDefault();
+                const reason = document.getElementById('reason').value.trim();
+                const review_id = document.getElementById('reviewIdInput').value;
 
-            if (confirm('คุณยืนยันต้องการชำระใช่ไหม?')) {
-                //ตรวจสอบ room_id และ วันที่เช็คอิน,วันที่เช็คเอ้าท์ แล้วไม่เป็นค่าว่าง 
-                fetch('../../controls/bookings_room.php', {
+                fetch('../../controls/notify.php', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded'
                         },
-                        //ส่งข้อมูลใน body ไปที่โฟลเดอร์ controls/bookings_room.php
                         body: new URLSearchParams({
-                            room_id: selectedRoomId,
-                            property_id: selectedPropertyId,
-                            check_in_date: checkinInput.value,
-                            check_out_date: checkoutInput.value,
-                            nights: diffDayDisplay.value,
-                            guests: guestsInput.value,
-                            total_price: prices_amount.value,
-                            submit_onl: true
+                            review_id: review_id,
+                            reason: reason,
+                            submit_rv_user: true
                         })
                     })
-                    //ผลลัพธ์
-                    .then(response => {
-                        //ตรวจสอบค่าผลลัพธ์ที่เกี่ยวNetwork ถ้ามีปัญหาให้แจ้ง network response was not ok
-                        if (!response.ok) throw new Error('network response was not ok');
-                        //คืนค่าเป็น json
-                        return response.json();
+                    .then(res => {
+                        if (!res.ok) throw new Error('network response was not ok');
+                        return res.json();
                     })
-                    //รับข้อมูลได้ ไม่มี error
                     .then(data => {
-                        console.log('Fetch response :', data);
                         if (data.success === true) {
-                            e.preventDefault();
-                            const latestTotalPrice = parseFloat(total_price.value);
-                            const bookingId = data.booking_id;
-                            if (!isNaN(latestTotalPrice) && latestTotalPrice > 0) {
-                                fetch('../../controls/bookings_room.php', {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/x-www-form-urlencoded'
-                                        },
-                                        body: 'total_price=' + encodeURIComponent(
-                                                latestTotalPrice) +
-                                            '&booking_id=' + encodeURIComponent(
-                                                bookingId) +
-                                            '&method=' + encodeURIComponent(
-                                                selectedPayment) + '&submit_onl=' +
-                                            encodeURIComponent(true)
-                                    })
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        if (data.gateway === "qrcode") {
-
-                                            window.location.href = 'qr-payment.php';
-                                        } else if (data.gateway === "credit-card") {
-
-                                            window.location.href = 'credit-card.php';
-                                        } else {
-                                            alert(data.err);
-                                        }
-                                    })
-                                    .catch(err => console.error(err));
-                            }
-                        }
-                    })
-                    //รับข้อมูลไม่ได้ มี error
-                    .catch(error => {
-                        console.error('Failed to parse JSON:', error);
-                        bookingMessage.innerText = 'เกิดข้อผิดพลาด: Response ไม่ถูกต้อง';
-                        bookingMessage.style.color = '#c0392b';
-                        ConfirmBtn.disabled = false;
-                        bookBtn.disabled = false;
-                        document.getElementById('Confirm_booking').style.display = 'none';
-                    })
-            }
-        });
-        //reset from การจอง
-        function resetForm() {
-            checkinInput.value = '';
-            checkoutInput.value = '';
-            guestsInput.value = '1';
-            nightsDisplay.innerText = '';
-            totalPriceDisplay.innerText = '0.00';
-            total_price.value = '';
-            roomid.value = '';
-            property.value = '';
-            room_number.value = '';
-            prices_amount.value = '';
-            rooms.forEach(c => c.classList.remove('selected'));
-            selectedRoomId = null;
-            selectedPropertyId = null;
-            selectedRoomPrice = 0;
-            bookingMessage.innerText = 'กรุณาเลือกห้องพักและวันที่เช็คอิน/เช็คเอาท์';
-            bookingMessage.style.color = '#c0392b';
-            bookingMessage.style.fontWeight = 'bold';
-            bookingMessage.style.textAlign = 'center';
-            bookingMessage.style.padding = '1rem';
-            bookBtn.disabled = true;
-        }
-        //ปุ่มreset form
-        const resetBtn = document.getElementById('resetBtn');
-        resetBtn.type = 'button';
-        resetBtn.innerText = 'Reset';
-        resetBtn.onclick = resetForm;
-        const bookingForm = document.getElementById('booking-form');
-        if (bookingForm) {
-            bookingForm.appendChild(resetBtn);
-        } else {
-            console.error('Element with id "booking-form" not found');
-        }
-        //ปุ่มFavorite
-        const favoriteBtn = <?php echo json_encode($fav_btn); ?>;
-        const buttons = document.querySelectorAll(".favorite-btn");
-
-        buttons.forEach(button => {
-            const houseId = button.dataset.propertyId;
-            if (favoriteBtn.includes(parseInt(houseId))) {
-                button.classList.add('active');
-            } else {
-                button.classList.remove('active');
-            }
-            button.addEventListener("click", async () => {
-                const action = button.dataset.method;
-                fetch("../../controls/list_fav.php", {
-                        method: "POST",
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        body: new URLSearchParams({
-                            property_id: houseId,
-                            action: action
-                        })
-
-                    })
-                    .then(response => response.json())
-                    .then(result => {
-
-                        if (result.success) {
-                            // toggle icon
-                            if (result.action === 'added') {
-                                button.classList.add("active");
-                                window.location.reload();
-                            } else if (result.action === 'removed') {
-                                button.classList.remove("active");
-                                window.location.reload();
-                            }
+                            alert(data.message);
+                            window.location.reload();
                         } else {
-                            alert("เกิดข้อผิดพลาด: " + result.message);
+                            alert(data.message);
                         }
                     })
                     .catch(error => {
-                        console.error('Error:', error);
-                        alert("เกิดข้อผิดพลาด: " + error.message);
+                        console.error('Error:', error.message);
                     });
-            });
+            };
         });
-    });
-    </script>
-    <script>
-    //เปิด-ปิด Sidebar
-    function toggleSidebar() {
-        const sidebar = document.getElementById('sidebar');
-        const mainContent = document.querySelector('.main-with-sidebar');
-        sidebar.classList.toggle("collapsed");
-        mainContent.classList.toggle("sidebar-collapsed");
-    }
-
-    function openConfirm_Booking() {
-        document.getElementById('Confirm_booking').style.display = 'flex';
-    }
-
-    function closeConfirm_Booking() {
-        document.getElementById('Confirm_booking').style.display = 'none';
-    }
-    window.onclick = function(event) {
-        const modal = document.getElementById('Confirm_booking');
-        if (event.target === modal) {
-            closeConfirm_Booking();
-        }
-    }
-    const slides = document.querySelectorAll(".Imgslider img");
-    const prevBtn = document.querySelector(".prev");
-    const nextBtn = document.querySelector(".next");
-    let index = 0;
-    let interval = setInterval(nextSlide, 5000); // ปรับเวลาเป็น 5 วินาที
-
-    function showSlide(i) {
-        slides.forEach(slide => slide.classList.remove("active"));
-        slides[i].classList.add("active");
-    }
-
-    function nextSlide() {
-        index = (index + 1) % slides.length;
-        showSlide(index);
-    }
-
-    function prevSlide() {
-        index = (index - 1 + slides.length) % slides.length;
-        showSlide(index);
-    }
-
-    nextBtn.addEventListener("click", () => {
-        nextSlide();
-        resetInterval();
-    });
-
-    prevBtn.addEventListener("click", () => {
-        prevSlide();
-        resetInterval();
-    });
-
-    function resetInterval() {
-        clearInterval(interval);
-        interval = setInterval(nextSlide, 8000); // ให้เวลานานขึ้นหลังกดเอง
-    }
-    //สคิปต์ดึงค่าละติจูดและลองจิจูดมาแสดง
-    const lat = <?php echo isset($house['Property_latitude']) ? floatval($house['Property_latitude']) : 13.7563; ?>;
-    const lng = <?php echo isset($house['Property_longitude']) ? floatval($house['Property_longitude']) : 100.5018; ?>;
-    const map = L.map('map').setView([lat, lng], 20);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
-
-    L.marker([lat, lng]).addTo(map);
-
-    const propertyId = "<?php echo $property['Property_id']; ?>";
-    const formReviews = document.getElementById('reviewForm');
-    formReviews.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const formData = new FormData(formReviews);
-        formData.append('property_id', propertyId);
-        formData.append('submit_review', true);
-        fetch('../../controls/reviews_house.php', {
-            method: 'POST',
-            body: formData
-        }).then(response => {
-            if (!response.ok) throw new Error('Network response was not ok');
-            return response.json();
-        }).then(data => {
-            console.log('Fetch response:', data);
-            if (data.success === true) {
-                window.location.reload();
-                alert('ขอบคุณสำหรับรีวิวของคุณ!');
-            } else {
-                console.log(data.message);
-                alert('เกิดข้อผิดพลาด : ' + data.message);
-            }
-        }).catch(error => {
-            console.error('Fetch error:', error);
-            alert('เกิดข้อผิดพลาด: ' + error);
-
-        });
-    });
-    document.addEventListener('DOMContentLoaded', function() {
-        const allDropdownToggles = document.querySelectorAll('.dropdown-toggle');
-        allDropdownToggles.forEach(toggle => {
-            toggle.addEventListener('click', function(event) {
-                event.stopPropagation();
-                const dropdownMenu = this.nextElementSibling;
-                dropdownMenu.classList.toggle('show');
-            });
-        });
-
-        window.addEventListener('click', function(event) {
-            const openDropdowns = document.querySelectorAll('.dropdown-menu.show');
-            openDropdowns.forEach(menu => {
-                if (!menu.parentElement.contains(event.target)) {
-                    menu.classList.remove('show');
-                }
-            });
-        });
-        const modal = document.getElementById("reportModal");
-        const report_btn = document.querySelectorAll('.report-review-btn');
-        const span = document.querySelector(".close-report");
-        const closeBtn = document.getElementById("closeBtn");
-        const formReport = document.getElementById("reportForm");
-        report_btn.forEach(btn => {
-            btn.onclick = function() {
-                const reviewId = this.dataset.reviewId;
-                document.getElementById('reviewIdInput').value = reviewId;
-                modal.style.display = "block";
-                this.closest('.dropdown-menu').classList.remove('show');
-            }
-        })
-        span.onclick = () => modal.style.display = "none";
-        closeBtn.onclick = () => modal.style.display = "none";
-        window.onclick = (e) => {
-            if (e.target == modal) {
-                modal.style.display = "none";
-            }
-        }
-        formReport.onsubmit = (e) => {
-            e.preventDefault();
-            const reason = document.getElementById('reason').value.trim();
-            const review_id = document.getElementById('reviewIdInput').value;
-            fetch('../../controls/notify.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: new URLSearchParams({
-                        review_id: review_id,
-                        reason: reason,
-                        submit_rv: true
-                    })
-                })
-                .then(res => {
-                    if (!res.ok) throw new Error('network response was not ok');
-                    return res.json();
-                })
-                .then(data => {
-                    if (data.success = true) {
-                        alert(data.message);
-                        window.location.reload();
-                    } else {
-                        alert(data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error.message);
-                });
-        };
-    });
-    </script>
+        </script>
 </body>
 
 </html>
