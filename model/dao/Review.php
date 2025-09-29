@@ -7,21 +7,69 @@ class Review
     {
         $this->conn = $db_connection;
     }
+
     public function get_Reviews($property_id)
     {
         if (!$property_id) {
             return "ไม่พบข้อมูลบ้านพัก!";
         }
-        $sql = "SELECT u.User_email,r.Rating,r.Comment,r.Create_at FROM review r 
+        $sql = "SELECT u.User_email,r.Review_id,r.Rating,r.Comment,r.Create_at FROM review r 
         INNER JOIN user u ON r.User_id = u.User_id 
         INNER JOIN property p ON r.Property_id = p.Property_id
-        WHERE r.Property_id =? ";
+        WHERE r.Property_id =? AND r.Review_status = 'normal'";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$property_id]);
         $reviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $reviews;
     }
+    public function get_violation()
+    {
+        $sql = "SELECT rp.Report_id,rp.Review_id,reporter.User_email AS Reported_by,owner.User_email AS Reported_user,rp.Report_reason,rp.Create_at
+        FROM review_reports rp
+        INNER JOIN review rv ON rp.Review_id = rv.Review_id
+        INNER JOIN user owner ON  rv.User_id = owner.User_id
+        INNER JOIN user reporter ON  rp.User_id = reporter.User_id
+        WHERE rp.Report_status = 'pending'";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([]);
+        $violation = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $violation;
+    }
+    public function get_user_id($email)
+    {
+        $sql = "SELECT User_id FROM user WHERE User_email=?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$email]);
+        $user_id = $stmt->fetchColumn();
+        return $user_id;
+    }
+    public function get_host_id($email)
+    {
+        $sql = "SELECT Host_id FROM host WHERE Host_email=?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$email]);
+        $host_id = $stmt->fetchColumn();
+        return $host_id;
+    }
+    public function violation($review_id, $user_email, $host_email, $reason)
+    {
+        if (!empty($user_email) && empty($host_email)) {
+            $user_id = $this->get_user_id($user_email);
+            $host_id = null;
+        } elseif (!empty($host_email) && empty($user_email)) {
+            $host_id = $this->get_host_id($user_email);
+            $user_id = null;
+        }
+        $sql = "INSERT INTO review_reports (Review_id,User_id,Host_id,Report_reason) VALUES (?,?,?,?)";
+        $stmt = $this->conn->prepare($sql);
+        try {
 
+            $stmt->execute([$review_id, $user_id, $host_id, $reason]);
+            return true;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
     public function addReview($user_email, $property_id, $rating, $comment)
     {
         if (!$user_email || !$property_id || !$rating || !$comment) {

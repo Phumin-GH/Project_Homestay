@@ -18,296 +18,296 @@ if (!isset($_SESSION['Admin_email'])) {
     <link rel="stylesheet" href="../../public/css/main-menu.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
+    .edit-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .edit-header {
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 2.5rem 2rem;
+        margin-bottom: 2rem;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        border: 1px solid #e5e5e5;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .edit-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: #1e5470;
+    }
+
+    .edit-header h1 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        color: #1a1a1a;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+    }
+
+    .edit-header p {
+        color: #666;
+        font-size: 1rem;
+    }
+
+    .edit-form {
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        border: 1px solid #e5e5e5;
+    }
+
+    .form-section {
+        margin-bottom: 2.5rem;
+    }
+
+    .form-section h3 {
+        color: #1a1a1a;
+        margin-bottom: 1.5rem;
+        font-size: 1.25rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .form-section h3::before {
+        content: '';
+        width: 4px;
+        height: 20px;
+        background: #1e5470;
+        border-radius: 2px;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.75rem;
+        font-weight: 600;
+        color: #1a1a1a;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 1rem;
+        border: 1px solid #e5e5e5;
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.2s ease;
+        background: #f8f9fa;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: #1e5470;
+        background: #ffffff;
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    .form-input:disabled {
+        background: #f1f3f4;
+        color: #666;
+        cursor: not-allowed;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+
+    .btn-group {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+    }
+
+    .btn {
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-primary {
+        background: #1e5470;
+        color: white;
+        box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+    }
+
+    .btn-secondary {
+        background: #6b7280;
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background: #525762ff;
+
+    }
+
+    .btn-primary:hover {
+        background: #2c79a0ff;
+    }
+
+    .alert {
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .alert-success {
+        background: #dcfce7;
+        color: #166534;
+        border: 1px solid #bbf7d0;
+    }
+
+    .alert-danger {
+        background: #fef2f2;
+        color: #dc2626;
+        border: 1px solid #fecaca;
+    }
+
+    .password-section {
+        background: #f8f9ff;
+        padding: 2rem;
+        border-radius: 16px;
+        border: 1px solid #e5e5e5;
+        margin-top: 2rem;
+    }
+
+    .password-section h3 {
+        color: #1e5470;
+    }
+
+    .help-text {
+        color: #666;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+        font-style: italic;
+    }
+
+    /* Phone Input Styles */
+    .phone-input-container {
+        display: flex;
+        align-items: center;
+        border: 1px solid #e5e5e5;
+        border-radius: 12px;
+        background: #f8f9fa;
+        overflow: hidden;
+        transition: all 0.2s ease;
+    }
+
+    .phone-input-container:focus-within {
+        border-color: #1e5470;
+        background: #ffffff;
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    .phone-prefix {
+        background: #1e5470;
+        color: white;
+        padding: 1rem 0.75rem;
+        font-weight: 600;
+        font-size: 1rem;
+        border-right: 1px solid #e5e5e5;
+        min-width: 60px;
+        text-align: center;
+        user-select: none;
+        cursor: default;
+    }
+
+    .phone-input {
+        border: none !important;
+        background: transparent !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        flex: 1;
+        padding-left: 1rem;
+    }
+
+    .phone-input:focus {
+        outline: none !important;
+        border: none !important;
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+
+    .phone-input:disabled {
+        background: transparent !important;
+        color: #666;
+    }
+
+    @media (max-width: 768px) {
         .edit-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        .edit-header {
-            background: #ffffff;
-            border-radius: 20px;
-            padding: 2.5rem 2rem;
-            margin-bottom: 2rem;
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-            border: 1px solid #e5e5e5;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .edit-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: #1e5470;
-        }
-
-        .edit-header h1 {
-            font-size: 1.75rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            color: #1a1a1a;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
-        }
-
-        .edit-header p {
-            color: #666;
-            font-size: 1rem;
-        }
-
-        .edit-form {
-            background: #ffffff;
-            border-radius: 20px;
-            padding: 2rem;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-            border: 1px solid #e5e5e5;
-        }
-
-        .form-section {
-            margin-bottom: 2.5rem;
-        }
-
-        .form-section h3 {
-            color: #1a1a1a;
-            margin-bottom: 1.5rem;
-            font-size: 1.25rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .form-section h3::before {
-            content: '';
-            width: 4px;
-            height: 20px;
-            background: #1e5470;
-            border-radius: 2px;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 0.75rem;
-            font-weight: 600;
-            color: #1a1a1a;
-            font-size: 0.875rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .form-input {
-            width: 100%;
             padding: 1rem;
-            border: 1px solid #e5e5e5;
-            border-radius: 12px;
-            font-size: 1rem;
-            transition: all 0.2s ease;
-            background: #f8f9fa;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: #1e5470;
-            background: #ffffff;
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-        }
-
-        .form-input:disabled {
-            background: #f1f3f4;
-            color: #666;
-            cursor: not-allowed;
         }
 
         .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
+            grid-template-columns: 1fr;
         }
 
         .btn-group {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            margin-top: 2rem;
+            flex-direction: column;
         }
 
-        .btn {
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
+        .edit-header {
+            padding: 2rem 1rem;
         }
 
-        .btn-primary {
-            background: #1e5470;
-            color: white;
-            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+        .edit-header h1 {
+            font-size: 1.5rem;
         }
 
-        .btn-secondary {
-            background: #6b7280;
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            background: #525762ff;
-
-        }
-
-        .btn-primary:hover {
-            background: #2c79a0ff;
-        }
-
-        .alert {
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
-            margin-bottom: 1.5rem;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .alert-success {
-            background: #dcfce7;
-            color: #166534;
-            border: 1px solid #bbf7d0;
-        }
-
-        .alert-danger {
-            background: #fef2f2;
-            color: #dc2626;
-            border: 1px solid #fecaca;
-        }
-
-        .password-section {
-            background: #f8f9ff;
-            padding: 2rem;
-            border-radius: 16px;
-            border: 1px solid #e5e5e5;
-            margin-top: 2rem;
-        }
-
-        .password-section h3 {
-            color: #1e5470;
-        }
-
-        .help-text {
-            color: #666;
-            font-size: 0.875rem;
-            margin-top: 0.5rem;
-            font-style: italic;
-        }
-
-        /* Phone Input Styles */
+        /* Mobile phone input styles */
         .phone-input-container {
-            display: flex;
-            align-items: center;
-            border: 1px solid #e5e5e5;
-            border-radius: 12px;
-            background: #f8f9fa;
-            overflow: hidden;
-            transition: all 0.2s ease;
-        }
-
-        .phone-input-container:focus-within {
-            border-color: #1e5470;
-            background: #ffffff;
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+            flex-direction: column;
+            border-radius: 8px;
         }
 
         .phone-prefix {
-            background: #1e5470;
-            color: white;
-            padding: 1rem 0.75rem;
-            font-weight: 600;
-            font-size: 1rem;
-            border-right: 1px solid #e5e5e5;
-            min-width: 60px;
-            text-align: center;
-            user-select: none;
-            cursor: default;
+            width: 100%;
+            border-right: none;
+            border-bottom: 1px solid #e5e5e5;
+            padding: 0.75rem;
+            min-width: auto;
         }
 
         .phone-input {
-            border: none !important;
-            background: transparent !important;
-            border-radius: 0 !important;
-            box-shadow: none !important;
-            flex: 1;
-            padding-left: 1rem;
+            padding: 1rem;
+            text-align: center;
         }
-
-        .phone-input:focus {
-            outline: none !important;
-            border: none !important;
-            background: transparent !important;
-            box-shadow: none !important;
-        }
-
-        .phone-input:disabled {
-            background: transparent !important;
-            color: #666;
-        }
-
-        @media (max-width: 768px) {
-            .edit-container {
-                padding: 1rem;
-            }
-
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-
-            .btn-group {
-                flex-direction: column;
-            }
-
-            .edit-header {
-                padding: 2rem 1rem;
-            }
-
-            .edit-header h1 {
-                font-size: 1.5rem;
-            }
-
-            /* Mobile phone input styles */
-            .phone-input-container {
-                flex-direction: column;
-                border-radius: 8px;
-            }
-
-            .phone-prefix {
-                width: 100%;
-                border-right: none;
-                border-bottom: 1px solid #e5e5e5;
-                padding: 0.75rem;
-                min-width: auto;
-            }
-
-            .phone-input {
-                padding: 1rem;
-                text-align: center;
-            }
-        }
+    }
     </style>
 </head>
 
@@ -344,8 +344,8 @@ if (!isset($_SESSION['Admin_email'])) {
                             class="fas fa-hand-holding-usd"></i><span class="menu-label">Refund</span></a></li>
                 <li><a href="manage-reviews.php" title="รีวิวจากผู้ใช้งาน"><i class="fas fa-star"></i><span
                             class="menu-label">Reviews</span></a></li>
-                <li><a href="violations.php" title="รายการการละเมิด"><i class="fas fa-exclamation-triangle"></i><span
-                            class="menu-label">Violations</span></a></li>
+                <li><a href="violations.php" title="จัดการเรื่องร้องเรียน"><i
+                            class="fas fa-exclamation-triangle"></i><span class="menu-label">Violations</span></a></li>
                 <li><a href="../../controls/logout.php" title="ออกจากระบบ"><i class="fas fa-sign-out-alt"></i><span
                             class="menu-label">Logout</span></a></li>
             </ul>
@@ -426,49 +426,49 @@ if (!isset($_SESSION['Admin_email'])) {
         <p>&copy; 2024 Homestay Booking. All rights reserved.</p>
     </footer>
     <script>
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle("collapsed");
-        }
-        document.addEventListener('DOMContentLoaded', function() {
-            const phoneInput = document.querySelector('.phone-input');
-            const phonePrefix = document.querySelector('.phone-prefix');
-            if (phoneInput && phonePrefix) {
-                // Prevent editing the prefix
-                phonePrefix.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    phoneInput.focus();
-                });
-                phoneInput.addEventListener('input', function(e) {
-                    let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        sidebar.classList.toggle("collapsed");
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        const phoneInput = document.querySelector('.phone-input');
+        const phonePrefix = document.querySelector('.phone-prefix');
+        if (phoneInput && phonePrefix) {
+            // Prevent editing the prefix
+            phonePrefix.addEventListener('click', function(e) {
+                e.preventDefault();
+                phoneInput.focus();
+            });
+            phoneInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
 
-                    // Limit to 9 digits (Thai mobile number)
-                    if (value.length > 9) {
-                        value = value.substring(0, 9);
-                    }
-                    // Format as XXX-XXX-XXX
-                    if (value.length >= 6) {
-                        value = value.substring(0, 3) + '-' + value.substring(3, 6) + '-' + value.substring(
-                            6);
-                    } else if (value.length >= 3) {
-                        value = value.substring(0, 3) + '-' + value.substring(3);
-                    }
-                    e.target.value = value;
-                });
-                // Prevent paste in prefix area
-                phonePrefix.addEventListener('paste', function(e) {
-                    e.preventDefault();
-                    phoneInput.focus();
-                });
-                // Prevent drag and drop on prefix
-                phonePrefix.addEventListener('drop', function(e) {
-                    e.preventDefault();
-                });
-                phonePrefix.addEventListener('dragover', function(e) {
-                    e.preventDefault();
-                });
-            }
-        });
+                // Limit to 9 digits (Thai mobile number)
+                if (value.length > 9) {
+                    value = value.substring(0, 9);
+                }
+                // Format as XXX-XXX-XXX
+                if (value.length >= 6) {
+                    value = value.substring(0, 3) + '-' + value.substring(3, 6) + '-' + value.substring(
+                        6);
+                } else if (value.length >= 3) {
+                    value = value.substring(0, 3) + '-' + value.substring(3);
+                }
+                e.target.value = value;
+            });
+            // Prevent paste in prefix area
+            phonePrefix.addEventListener('paste', function(e) {
+                e.preventDefault();
+                phoneInput.focus();
+            });
+            // Prevent drag and drop on prefix
+            phonePrefix.addEventListener('drop', function(e) {
+                e.preventDefault();
+            });
+            phonePrefix.addEventListener('dragover', function(e) {
+                e.preventDefault();
+            });
+        }
+    });
     </script>
 </body>
 

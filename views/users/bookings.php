@@ -1106,11 +1106,8 @@ require_once __DIR__ . '/../../api/get_bookings.php';
     const span = document.querySelector(".close");
     const closeBtn = document.getElementById("closeBtn");
     const form = document.getElementById("cancelForm");
-
     refund_btn.forEach(btn => {
-
         btn.onclick = function() {
-
             const bookingId = this.dataset.bookingId;
             const amount = this.dataset.amount;
             document.getElementById('bookingIdInput').value = bookingId;

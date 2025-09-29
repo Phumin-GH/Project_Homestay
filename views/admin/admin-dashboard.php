@@ -20,254 +20,254 @@ if (!isset($_SESSION["Admin_email"])) {
     <link rel="stylesheet" href="../../public/css/barStyle.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
+    .admin-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .page-header {
+        background: #1e5470;
+        color: white;
+        padding: 3rem 2rem;
+        border-radius: 16px;
+        margin-bottom: 3rem;
+        text-align: center;
+    }
+
+    .page-header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .page-header p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+    }
+
+    .stat-card {
+        background: #ffffff;
+        padding: 1.5rem;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e5e5e5;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    }
+
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        font-size: 1.25rem;
+        color: white;
+    }
+
+    .stat-icon.properties {
+        background: #1e5470;
+    }
+
+    .stat-icon.hosts {
+        background: linear-gradient(135deg, #10b981, #059669);
+    }
+
+    .stat-icon.users {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+    }
+
+    .stat-icon.bookings {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+    }
+
+    .stat-icon.income {
+        background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    }
+
+    .stat-icon.reviews {
+        background: linear-gradient(135deg, #06b6d4, #0891b2);
+    }
+
+    .stat-number {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        color: #666;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .quick-actions {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+    }
+
+    .action-card {
+        background: #ffffff;
+        padding: 2rem;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e5e5e5;
+        text-align: center;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .action-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    }
+
+    .action-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        font-size: 1.5rem;
+        color: white;
+    }
+
+    .action-icon.manage-properties {
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    }
+
+    .action-icon.manage-hosts {
+        background: linear-gradient(135deg, #10b981, #059669);
+    }
+
+    .action-icon.manage-users {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+    }
+
+    .action-icon.manage-reviews {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+    }
+
+    .action-icon.reports {
+        background: linear-gradient(135deg, #06b6d4, #0891b2);
+    }
+
+    .action-icon.violations {
+        background: linear-gradient(135deg, #06b6d4, #0891b2);
+    }
+
+    .action-icon.approve-properties {
+        background: linear-gradient(135deg, #10b981, #059669);
+    }
+
+    .action-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 0.5rem;
+    }
+
+    .action-description {
+        color: #666;
+        font-size: 0.875rem;
+        line-height: 1.5;
+    }
+
+    .system-info {
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e5e5e5;
+        padding: 2rem;
+    }
+
+    .system-info h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .info-item {
+        text-align: center;
+        padding: 1rem;
+        background: #f8f9ff;
+        border-radius: 8px;
+        border: 1px solid #e5e5e5;
+    }
+
+    .info-label {
+        font-size: 0.875rem;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+    }
+
+    .info-value {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1a1a1a;
+    }
+
+    @media (max-width: 768px) {
         .admin-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
+            padding: 1rem;
         }
 
         .page-header {
-            background: #1e5470;
-            color: white;
-            padding: 3rem 2rem;
-            border-radius: 16px;
-            margin-bottom: 3rem;
-            text-align: center;
+            padding: 2rem 1rem;
+            margin-bottom: 2rem;
         }
 
         .page-header h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        .page-header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
+            font-size: 2rem;
         }
 
         .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 3rem;
-        }
-
-        .stat-card {
-            background: #ffffff;
-            padding: 1.5rem;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            border: 1px solid #e5e5e5;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-        }
-
-        .stat-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1rem;
-            font-size: 1.25rem;
-            color: white;
-        }
-
-        .stat-icon.properties {
-            background: #1e5470;
-        }
-
-        .stat-icon.hosts {
-            background: linear-gradient(135deg, #10b981, #059669);
-        }
-
-        .stat-icon.users {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-        }
-
-        .stat-icon.bookings {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-        }
-
-        .stat-icon.income {
-            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-        }
-
-        .stat-icon.reviews {
-            background: linear-gradient(135deg, #06b6d4, #0891b2);
-        }
-
-        .stat-number {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-label {
-            color: #666;
-            font-size: 0.875rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
         }
 
         .quick-actions {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 3rem;
-        }
-
-        .action-card {
-            background: #ffffff;
-            padding: 2rem;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            border: 1px solid #e5e5e5;
-            text-align: center;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            color: inherit;
-        }
-
-        .action-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-        }
-
-        .action-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1rem;
-            font-size: 1.5rem;
-            color: white;
-        }
-
-        .action-icon.manage-properties {
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
-        }
-
-        .action-icon.manage-hosts {
-            background: linear-gradient(135deg, #10b981, #059669);
-        }
-
-        .action-icon.manage-users {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-        }
-
-        .action-icon.manage-reviews {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-        }
-
-        .action-icon.reports {
-            background: linear-gradient(135deg, #06b6d4, #0891b2);
-        }
-
-        .action-icon.violations {
-            background: linear-gradient(135deg, #06b6d4, #0891b2);
-        }
-
-        .action-icon.approve-properties {
-            background: linear-gradient(135deg, #10b981, #059669);
-        }
-
-        .action-title {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 0.5rem;
-        }
-
-        .action-description {
-            color: #666;
-            font-size: 0.875rem;
-            line-height: 1.5;
-        }
-
-        .system-info {
-            background: #ffffff;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            border: 1px solid #e5e5e5;
-            padding: 2rem;
-        }
-
-        .system-info h3 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
+            grid-template-columns: 1fr;
         }
 
         .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(2, 1fr);
         }
-
-        .info-item {
-            text-align: center;
-            padding: 1rem;
-            background: #f8f9ff;
-            border-radius: 8px;
-            border: 1px solid #e5e5e5;
-        }
-
-        .info-label {
-            font-size: 0.875rem;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 0.5rem;
-        }
-
-        .info-value {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #1a1a1a;
-        }
-
-        @media (max-width: 768px) {
-            .admin-container {
-                padding: 1rem;
-            }
-
-            .page-header {
-                padding: 2rem 1rem;
-                margin-bottom: 2rem;
-            }
-
-            .page-header h1 {
-                font-size: 2rem;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 1rem;
-            }
-
-            .quick-actions {
-                grid-template-columns: 1fr;
-            }
-
-            .info-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
+    }
     </style>
 </head>
 
@@ -305,8 +305,8 @@ if (!isset($_SESSION["Admin_email"])) {
                             class="fas fa-hand-holding-usd"></i><span class="menu-label">Refund</span></a></li>
                 <li><a href="manage-reviews.php" title="รีวิวจากผู้ใช้งาน"><i class="fas fa-star"></i><span
                             class="menu-label">Reviews</span></a></li>
-                <li><a href="violations.php" title="รายการการละเมิด"><i class="fas fa-exclamation-triangle"></i><span
-                            class="menu-label">Violations</span></a></li>
+                <li><a href="violations.php" title="จัดการเรื่องร้องเรียน"><i
+                            class="fas fa-exclamation-triangle"></i><span class="menu-label">Violations</span></a></li>
                 <li><a href="../../controls/logout.php" title="ออกจากระบบ"><i class="fas fa-sign-out-alt"></i><span
                             class="menu-label">Logout</span></a></li>
             </ul>
@@ -452,12 +452,12 @@ if (!isset($_SESSION["Admin_email"])) {
     </div>
 
     <script>
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const mainContent = document.querySelector('.main-with-sidebar');
-            sidebar.classList.toggle("collapsed");
-            mainContent.classList.toggle("sidebar-collapsed");
-        }
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.querySelector('.main-with-sidebar');
+        sidebar.classList.toggle("collapsed");
+        mainContent.classList.toggle("sidebar-collapsed");
+    }
     </script>
 </body>
 

@@ -633,7 +633,6 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
         }
     }
 
-    /* 3. ปุ่มปิด (กากบาท) */
     .close-button {
         color: #aaa;
         position: absolute;
@@ -649,10 +648,207 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
         color: #000;
     }
 
-    /* === Calendar Styles === */
     #calendar {
         width: 100%;
         margin: 0 auto;
+    }
+
+    .rating-container {
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .star-rating {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+        margin-left: 10px;
+    }
+
+    .star-rating input[type="radio"] {
+        display: none;
+    }
+
+    /* สไตล์ของดาว (label) */
+    .star-rating label {
+        font-size: 1.5rem;
+        /* ขนาดของดาว */
+        color: #ddd;
+        /* สีดาวเริ่มต้น (สีเทา) */
+        cursor: pointer;
+        transition: color 0.2s ease-in-out;
+    }
+
+
+    .star-rating:not(:hover) input[type="radio"]:checked~label,
+    .star-rating:hover input[type="radio"]~label:hover,
+    .star-rating:hover input[type="radio"]~label:hover~label {
+        color: #ffc107;
+
+    }
+
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    .dropdown-toggle {
+        border: 1px solid transparent;
+        background: transparent;
+        color: #555;
+        padding: 10px;
+        border-radius: 50%;
+        cursor: pointer;
+        line-height: 1;
+        transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .dropdown-toggle:hover,
+    .dropdown-toggle:focus {
+        background-color: #f1f1f1;
+        outline: none;
+
+    }
+
+    .dropdown-menu {
+        display: block;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+        position: absolute;
+        right: 0;
+        top: 100%;
+        margin-top: 10px;
+        background-color: white;
+        min-width: 240px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        border-radius: 12px;
+        padding: 8px;
+        z-index: 1000;
+    }
+
+    .dropdown-menu.show {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+
+    }
+
+    .dropdown-item {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        padding: 12px 16px;
+        color: #333;
+        text-decoration: none;
+        font-size: 0.95rem;
+        white-space: nowrap;
+        border-radius: 8px;
+        transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .dropdown-item i {
+        margin-right: 12px;
+        width: 18px;
+        text-align: center;
+        color: #888;
+        transition: color 0.2s ease;
+    }
+
+    .dropdown-item:hover {
+        background-color: #f5f5f5;
+    }
+
+    .dropdown-item.report-review-btn:hover {
+        background-color: #fff1f1;
+        color: #d93025;
+    }
+
+    .dropdown-item.report-review-btn:hover i {
+        color: #d93025;
+    }
+
+    .modal-report {
+        display: none;
+        /* เริ่มต้นซ่อน */
+        position: fixed;
+        z-index: 500;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-report-content {
+        background-color: #fff;
+        margin: 10% auto;
+        padding: 20px;
+        border-radius: 8px;
+        width: 400px;
+        position: relative;
+    }
+
+    .close-report {
+        position: absolute;
+        right: 15px;
+        top: 10px;
+        font-size: 24px;
+        cursor: pointer;
+    }
+
+    textarea {
+        width: 100%;
+        padding: 10px;
+        margin-top: 8px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        resize: vertical;
+    }
+
+    textarea:focus {
+        border: #1e5470 2px solid;
+        box-shadow: 0 0 6px rgba(89, 166, 254, 1);
+        outline: none;
+    }
+
+    .contact-btn {
+        background-color: #1e5470;
+        color: white;
+    }
+
+    .contact-btn:hover {
+        background-color: #2a6f97;
+    }
+
+    .cancel-btn {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .cancel-btn:hover {
+        background-color: #c82333;
+    }
+
+    .action-btn {
+        padding: 0.6rem 1.2rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 500;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .action-btn:hover {
+        transform: translateY(-1px);
     }
     </style>
 </head>
@@ -770,14 +966,6 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                     </div>
                     <?php endforeach; ?>
                 </div>
-
-                <!-- <button id="openCalendarBtn" class="button">เปิดปฏิทิน</button>
-                <div id="calendarModal" class="modal">
-                    <div class="modal-content">
-                        <span class="close-button">&times;</span>
-                        <div id="calendar"></div>
-                    </div>
-                </div> -->
                 <div class="booking-map-flex">
                     <div class="map-section" style="flex:1; min-width:280px;">
                         <!-- <div class="section-title">แผนที่ที่พัก</div> -->
@@ -894,16 +1082,20 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                         <textarea name="review_text" rows="3"
                             style="width:100%; border-radius:6px; border:1px solid #ccc; padding:0.7rem; margin-bottom:0.7rem;"
                             required placeholder="เขียนรีวิว..."></textarea>
-                        <div style="margin-bottom:0.7rem;">
-                            <label>ให้คะแนน: </label>
-                            <select name="review_rating" required style="border-radius:4px; padding:0.2rem 0.5rem;">
-                                <option value="">เลือก</option>
-                                <option value="5">5 ★</option>
-                                <option value="4">4 ★</option>
-                                <option value="3">3 ★</option>
-                                <option value="2">2 ★</option>
-                                <option value="1">1 ★</option>
-                            </select>
+                        <div class="rating-container">
+                            <label>ให้คะแนน:</label>
+                            <div class="star-rating">
+                                <input type="radio" id="5-stars" name="review_rating" value="5" required /><label
+                                    for="5-stars"><i class="fa-solid fa-star"></i></label>
+                                <input type="radio" id="4-stars" name="review_rating" value="4" /><label
+                                    for="4-stars"><i class="fa-solid fa-star"></i></label>
+                                <input type="radio" id="3-stars" name="review_rating" value="3" /><label
+                                    for="3-stars"><i class="fa-solid fa-star"></i></label>
+                                <input type="radio" id="2-stars" name="review_rating" value="2" /><label
+                                    for="2-stars"><i class="fa-solid fa-star"></i></label>
+                                <input type="radio" id="1-star" name="review_rating" value="1" /><label for="1-star"><i
+                                        class="fa-solid fa-star"></i></label>
+                            </div>
                         </div>
                         <button type="submit" name="submit_review" class="btn btn-confirm"
                             style="padding:0.5rem 1.5rem;">ส่งรีวิว</button>
@@ -921,9 +1113,20 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                         <span style="color:#888; font-size:0.95rem; margin-left:1rem;">
                             <?php echo date('d/m/Y', strtotime($review['Create_at'])); ?>
                         </span>
-                        <button
+                        <!-- <button
                             style="border: none; background: #fff; padding: 10px; border-radius: 15px; cursor: pointer;   "><i
-                                class="fa-solid fa-ellipsis-vertical"></i></button>
+                                class="fa-solid fa-ellipsis-vertical"></i></button> -->
+                        <div class="dropdown">
+                            <button class="dropdown-toggle" aria-label="ตัวเลือกเพิ่มเติม">
+                                <i class="fa-solid fa-ellipsis-vertical"></i>
+                            </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item report-review-btn"
+                                    data-review-id="<?php echo $review['Review_id'] ?>">
+                                    <i class="fa-solid fa-flag"></i> รายงานรีวิวที่ไม่เหมาะสม
+                                </a>
+                            </div>
+                        </div>
 
                     </div>
                     <div style="margin-top:0.3rem; color:#333;">
@@ -935,6 +1138,20 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                 <div style="color:#888;">ยังไม่มีรีวิวสำหรับที่พักนี้</div>
                 <?php endif; ?>
             </div>
+        </div>
+    </div>
+    <div id="reportModal" class="modal-report">
+        <div class="modal-report-content">
+            <span class="close-report">&times;</span>
+            <h2>เหตุผลการเรื่องร้องเรียน</h2>
+            <form id="reportForm">
+                <input type="hidden" id="reviewIdInput">
+                <label for="reason">กรุณากรอกเหตุผล:</label>
+                <textarea id="reason" name="reason" rows="4" placeholder="ระบุเหตุผล..." required></textarea>
+                <br>
+                <button type="submit" class="action-btn contact-btn">ส่งข้อมูล</button>
+                <button type="button" id="closeBtn" class="action-btn cancel-btn">ยกเลิก</button>
+            </form>
         </div>
     </div>
     <footer>
@@ -1262,8 +1479,6 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
             }
             button.addEventListener("click", async () => {
                 const action = button.dataset.method;
-                // alert(houseId);
-                // ส่งข้อมูลไป PHP
                 fetch("../../controls/list_fav.php", {
                         method: "POST",
                         headers: {
@@ -1287,9 +1502,6 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                                 button.classList.remove("active");
                                 window.location.reload();
                             }
-                            // if (button.classList.contains("active")) {
-                            // } else {
-                            // }
                         } else {
                             alert("เกิดข้อผิดพลาด: " + result.message);
                         }
@@ -1302,9 +1514,6 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
         });
     });
     </script>
-
-
-
     <script>
     //เปิด-ปิด Sidebar
     function toggleSidebar() {
@@ -1313,23 +1522,20 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
         sidebar.classList.toggle("collapsed");
         mainContent.classList.toggle("sidebar-collapsed");
     }
-    //เปิดModal ยืนยันการจอง
+
     function openConfirm_Booking() {
         document.getElementById('Confirm_booking').style.display = 'flex';
-
     }
-    //ปิดModal ยืนยันการจอง
+
     function closeConfirm_Booking() {
         document.getElementById('Confirm_booking').style.display = 'none';
     }
-    //ถ้าClick ส่วนที่ไม่ใช่Modal ให้ปิดModal
     window.onclick = function(event) {
         const modal = document.getElementById('Confirm_booking');
         if (event.target === modal) {
             closeConfirm_Booking();
         }
     }
-
     const slides = document.querySelectorAll(".Imgslider img");
     const prevBtn = document.querySelector(".prev");
     const nextBtn = document.querySelector(".next");
@@ -1404,48 +1610,76 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
 
         });
     });
-    // document.addEventListener('DOMContentLoaded', function() {
-    //     // --- ส่วนควบคุม Modal ---
-    //     const modal = document.getElementById("calendarModal");
-    //     const openBtn = document.getElementById("openCalendarBtn");
-    //     const closeBtn = document.querySelector(".close-button");
+    document.addEventListener('DOMContentLoaded', function() {
+        const allDropdownToggles = document.querySelectorAll('.dropdown-toggle');
+        allDropdownToggles.forEach(toggle => {
+            toggle.addEventListener('click', function(event) {
+                event.stopPropagation();
+                const dropdownMenu = this.nextElementSibling;
+                dropdownMenu.classList.toggle('show');
+            });
+        });
 
-    //     // เมื่อกดปุ่ม "เปิดปฏิทิน"
-    //     openBtn.onclick = function() {
-    //         modal.style.display = "block";
-    //         // ต้อง render ปฏิทินใหม่หลังจากที่ Modal แสดงผลแล้ว
-    //         // เพื่อให้ขนาดของปฏิทินถูกต้อง
-    //         calendar.render();
-    //     }
-
-    //     // เมื่อกดปุ่มปิด (กากบาท)
-    //     closeBtn.onclick = function() {
-    //         modal.style.display = "none";
-    //     }
-
-    //     // เมื่อคลิกที่พื้นที่สีเทานอก Modal
-    //     window.onclick = function(event) {
-    //         if (event.target == modal) {
-    //             modal.style.display = "none";
-    //         }
-    //     }
-
-    //     // --- ส่วนของ FullCalendar ---
-    //     var calendarEl = document.getElementById('calendar');
-    //     var calendar = new FullCalendar.Calendar(calendarEl, {
-    //         initialView: 'dayGridMonth',
-    //         locale: 'th',
-    //         headerToolbar: {
-    //             left: 'prev,next today',
-    //             center: 'title',
-    //             right: 'dayGridMonth,timeGridWeek,listWeek'
-    //         },
-    //         events: '../../controls/get_room.php' // ดึงข้อมูลจากไฟล์ PHP ของคุณ
-    //     });
-
-    //     // ไม่ต้อง render ตอนโหลดหน้าเว็บครั้งแรก แต่จะไป render ตอนเปิด Modal
-    //     // calendar.render(); 
-    // });
+        window.addEventListener('click', function(event) {
+            const openDropdowns = document.querySelectorAll('.dropdown-menu.show');
+            openDropdowns.forEach(menu => {
+                if (!menu.parentElement.contains(event.target)) {
+                    menu.classList.remove('show');
+                }
+            });
+        });
+        const modal = document.getElementById("reportModal");
+        const report_btn = document.querySelectorAll('.report-review-btn');
+        const span = document.querySelector(".close-report");
+        const closeBtn = document.getElementById("closeBtn");
+        const formReport = document.getElementById("reportForm");
+        report_btn.forEach(btn => {
+            btn.onclick = function() {
+                const reviewId = this.dataset.reviewId;
+                document.getElementById('reviewIdInput').value = reviewId;
+                modal.style.display = "block";
+                this.closest('.dropdown-menu').classList.remove('show');
+            }
+        })
+        span.onclick = () => modal.style.display = "none";
+        closeBtn.onclick = () => modal.style.display = "none";
+        window.onclick = (e) => {
+            if (e.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+        formReport.onsubmit = (e) => {
+            e.preventDefault();
+            const reason = document.getElementById('reason').value.trim();
+            const review_id = document.getElementById('reviewIdInput').value;
+            fetch('../../controls/notify.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams({
+                        review_id: review_id,
+                        reason: reason,
+                        submit_rv: true
+                    })
+                })
+                .then(res => {
+                    if (!res.ok) throw new Error('network response was not ok');
+                    return res.json();
+                })
+                .then(data => {
+                    if (data.success = true) {
+                        alert(data.message);
+                        window.location.reload();
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error.message);
+                });
+        };
+    });
     </script>
 </body>
 

@@ -144,7 +144,15 @@ class Property
         // ];
         // return $result;
     }
-
+    public function get_AllProperty()
+    {
+        $sql = "SELECT p.*,h.Host_firstname,h.Host_lastname FROM property p
+        LEFT JOIN host h ON p.Host_id = h.Host_id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([]);
+        $AllProperty = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $AllProperty;
+    }
     public function get_manageProperty($email)
     {
         // ดึง Host_id

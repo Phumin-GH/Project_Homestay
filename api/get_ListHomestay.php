@@ -23,6 +23,9 @@ if (isset($_SESSION['Host_email'])) {
     $total_income = $propertyHandle->Total_income($email);
     $total_reviews = $propertyHandle->Total_reviews($email);
 }
+if (isset($_SESSION['Admin_email'])) {
+    $AllProperty = $propertyHandle->get_AllProperty();
+}
 
 //รับ house_id มาจาก main-menu.php
 if (isset($_POST['house_id'])) {

@@ -79,6 +79,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
         margin-bottom: 0.5rem;
     }
 
+
     .section-title {
         font-size: 1.2rem;
         font-weight: 500;
@@ -119,11 +120,9 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
         transition: background-color 0.2s ease, box-shadow 0.2s ease;
     }
 
-    .dropdown-toggle:hover,
     .dropdown-toggle:focus {
         background-color: #f1f1f1;
         outline: none;
-
     }
 
     .dropdown-menu {
@@ -205,35 +204,30 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                 <i class="fas fa-bars"></i>
             </button>
             <ul class="sidebar-menu">
-                <?php if ($hosts['Host_Status'] == 'pending_verify'): ?>
-                <li><a href="add-property.php" title="ลงทะเบียนบ้านพักใหม่"><i class="fas fa-user-plus"></i>
-                        <span class="menu-label">ลงทะเบียนบ้านพักใหม่</span></a></li>
-                <?php endif; ?>
-                <li><a href="host-dashboard.php" title="รายงาน"><i class="fa-solid fa-ranking-star"></i><span
+                <li><a href="admin-dashboard.php" title="หน้าแดชบอร์ด"><i class="fa-solid fa-ranking-star"></i><span
                             class="menu-label">Dashboard</span></a></li>
-                <li><a href="profile.php" title="โปรไฟล์"><i class="fas fa-user"></i><span
-                            class="menu-label">Profile</span></a>
-                </li>
-                <?php if ($hosts['Host_Status'] == 'active'): ?>
-                <li><a href="manage-property.php" title="จัดการบ้านพัก" class="active"><i class="fas fa-plus"></i><span
-                            class="menu-label">Manage
-                            Property</span></a></li>
-                <li><a href="list_booking.php" title="รายการที่จองเข้ามา"><i class="fa-solid fa-list-ul"></i><span
-                            class="menu-label">List Bookings</span></a></li>
-                <li><a href="refund_booking.php" title="การขอคืนเงิน"><i
-                            class="fa-solid fa-money-bill-transfer"></i><span class="menu-label">List Refund</span></a>
-                </li>
-                <li><a href="walkin-property.php" title="การจอง"><i class="fa-solid fa-person-walking"></i><span
-                            class="menu-label">Walkin</span></a></li>
-                <?php endif; ?>
+                <li><a href="profile.php" title="ข้อมูลผู้ใช้งาน"><i class="fas fa-user"></i><span
+                            class="menu-label">Profile</span></a></li>
+                <li><a href="approve-properties.php" title="อนุมัติสถานที่พัก"><i
+                            class="fa-solid fa-house-medical-circle-check"></i><span class="menu-label">Approve
+                            Properties</span></a></li>
+                <li><a href="manage-hosts.php" title="จัดการผู้ใช้งานสถานที่พัก"><i class="fas fa-users"></i><span
+                            class="menu-label">Hosts</span></a></li>
+                <li><a href="manage-users.php" title="จัดการผู้ใช้งาน"><i class="fas fa-user-friends"></i><span
+                            class="menu-label">Users</span></a></li>
+                <li><a href="manage-refund.php" title="คำร้องขอคืนเงินผู้ใช้งาน"><i
+                            class="fas fa-hand-holding-usd"></i><span class="menu-label">Refund</span></a></li>
+                <li><a href="manage-reviews.php" title="รีวิวของบ้านพัก" class="active"><i class="fas fa-star"></i><span
+                            class="menu-label">Reviews</span></a></li>
+                <li><a href="violations.php" title="จัดการเรื่องร้องเรียน"><i
+                            class="fas fa-exclamation-triangle"></i><span class="menu-label">Violations</span></a></li>
                 <li><a href="../../controls/logout.php" title="ออกจากระบบ"><i class="fas fa-sign-out-alt"></i><span
                             class="menu-label">Logout</span></a></li>
             </ul>
             <div class="sidebar-footer">
                 <div>
                     <i class="fas fa-user-circle"></i>
-                    <span class="menu-label"
-                        title="footer"><?php echo htmlspecialchars($_SESSION['Admin_email']); ?></span>
+                    <span class="menu-label"><?php echo htmlspecialchars($_SESSION['Admin_email']); ?></span>
                 </div>
             </div>
         </aside>
@@ -284,8 +278,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                                 <i class="fa-solid fa-ellipsis-vertical"></i>
                             </button>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item report-review-btn"
-                                    data-review-id="<?php echo $review['Review_id'] ?>">
+                                <a class="dropdown-item action-btn" data-review-id="<?php echo $review['Review_id'] ?>">
                                     <i class="fa-solid fa-flag"></i> รายงานรีวิวที่ไม่เหมาะสม
                                 </a>
                             </div>
@@ -324,15 +317,22 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
             });
         });
     });
+
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.querySelector('.main-with-sidebar');
+        sidebar.classList.toggle("collapsed");
+        mainContent.classList.toggle("sidebar-collapsed");
+    }
     const modal = document.getElementById("reportModal");
-    const report_btn = document.querySelectorAll('.report-review-btn');
+    const report_btn = document.querySelectorAll('.action-btn');
     const span = document.querySelector(".close-report");
     const closeBtn = document.getElementById("closeBtn");
     const formReport = document.getElementById("reportForm");
     report_btn.forEach(btn => {
         btn.onclick = function() {
             const reviewId = this.dataset.reviewId;
-            document.getElementById('reviewIdInput').value = reviewId;
+            document.getElementById('userIdInput').value = reviewId;
             modal.style.display = "block";
         }
     })
@@ -343,37 +343,6 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
             modal.style.display = "none";
         }
     }
-    formReport.onsubmit = (e) => {
-        e.preventDefault();
-        const reason = document.getElementById('reason').value.trim();
-        const review_id = document.getElementById('reviewIdInput').value;
-        fetch('../../controls/notify.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: new URLSearchParams({
-                    review_id: review_id,
-                    reason: reason,
-                    submit_rv: true
-                })
-            })
-            .then(res => {
-                if (!res.ok) throw new Error('network response was not ok');
-                return res.json();
-            })
-            .then(data => {
-                if (data.success = true) {
-                    alert(data.message);
-                    window.location.reload();
-                } else {
-                    alert(data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error.message);
-            });
-    };
     </script>
 </body>
 

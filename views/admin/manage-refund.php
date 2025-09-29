@@ -197,8 +197,8 @@ require_once __DIR__ . '/../../api/get_refund.php';
                             class="fas fa-hand-holding-usd"></i><span class="menu-label">Refund</span></a></li>
                 <li><a href="manage-reviews.php" title="รีวิวจากผู้ใช้งาน"><i class="fas fa-star"></i><span
                             class="menu-label">Reviews</span></a></li>
-                <li><a href="violations.php" title="รายการการละเมิด"><i class="fas fa-exclamation-triangle"></i><span
-                            class="menu-label">Violations</span></a></li>
+                <li><a href="violations.php" title="จัดการเรื่องร้องเรียน"><i
+                            class="fas fa-exclamation-triangle"></i><span class="menu-label">Violations</span></a></li>
                 <li><a href="../../controls/logout.php" title="ออกจากระบบ"><i class="fas fa-sign-out-alt"></i><span
                             class="menu-label">Logout</span></a></li>
             </ul>
