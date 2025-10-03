@@ -15,8 +15,8 @@ if (isset($_POST['submit_review'])) {
     $comment = trim($_POST['review_text'] ?? '');
     $property_id = (int)($_POST['property_id'] ?? 0);
     $user_email = $_SESSION['User_email'];
-    if ($rating < 1 || $rating > 5) {
-        echo json_encode(['success' => false, 'message' => $rating]);
+    if ($rating < 1) {
+        echo json_encode(['success' => false, 'message' => 'โปรดให้คะแนนรีวิวบ้านพัก']);
         exit();
     }
     if (empty($comment)) {

@@ -23,7 +23,6 @@ class Refund
         return $refund;
     }
 
-
     public function get_listComplete()
     {
         $sql = "SELECT r.Refund_date,r.Refund_amount,r.Refund_reason,r.Host_Check,u.Firstname,u.Lastname,b.Booking_id,p.Property_name 

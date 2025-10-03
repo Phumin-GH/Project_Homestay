@@ -27,7 +27,7 @@ if (!isset($_SESSION["Admin_email"])) {
     }
 
     .page-header {
-        background: #1e5470;
+        background: linear-gradient(155deg, #1e5470 0%, #74adc9ff 100%);
         color: white;
         padding: 3rem 2rem;
         border-radius: 16px;
@@ -48,7 +48,7 @@ if (!isset($_SESSION["Admin_email"])) {
 
     .stats-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
         gap: 1.5rem;
         margin-bottom: 3rem;
     }
@@ -268,7 +268,22 @@ if (!isset($_SESSION["Admin_email"])) {
             grid-template-columns: repeat(2, 1fr);
         }
     }
+
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 2rem;
+        padding: 2rem;
+    }
+
+    .chart-container {
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+    }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -322,7 +337,8 @@ if (!isset($_SESSION["Admin_email"])) {
                 <div class="page-header">
                     <h1><i class="fas fa-tachometer-alt"></i> Admin Dashboard</h1>
                     <p>Welcome back,
-                        <?php echo htmlspecialchars($admin['Admin_username']); ?> !</p>
+                        <?php echo htmlspecialchars($admin['Admin_username']); ?> !
+                    </p>
                 </div>
                 <div class="stats-grid">
                     <div class="stat-card">
@@ -360,15 +376,37 @@ if (!isset($_SESSION["Admin_email"])) {
                         <div class="stat-number">฿<?php echo number_format($total_income); ?></div>
                         <div class="stat-label">Total Income</div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-icon reviews">
-                            <i class="fas fa-star"></i>
+                </div>
+                <div class="system-info">
+                    <h3>
+                        <i class="fas fa-info-circle"></i>
+                        System Information
+                    </h3>
+                    <div class="dashboard-grid">
+                        <div class="chart-container">
+                            <h2>ยอดขายรายเดือน</h2>
+                            <canvas id="revenueChart"></canvas>
                         </div>
-                        <div class="stat-number"><?php echo number_format($total_reviews); ?></div>
-                        <div class="stat-label">Reviews</div>
+
+                        <div class="chart-container">
+                            <h2>ผู้สมัครใหม่ (30 วันล่าสุด)</h2>
+                            <canvas id="userGrowthChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h2>ผู้สมัครใหม่ (30 วันล่าสุด)</h2>
+                            <canvas id="propertyChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h2>ผู้สมัครใหม่ (30 วันล่าสุด)</h2>
+                            <canvas id="bookingChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h2>ผู้สมัครใหม่ (30 วันล่าสุด)</h2>
+                            <canvas id="gatewayChart"></canvas>
+                        </div>
+
                     </div>
                 </div>
-
                 <!-- Quick Actions -->
                 <div class="quick-actions">
                     <a href="approve-properties.php" class="action-card">
@@ -458,6 +496,202 @@ if (!isset($_SESSION["Admin_email"])) {
         sidebar.classList.toggle("collapsed");
         mainContent.classList.toggle("sidebar-collapsed");
     }
+    document.addEventListener('DOMContentLoaded', function() {
+
+        async function renderGatewayChart() {
+            const ctx = document.getElementById('gatewayChart').getContext('2d');
+            try {
+                const response = await fetch('../../api/report_type_gateway.php?type=gateway');
+                const gatewayData = await response.json();
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: gatewayData.labels,
+                        datasets: [{
+                            label: 'จำนวนการจอง',
+                            data: gatewayData.data,
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.7)',
+                                'rgba(54, 162, 235, 0.7)',
+                                'rgba(255, 206, 86, 0.7)',
+                                'rgba(75, 192, 192, 0.7)',
+                                'rgba(153, 102, 255, 0.7)'
+                            ],
+                            hoverOffset: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Error fetching chart data:', error);
+                ctx.canvas.parentNode.innerHTML += '<p style="color:red;">ไม่สามารถโหลดข้อมูลได้</p>';
+            }
+        }
+        async function renderRevenueChart() {
+            const ctx = document.getElementById('revenueChart').getContext('2d');
+            try {
+                const response = await fetch('../../api/report_type_gateway.php?type=revenue');
+                const revenueData = await response.json();
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: revenueData.labels,
+                        datasets: [{
+                                label: 'ยอดขาย (บาท)',
+                                data: revenueData.total,
+                                backgroundColor: 'rgba(8, 85, 136, 0.6)'
+                            },
+                            {
+                                label: 'Platfrom',
+                                data: revenueData.platform,
+                                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+
+                            },
+                            {
+                                label: 'Host',
+                                data: revenueData.host,
+                                backgroundColor: 'rgba(26, 116, 176, 0.6)'
+                            },
+                        ],
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Error loading revenue chart:', error);
+                ctx.canvas.parentNode.innerHTML += '<p style="color:red;">ไม่สามารถโหลดข้อมูลได้</p>';
+            }
+        }
+        async function renderBookingChart() {
+            const ctx = document.getElementById('bookingChart').getContext('2d');
+            try {
+                const response = await fetch('../../api/report_type_gateway.php?type=booking');
+                const revenueData = await response.json();
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: revenueData.labels,
+                        datasets: [{
+                                label: 'ยอดขาย (บาท)',
+                                data: revenueData.data,
+
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                                fill: true,
+                                tension: 0.4
+                            },
+
+                        ],
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Error loading revenue chart:', error);
+                ctx.canvas.parentNode.innerHTML += '<p style="color:red;">ไม่สามารถโหลดข้อมูลได้</p>';
+            }
+        }
+        async function renderTopProeprtyChart() {
+            const ctx = document.getElementById('propertyChart').getContext('2d');
+            try {
+                const response = await fetch('../../api/report_type_gateway.php?type=property');
+                const revenueData = await response.json();
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: revenueData.labels,
+                        datasets: [{
+                                label: 'ยอดขาย (บาท)',
+                                data: revenueData.data,
+                                backgroundColor: 'rgba(8, 85, 136, 0.6)'
+                            },
+
+                        ],
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Error loading revenue chart:', error);
+                ctx.canvas.parentNode.innerHTML += '<p style="color:red;">ไม่สามารถโหลดข้อมูลได้</p>';
+            }
+        }
+        async function renderUserGrowthChart() {
+            const ctx = document.getElementById('userGrowthChart').getContext('2d');
+            try {
+                const response = await fetch('../../api/report_type_gateway.php?type=users');
+                const userData = await response.json();
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: userData.labels,
+                        datasets: [{
+                                // --- เส้นกราฟที่ 1: ผู้ใช้ใหม่ ---
+                                label: 'ผู้ใช้ใหม่',
+                                data: userData.user, // ดึงข้อมูลจาก usersData
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                                fill: true,
+                                tension: 0.4
+                            },
+                            {
+                                // --- เส้นกราฟที่ 2: โฮสต์ใหม่ ---
+                                label: 'โฮสต์ใหม่',
+                                data: userData.host, // ดึงข้อมูลจาก hostsData
+                                borderColor: 'rgba(255, 99, 132, 1)',
+                                backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                                fill: true,
+                                tension: 0.4
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Error loading user chart:', error);
+                ctx.canvas.parentNode.innerHTML += '<p style="color:red;">ไม่สามารถโหลดข้อมูลได้</p>';
+            }
+        }
+
+        renderTopProeprtyChart();
+        renderRevenueChart();
+        renderUserGrowthChart();
+        renderGatewayChart();
+        renderBookingChart();
+    });
     </script>
 </body>
 

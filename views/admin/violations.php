@@ -5,30 +5,7 @@ if (!isset($_SESSION["Admin_email"])) {
     header("Location: admin-login.php");
     exit();
 }
-
-// *** 중요 ***
-// ในส่วนนี้ คุณต้องสร้างไฟล์ API เพื่อดึงข้อมูลการ report ทั้งหมด
 require_once __DIR__ . '/../../api/get_violation_reports.php';
-
-// ด้านล่างนี้คือข้อมูลตัวอย่าง (Dummy Data) เพื่อให้หน้าเว็บแสดงผลได้ก่อน
-// $reports = [
-//     [
-//         'report_id' => 1,
-//         'review_id' => 101,
-//         'reported_by' => 'Phumin',
-//         'reported_user' => 'Somsak',
-//         'report_reason' => 'ใช้คำหยาบคายและไม่เหมาะสม',
-//         'report_date' => '2025-09-25 10:30:00'
-//     ],
-//     [
-//         'report_id' => 2,
-//         'review_id' => 102,
-//         'reported_by' => 'Jane',
-//         'reported_user' => 'Somchai (Host)',
-//         'report_reason' => 'รีวิวไม่เป็นความจริง กล่าวหาเท็จ',
-//         'report_date' => '2025-09-24 15:00:00'
-//     ]
-// ];
 ?>
 <!DOCTYPE html>
 <html lang="th">
@@ -49,7 +26,7 @@ require_once __DIR__ . '/../../api/get_violation_reports.php';
     }
 
     .page-header {
-        background: #1e5470;
+        background: linear-gradient(155deg, #1e5470 0%, #74adc9ff 100%);
         color: white;
         padding: 3rem 2rem;
         border-radius: 16px;
@@ -257,21 +234,30 @@ require_once __DIR__ . '/../../api/get_violation_reports.php';
                                     <td><?php echo htmlspecialchars($report['Report_reason']); ?></td>
                                     <td><?php echo date('d/m/Y H:i', strtotime($report['Create_at'])); ?></td>
                                     <td>
-                                        <a href="view_review.php?review_id=<?php echo $report['Review_id']; ?>"
+                                        <form action="views_property.php" method="POST" style='display:inline;'>
+                                            <input type="hidden" name="house_id"
+                                                value="<?= htmlspecialchars($report['Property_id']); ?>">
+                                            <input type="hidden" name="review_id"
+                                                value="<?= htmlspecialchars($report['Review_id']); ?>">
+                                            <button type='submit' class="btn btn-view">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </form>
+                                        <!-- <a href="view_review.php?review_id=<?php echo $report['Review_id']; ?>"
                                             class="btn btn-view" title="ดูรีวิว">
                                             <i class="fas fa-eye"></i>
-                                        </a>
-                                        <form action="../../controls/violation_actions.php" method="POST"
+                                        </a> -->
+                                        <form action="../../controls/report_action.php" method="POST"
                                             style="display:inline;"
                                             onsubmit="return confirm('คุณแน่ใจหรือไม่ว่าต้องการลบรีวิวนี้?');">
                                             <input type="hidden" name="review_id"
-                                                value="<?php echo $report['Review_id']; ?>">
+                                                value="<?= htmlspecialchars($report['Review_id']); ?>">
                                             <button type="submit" name="delete_review" class="btn btn-delete"
                                                 title="ลบรีวิว">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
-                                        <form action="../../controls/violation_actions.php" method="POST"
+                                        <form action="../../controls/report_action.php" method="POST"
                                             style="display:inline;"
                                             onsubmit="return confirm('คุณแน่ใจหรือไม่ว่าต้องการซ่อนรีวิวนี้?');">
                                             <input type="hidden" name="review_id"

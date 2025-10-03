@@ -3,12 +3,12 @@ require_once __DIR__ . '/model/config/db_connect.php';
 $password = 'admin1234';
 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 echo $hashed_password;
-$hash = '$2y$10$F1ny6.wfBvZlS9OuS9KRsuVo.O2ee13GQMuuKu4TKtrocG2qzkOb6';
-$verify = password_verify('phumin.pm2003', $hash);
+$hash = '$2y$10$HFwxuJz/XQeiivxlFMLO4ORTgCvEBAu9.SAZYaPmd58I.AXRwEEju';
+$verify = password_verify('1234', $hash);
 if ($verify === true) {
-    echo "true";
+    echo "/true";
 } else {
-    echo "false";
+    echo "/false";
 }
 // date_default_timezone_set("Asia/Bangkok");
 // $expires = date("Y-m-d");

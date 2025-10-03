@@ -29,8 +29,8 @@ require_once __DIR__ . "/../../api/get_ListHomestay.php";
     <style>
     .banner-slider {
         width: 100%;
-        margin-bottom: 2.5rem;
-        height: 550px;
+        margin-bottom: 0.25rem;
+        height: 350px;
         position: relative;
         overflow: hidden;
         border-radius: 0 0 20px 20px;
@@ -94,7 +94,7 @@ require_once __DIR__ . "/../../api/get_ListHomestay.php";
         text-align: center;
         color: white;
         z-index: 5;
-        width: 80%;
+        width: 65%;
     }
 
     .banner-text h2 {
@@ -188,8 +188,6 @@ require_once __DIR__ . "/../../api/get_ListHomestay.php";
                 <li><a href="bookings.php"><i class="fas fa-calendar"></i><span class="menu-label"
                             title="รายการจอง">Bookings</span></a>
                 </li>
-                <li><a href="review.php" title="รีวิวสถานที่พัก"><i class="fas fa-star"></i><span
-                            class="menu-label">Review</span></a></li>
                 <li><a href="../../controls/logout.php" title="ออกจากระบบ"><i class="fas fa-sign-out-alt"></i><span
                             class="menu-label">Logout</span></a>
                 </li>
@@ -230,8 +228,8 @@ require_once __DIR__ . "/../../api/get_ListHomestay.php";
                     <div class="search-container">
                         <div class="search-box">
                             <input type="text" id="searchInput" placeholder="Search homestays..." />
-                            <input type="date" id="checkInDate" />
-                            <input type="date" id="checkOutDate" />
+                            <!-- <input type="date" id="checkInDate" />
+                            <input type="date" id="checkOutDate" /> -->
                             <button type="button"><i class="fas fa-search"></i></button>
                         </div>
                     </div>
@@ -247,7 +245,7 @@ require_once __DIR__ . "/../../api/get_ListHomestay.php";
                                 <img src="../../public/<?php echo htmlspecialchars($house["Property_image"]); ?>"
                                     alt="<?php echo htmlspecialchars($house["Property_name"]) ?>"><br>
                                 <h3><?php echo htmlspecialchars($house["Property_name"]); ?></h3>
-                                <!-- <button class="favorite-btn" onclick="favorite(<?php echo (int)$house['Host_id']; ?>)">
+                                <!-- <button class="favorite-btn" onclick="favorite(<?php echo (int) $house['Host_id']; ?>)">
                                     <i class="fas fa-heart"></i>
                                 </button> -->
 

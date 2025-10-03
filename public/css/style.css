@@ -270,7 +270,8 @@ header {
 } */
 .search-section {
   width: 100%;
-  max-width: 150rem;
+  max-width: 125rem;
+  z-index: 200;
   background: #ffffff;
   padding: 1.5rem;
   border-radius: 16px; /* Slightly larger radius */
@@ -376,7 +377,7 @@ header {
 
 .homestay-list h2 {
   font-size: 2.5rem;
-  margin-bottom: 2rem;
+  margin-bottom: 0.1rem;
   text-align: center;
   color: #333;
   position: relative;
@@ -502,6 +503,7 @@ footer {
   text-align: center;
   padding: 2rem;
   margin-top: 3rem;
+  z-index: 300;
 }
 
 footer p {

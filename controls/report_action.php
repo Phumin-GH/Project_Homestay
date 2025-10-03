@@ -22,6 +22,36 @@ try {
             exit();
         }
     }
+    if (isset($_POST['submit_hidden_rv'])) {
+        if (empty($_POST['review_id'])) {
+            echo json_encode(["message" => "ไม่พบข้อมูลรีวิว", "success" => false]);
+            exit();
+        }
+        $review_id = $_POST['review_id'];
+        $result = $reviewsHandler->hidden_review($review_id);
+        if ($result === true) {
+            echo json_encode(["message" => "ซ่อนรีวิวสำเร็จ", "success" => true]);
+            exit();
+        } else {
+            echo json_encode(["message" => $result, "success" => false]);
+            exit();
+        }
+    }
+    if (isset($_POST['submit_show_rv'])) {
+        if (empty($_POST['review_id'])) {
+            echo json_encode(["message" => "ไม่พบข้อมูลรีวิว", "success" => false]);
+            exit();
+        }
+        $review_id = $_POST['review_id'];
+        $result = $reviewsHandler->show_review($review_id);
+        if ($result === true) {
+            echo json_encode(["message" => "แสดงรีวิวสำเร็จ", "success" => true]);
+            exit();
+        } else {
+            echo json_encode(["message" => $result, "success" => false]);
+            exit();
+        }
+    }
     if (isset($_POST['submit_rv_user'])) {
         if (isset($_SESSION['User_email'])) {
             if (empty($_POST['review_id']) || empty(trim($_POST['reason']))) {

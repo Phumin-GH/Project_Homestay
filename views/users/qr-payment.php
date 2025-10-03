@@ -98,13 +98,10 @@ require_once __DIR__ . '/../../api/get_listBook.php';
     .qr-container {
         display: flex;
         flex-direction: column;
-        /* เรียงเป็นแนวตั้ง */
         align-items: center;
-        /* จัดตรงกลางแนวนอน */
         justify-content: center;
-        /* จัดตรงกลางแนวตั้ง */
         text-align: center;
-        margin-top: 0.5rem;
+        margin-top: 0.5rem 5rem 0 5rem;
     }
 
     .qrcode {
@@ -234,6 +231,15 @@ require_once __DIR__ . '/../../api/get_listBook.php';
         <?php else: ?>
         <div class="Main-content">
             <div class="Profile-container">
+                <div class="countdown-container">
+                    <div class="countdown">
+                        เวลาที่เหลือในการชำระเงิน:
+                        <span id="countdown">กำลังโหลด...</span>
+                    </div>
+                    <div class="countdown">
+                        <span id="error-message"></span>
+                    </div>
+                </div>
                 <div class="Profile-info">
                     <div class="Info-section">
                         <h3>หน้าการชำระเงิน</h3>
@@ -254,15 +260,7 @@ require_once __DIR__ . '/../../api/get_listBook.php';
                         </div>
                     </div>
                 </div>
-                <div class="countdown-container">
-                    <div class="countdown">
-                        เวลาที่เหลือในการชำระเงิน:
-                        <span id="countdown">กำลังโหลด...</span>
-                    </div>
-                    <div class="countdown">
-                        <span id="error-message"></span>
-                    </div>
-                </div>
+
             </div>
         </div>
     </div>

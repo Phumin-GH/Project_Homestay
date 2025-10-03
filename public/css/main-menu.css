@@ -140,31 +140,18 @@ header {
   margin: 0.25rem 1rem 0.25rem 0;
 }
 
-.sidebar-menu li a i:hover {
+.sidebar-menu li a:hover {
   background: #f8f9ff;
   color: #1e5470;
   font-weight: 500;
 }
-/* Test */
+
 .sidebar-menu li a.active {
   position: relative;
   color: #1e5470;
   font-weight: 600;
   background: #e1f2fc;
 }
-
-/* .sidebar-menu li a.active::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 4px;
-  height: 60%;
-
-  background: #1e5470;
-  border-radius: 5px;
-} */
 
 .sidebar-menu li a i {
   width: 1.25rem;
@@ -258,79 +245,6 @@ header {
   margin-bottom: 2rem;
 }
 
-/* Search Section */
-/* .search-section {
-  background: #ffffff;
-  padding: 2rem;
-  border-radius: 16px;
-  margin-bottom: 3rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  border: 1px solid #e5e5e5;
-}
-
-.search-container {
-  max-width: 5000px;
-  margin: 1rem auto;
-}
-
-.search-box {
-  display: flex;
-  gap: 1rem;
-   grid-row-start: ; 
-  background: #f8f9fa;
-  padding: 1rem;
-  border-radius: 12px;
-  border: 0.1px solid #e5e5e5;
-}
-
-.search-box input[type="text"] {
-  flex: 1;
-  padding: 0.75rem 1rem;
-  border: 0.1px solid #e5e5e5;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  background: #f8f9fa;
-  transition: border-color 0.2s ease;
-}
-
-.search-box input[type="text"]:focus {
-  outline: none;
-  background: white;
-  border-color: #1e5470;
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-}
-
-.search-box input[type="date"] {
-  padding: 0.75rem 1rem;
-  border: 1px solid #e5e5e5;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  background: white;
-  transition: border-color 0.2s ease;
-}
-
-.search-box input[type="date"]:focus {
-  outline: none;
-  border-color: #1e5470;
-}
-
-.search-box button {
-  background: #1e5470;
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-weight: 500;
-}
-
-.search-box button:hover {
-  background: #1e5470;
-  transform: translateY(-1px);
-} */
-
-/* Homestay List */
 .homestay-list {
   max-width: 105rem;
   margin: 0 auto;
@@ -339,7 +253,7 @@ header {
 .homestay-list h2 {
   font-size: 1.75rem;
   font-weight: 600;
-  margin: 5rem 0 5rem 0;
+  margin: 1.5rem 0;
   color: #1a1a1a;
 }
 

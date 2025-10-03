@@ -64,7 +64,14 @@ class Verify
     }
     public function get_homestay()
     {
-        $stmt = $this->conn->prepare("SELECT * FROM Property INNER JOIN Host on Property.Host_id = Host.Host_id WHERE Property.Property_status = 'pending'");
+        $stmt = $this->conn->prepare("SELECT p.Property_id,p.Property_image,p.Property_name,
+        p.Property_province,p.Property_district,p.Property_subdistrict,p.Property_latitude,
+        p.Property_longitude,h.Host_firstname,h.Host_lastname,h.Host_email,h.Host_phone,
+        r.Room_number,r.Room_price,r.Room_capacity,r.Room_utensils,r.Room_status
+        FROM property p
+        INNER JOIN room r ON p.Property_id = r.Property_id
+        INNER JOIN host h on p.Host_id = h.Host_id 
+        WHERE p.Property_status = 'pending'");
         $stmt->execute();
         $homestay = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $homestay;

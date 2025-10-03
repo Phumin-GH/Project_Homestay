@@ -139,7 +139,7 @@ require_once __DIR__ . "/api/get_ListHomestay.php";
                 <ul>
                     <li><a id="scollHome" class="active">Home</a></li>
                     <li><a id="scrollToReviewsBtn">About</a></li>
-                    <li><a href="#">Contact</a></li>
+                    <!-- <li><a href="#">Contact</a></li> -->
 
                     <li class="dropdown">
                         <button class="dropdown-toggle" id="dropdown-toggle" type="button">
@@ -179,44 +179,23 @@ require_once __DIR__ . "/api/get_ListHomestay.php";
             <div class="search-container">
                 <div class="search-box">
                     <input type="text" id="searchInput" placeholder="Search homestays..." />
-                    <input type="date" id="checkInDate" />
-                    <input type="date" id="checkOutDate" />
-                    <button type="button"><i class="fas fa-search"></i></button>
+                    <!-- <input type="date" id="checkInDate" />
+                    <input type="date" id="checkOutDate" /> -->
+                    <select name="filter" id="filter">
+                        <option value=""> </option>
+                        <option value="เชียงใหม่">คะแนนรีวิวดีสุด</option>
+                        <option value="กาญจนบุรี">ราคาถูกที่สุด</option>
+                        <option value="ชลบุรี">ยอดนิยม</option>
+                    </select>
+                    <button type="button" id="searchBtn"><i class="fas fa-search"></i></button>
                 </div>
             </div>
         </section>
 
         <section class="homestay-list">
             <h2>Available Homestays</h2>
-            <div class="homestay-grid">
-                <?php foreach ($homestay  as $house): ?>
-                <div class='homestay-card'>
-                    <div class='homestay-info'>
-                        <img src='public/<?= htmlspecialchars($house['Property_image']) ?>'
-                            alt='<?= htmlspecialchars($house['Property_name']) ?>'><br>
-                        <h3>
-                            <?= htmlspecialchars($house['Property_name']) ?>
-                        </h3>
-                        <div>
-                            <span style="color:#f5b301; font-size:1.1rem; margin-left:0.5rem;">
-                                <i class="fa-solid fa-star"></i>
-                            </span>
-                            <?php echo isset($house['Rating']) ? round($house['Rating'], 1) : 'ไม่มีคะแนนรีวิว'; ?>
-                        </div>
-                        <p>
-                            <?= htmlspecialchars($house['Host_firstname'] . ' ' . $house['Host_lastname']) ?>
-                        </p>
-                        <p class='location'><i class='fa-solid fa-location-pin'></i> จ.
-                            <?=
-                                htmlspecialchars($house['Property_province'] . ' ' . 'อ.' . $house['Property_district']
-                                    . ' ' . 'ต.' . $house['Property_subdistrict']) ?>
-                        <p>
+            <div class="homestay-grid" id="homestay-container">
 
-                            <button class='book-btn' onclick='views/users/user-login.php'><i
-                                    class="fa-solid fa-book"></i> Book Now</button>
-                    </div>
-                </div>
-                <?php endforeach; ?>
             </div>
         </section>
     </main>
@@ -230,6 +209,63 @@ require_once __DIR__ . "/api/get_ListHomestay.php";
     <script src=" public/js/Barscript.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const filter = document.getElementById('filter');
+        const productContainer = document.getElementById('homestay-container');
+
+        function fetchHomestays(searchTerm = '') {
+            fetch('controls/search_homestay.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        'search_query': searchTerm
+                    })
+                })
+                .then(response => response.json())
+
+                .then(products => {
+
+                    // เคลียร์ข้อมูลเก่าใน container
+                    productContainer.innerHTML = '';
+
+                    if (products.length > 0) {
+                        // วนลูปสร้างการ์ดสินค้าจากข้อมูลที่ได้
+                        products.forEach(product => {
+                            const productCard = document.createElement('div');
+                            productCard.className = 'homestay-card';
+                            productCard.innerHTML = `
+                                <div class='homestay-info'>
+                                <img src='public/${product.Property_image}' alt='${product.Property_image}'>
+                                <h3>${product.Property_name}</h3>
+                                <div >
+                                <span style='color:#f5b301; font-size:1.1rem; margin-left:0.5rem;'>
+                                <i class='fa-solid fa-star'> </i>${Number(product.Rating, 1).toFixed(1)}
+                                </span>
+                                </div>
+                                <p>${product.Host_firstname} ${product.Host_lastname}</p>
+                                <p class='location'><i class='fa-solid fa-location-pin'></i>
+                                    จ.${product.Property_province} อ.${product.Property_district} ต.${product.Property_subdistrict}
+                                </p>
+                                <button class='book-btn' onclick="window.location.href='views/users/user-login.php'"><i class='fa-solid fa-book'></i> จอง</button>
+                                </div>`;
+                            productContainer.appendChild(productCard);
+                        });
+                    } else {
+                        productContainer.innerHTML = '<p>ไม่พบสินค้าที่ตรงกับคำค้นหา</p>';
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+        searchBtn.addEventListener('click', function() {
+            fetchHomestays(searchInput.value);
+        });
+        filter.addEventListener('change', function() {
+            fetchHomestays(filter.value);
+        })
+        fetchHomestays();
         const scrollButton = document.getElementById('scrollToReviewsBtn');
         const targetDiv = document.getElementById('reviews-container');
         const img = document.getElementById('image_banner');

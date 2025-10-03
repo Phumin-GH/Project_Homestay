@@ -639,7 +639,6 @@ require_once __DIR__ . '/../../api/get_bookings.php';
                 </li>
                 <li><a href="bookings.php" class="active"><i class="fas fa-calendar"></i><span
                             class="menu-label">Booking</span></a></li>
-                <li><a href="bookings.php"><i class="fas fa-star"></i><span class="menu-label">Review</span></a></li>
                 <li><a href="../../controls/logout.php"><i class="fas fa-sign-out-alt"></i><span
                             class="menu-label">Logout</span></a>
                 </li>
@@ -743,7 +742,7 @@ require_once __DIR__ . '/../../api/get_bookings.php';
                                 <div class="booking-actions">
                                     <button class="action-btn cancel-btn"
                                         data-booking-id="<?php echo htmlspecialchars($booking['Booking_id']); ?>">
-                                        <i class="fas fa-times" type="button"></i> Cancel
+                                        <i class="fas fa-times" type="button"></i> ยกเลิก
                                     </button>
                                     <form method="post" action="detail_house.php" style="display:inline;">
                                         <input type="hidden" name="house_id"
@@ -824,7 +823,7 @@ require_once __DIR__ . '/../../api/get_bookings.php';
                                         <input type="hidden" name="house_id"
                                             value="<?php echo htmlspecialchars($booking["Property_id"]); ?>">
                                         <button type="submit" class="action-btn refund-btn">
-                                            <i class="fas fa-sync"></i>ดูรายละเอียด
+                                            <i class="fas fa-sync"></i>รีวิวบ้านพัก
                                         </button>
                                     </form>
                                 </div>

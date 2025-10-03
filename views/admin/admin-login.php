@@ -48,12 +48,12 @@ session_start();
                 ?>
                 <div class="form-group">
                     <label for="login-email">Email Address</label>
-                    <input type="email" id="login-email" name="email" placeholder="admin@gmail.com" required>
+                    <input type="email" id="login-email" name="email" placeholder="Email" required>
                 </div>
 
                 <div class="form-group">
                     <label for="login-password">Password</label>
-                    <input type="password" id="login-password" name="password" placeholder="admin1234" required>
+                    <input type="password" id="login-password" name="password" placeholder="Password" required>
                 </div>
                 <button type="submit" class="btn btn-primary" name="admin_login">
                     <i class="fas fa-sign-in-alt"></i>
@@ -64,41 +64,41 @@ session_start();
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const authContainer = document.getElementById('auth-container');
-            const loginTab = document.getElementById('login-tab');
-            const loginForm = document.getElementById('login-form');
-            const forgotPasswordLink = document.getElementById('forgot-password-link');
-            const forgotPasswordModal = document.getElementById('forgot-password-modal');
-            const closeForgotModalBtn = document.getElementById('close-forgot-modal');
+    document.addEventListener('DOMContentLoaded', () => {
+        const authContainer = document.getElementById('auth-container');
+        const loginTab = document.getElementById('login-tab');
+        const loginForm = document.getElementById('login-form');
+        const forgotPasswordLink = document.getElementById('forgot-password-link');
+        const forgotPasswordModal = document.getElementById('forgot-password-modal');
+        const closeForgotModalBtn = document.getElementById('close-forgot-modal');
 
 
-            document.getElementById('close-auth').addEventListener('click', () => {
-                window.location.href = "../index.php";
-            });
-
-
-            const forms = document.querySelectorAll('form');
-            forms.forEach(form => {
-                form.addEventListener('submit', (e) => {
-                    const submitBtn = form.querySelector('button[type="submit"]');
-                    submitBtn.classList.add('loading');
-                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-                });
-            });
-            const confirmPasswordInput = document.getElementById('signup-confirm-password');
-            const passwordInput = document.getElementById('signup-password');
-
-            if (confirmPasswordInput && passwordInput) {
-                confirmPasswordInput.addEventListener('input', () => {
-                    if (passwordInput.value !== confirmPasswordInput.value) {
-                        confirmPasswordInput.setCustomValidity('Passwords do not match');
-                    } else {
-                        confirmPasswordInput.setCustomValidity('');
-                    }
-                });
-            }
+        document.getElementById('close-auth').addEventListener('click', () => {
+            window.location.href = "../../index.php";
         });
+
+
+        const forms = document.querySelectorAll('form');
+        forms.forEach(form => {
+            form.addEventListener('submit', (e) => {
+                const submitBtn = form.querySelector('button[type="submit"]');
+                submitBtn.classList.add('loading');
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            });
+        });
+        const confirmPasswordInput = document.getElementById('signup-confirm-password');
+        const passwordInput = document.getElementById('signup-password');
+
+        if (confirmPasswordInput && passwordInput) {
+            confirmPasswordInput.addEventListener('input', () => {
+                if (passwordInput.value !== confirmPasswordInput.value) {
+                    confirmPasswordInput.setCustomValidity('Passwords do not match');
+                } else {
+                    confirmPasswordInput.setCustomValidity('');
+                }
+            });
+        }
+    });
     </script>
 </body>
 

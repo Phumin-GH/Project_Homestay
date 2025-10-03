@@ -1,6 +1,6 @@
 :root {
   --primary-color: #1e5470;
-  --primary-hover: #cbeaec;
+  --primary-hover: #0f7d85;
   --background-color: #fafafa;
   --surface-color: #ffffff;
   --text-primary: #1a1a1a;
@@ -46,10 +46,12 @@ body {
   max-width: 420px;
   overflow: hidden;
   position: relative;
+  overflow-x: auto;
+  max-width: 50vh;
 }
 
 .auth-header {
-  background: linear-gradient(var(--primary-color), #3085af, #dfede2);
+  background: linear-gradient(155deg, #1e5470 0%, #74adc9ff 100%);
   padding: 2rem;
   text-align: center;
   color: white;
@@ -124,6 +126,8 @@ body {
 
 .auth-content {
   padding: 2rem;
+  overflow-y: auto;
+  max-height: 55vh;
 }
 
 .form-content {
@@ -220,16 +224,17 @@ body {
 }
 
 .btn-primary {
-  background: var(--primary-color);
+  background: linear-gradient(155deg, #1e5470 0%, #74adc9ff 100%);
   color: white;
+  box-shadow: var(--shadow-md);
 }
 
 .btn-primary:hover {
   background: var(--shadow-md);
-  color: var(--primary-color);
-  border: 2px solid var(--primary-color);
+  color: #74adc9ff;
+  border: 2px solid #74adc9ff;
   transform: translateY(-1px);
-  /*box-shadow: var(--shadow-md);*/
+  box-shadow: var(--shadow-md);
 }
 
 .btn-primary:active {

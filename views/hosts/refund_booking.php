@@ -396,7 +396,7 @@ require_once  __DIR__ . "/../../controls/log_hosts.php";
                                             <form method="post" action="../../controls/refund_actions.php"
                                                 style="display:inline;"
                                                 onsubmit="return confirm('คุณต้องอนุมัติรายการคืนเงินนี้ใช่หรือไม่?');">
-                                                <input type="number" name="booking_id"
+                                                <input type="hidden" name="booking_id"
                                                     value="<?php echo $request['Booking_id']; ?>">
                                                 <button type="submit" title="อนุมัติ" name="host_approve"
                                                     class="action-btn btn-approve">

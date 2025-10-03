@@ -16,5 +16,33 @@ if (isset($_SESSION['Admin_email'])) {
     $users = $verifyHandler->get_users();
     $ban_user = $verifyHandler->get_ban_user();
     $inactive_user = $verifyHandler->get_inactive_user();
-    $homestay = $verifyHandler->get_homestay();
+    $homestayRowData = $verifyHandler->get_homestay();
+    $homestay = [];
+    foreach ($homestayRowData as $row) {
+        $propertyId = $row['Property_id'];
+        if (!isset($homestay[$propertyId])) {
+            $homestay[$propertyId] = [
+                'Property_id' => $row['Property_id'],
+                'Property_name' => $row['Property_name'],
+                'Property_province' => $row['Property_province'],
+                'Property_district' => $row['Property_district'],
+                'Property_subdistrict' => $row['Property_subdistrict'],
+                'Property_latitude' => $row['Property_latitude'],
+                'Property_longitude' => $row['Property_longitude'],
+                'Property_image' => $row['Property_image'],
+                'Host_firstname' => $row['Host_firstname'],
+                'Host_lastname' => $row['Host_lastname'],
+                'Host_email' => $row['Host_email'],
+                'Host_phone' => $row['Host_phone'],
+                'rooms' => [] // สร้าง Array ว่างสำหรับเก็บห้องพัก
+            ];
+        }
+        $homestay[$propertyId]['rooms'][] = [
+            'Room_number' => $row['Room_number'],
+            'Room_price' => $row['Room_price'],
+            'Room_capacity' => $row['Room_capacity'],
+            'Room_utensils' => $row['Room_utensils'],
+            'Room_status' => $row['Room_status']
+        ];
+    }
 }

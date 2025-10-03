@@ -357,8 +357,8 @@ require_once __DIR__ . "/../../controls/log_hosts.php";
                 <?php endif; ?>
                 <li><a href="../../controls/logout.php" title="ออกจากระบบ"><i class="fas fa-sign-out-alt"></i><span
                             class="menu-label">Logout</span></a></li>
-            </ul> class="menu-label">Logout</span></a></li>
             </ul>
+
 
             <div class="sidebar-footer">
                 <div>

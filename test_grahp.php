@@ -1,204 +1,141 @@
-<?php
-session_start();
-
-require_once __DIR__ . '/api/get_TotalData.php';
-
-?>
 <!DOCTYPE html>
 <html lang="th">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Homestay Booking</title>
-    <link rel="website icon" type="png" href="../../public/images/logo.png">
-    <link rel="stylesheet" href="../../public/css/style.css">
-    <link rel="stylesheet" href="../../public/css/main-menu.css">
-    <link rel="stylesheet" href="../../public/css/barStyle.css">
+    <title>ปฏิทินใน Modal</title>
+
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     <style>
-    .admin-container {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 2rem;
-    }
+        body {
+            font-family: sans-serif;
+            padding: 2rem;
+        }
 
-    .page-header {
-        background: #1e5470;
-        color: white;
-        padding: 3rem 2rem;
-        border-radius: 12px;
-        margin-bottom: 2rem;
-    }
+        /* --- 1. CSS สำหรับ Modal --- */
+        /* พื้นหลังสีดำโปร่งแสง */
+        .modal-overlay {
+            display: none;
+            /* ซ่อนไว้ในตอนแรก */
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.6);
+        }
 
-    .grid-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 2rem;
-    }
+        /* กล่องเนื้อหาของ Modal */
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            /* จัดให้อยู่กึ่งกลาง */
+            padding: 25px;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 1100px;
+            border-radius: 12px;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
 
-    .info-card,
-    .chart-card {
-        background-color: #ffffff;
-        border-radius: 12px;
-        padding: 1.5rem;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    }
+        /* ปุ่มปิด (X) */
+        .modal-close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
 
-    .card-header {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: #1e5470;
-        margin-bottom: 1.5rem;
-        border-bottom: 1px solid #e0e0e0;
-        padding-bottom: 1rem;
-    }
+        .modal-close:hover,
+        .modal-close:focus {
+            color: black;
+        }
 
-    /* ▼▼▼ 2. CSS สำหรับปุ่มและกราฟ ▼▼▼ */
-    .time-range-selector {
-        margin-bottom: 1.5rem;
-        text-align: center;
-    }
-
-    .time-range-selector button {
-        padding: 8px 16px;
-        margin: 0 5px;
-        border: 1px solid #ccc;
-        background-color: #f0f0f0;
-        cursor: pointer;
-        border-radius: 20px;
-        transition: all 0.2s ease-in-out;
-    }
-
-    .time-range-selector button:hover {
-        background-color: #ddd;
-    }
-
-    .time-range-selector button.active {
-        background-color: #1e5470;
-        color: white;
-        border-color: #1e5470;
-    }
+        /* สไตล์ปุ่มกด */
+        .show-calendar-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #1e5470;
+            color: white;
+            border: none;
+            border-radius: 8px;
+        }
     </style>
 </head>
 
 <body>
-    <div class="main-with-sidebar">
-        <div class="admin-container">
-            <div class="page-header">
-                <h1><i class="fas fa-tachometer-alt"></i> Dashboard</h1>
-                <p>ภาพรวมของระบบการจัดการโฮมสเตย์</p>
-            </div>
 
-            <div class="grid-container">
-                <div class="info-card">...</div>
-                <div class="info-card">...</div>
-                <div class="info-card">...</div>
+    <button id="openModalBtn" class="show-calendar-btn">
+        <i class="fas fa-calendar-alt"></i> แสดงปฏิทินการจอง
+    </button>
 
-                <div class="chart-card" style="grid-column: 1 / -1;">
-                    <h3 class="card-header">
-                        <i class="fas fa-chart-line"></i> ภาพรวมรายได้
-                    </h3>
-                    <div class="time-range-selector">
-                        <button data-period="week" class="active">สัปดาห์นี้</button>
-                        <button data-period="month">เดือนนี้</button>
-                        <button data-period="year">ปีนี้</button>
-                    </div>
-                    <canvas id="revenueChart"></canvas>
-                </div>
-                <div class="info-card">...</div>
-            </div>
+    <div id="calendarModal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <div id="calendar"></div>
         </div>
     </div>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const ctx = document.getElementById('revenueChart').getContext('2d');
-        const timeRangeButtons = document.querySelectorAll('.time-range-selector button');
-        let revenueChart; // สร้างตัวแปรไว้นอกฟังก์ชันเพื่อเก็บ instance ของกราฟ
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- 3. ดึง Element ที่จำเป็น ---
+            const modal = document.getElementById('calendarModal');
+            const openBtn = document.getElementById('openModalBtn');
+            const closeBtn = document.querySelector('.modal-close');
+            const calendarEl = document.getElementById('calendar');
 
-        // ฟังก์ชันสำหรับดึงข้อมูลและอัปเดตกราฟ
-        function updateChart(period = 'week') {
-            // ส่ง fetch request ไปยัง API พร้อมกับช่วงเวลาที่เลือก
-            // fetch(`controls/test_grahp1.php?period=${period}`)
-            fetch(`controls/test_grahp1.php`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-type': 'application/x-www-form-urlencoded'
-                    },
-                    body: new URLSearchParams({
-                        period: period
-                    })
-                })
-                .then(response => response.json())
-                .then(chartData => {
-                    // ถ้ามีกราฟเก่าอยู่ ให้ทำลายทิ้งก่อน
-                    if (revenueChart) {
-                        revenueChart.destroy();
-                    }
+            let calendarInstance = null; // ตัวแปรสำหรับเก็บ instance ของปฏิทิน
 
-                    // สร้างกราฟใหม่ด้วยข้อมูลที่ได้รับมา
-                    revenueChart = new Chart(ctx, {
-                        type: 'line', // หรือ 'bar'
-                        data: {
-                            labels: chartData.labels,
-                            datasets: [{
-                                label: 'รายได้',
-                                data: chartData.data,
-                                backgroundColor: 'rgba(30, 84, 112, 0.2)',
-                                borderColor: 'rgba(30, 84, 112, 1)',
-                                borderWidth: 2,
-                                tension: 0.3,
-                                fill: true
-                            }]
+            // --- ฟังก์ชันเปิด Modal ---
+            function openModal() {
+                modal.style.display = 'block';
+
+                // ตรวจสอบและสร้างปฏิทิน (เฉพาะครั้งแรกที่เปิด)
+                if (!calendarInstance) {
+                    calendarInstance = new FullCalendar.Calendar(calendarEl, {
+                        initialView: 'dayGridMonth',
+                        locale: 'th',
+                        headerToolbar: {
+                            left: 'prev,next today',
+                            center: 'title',
+                            right: 'dayGridMonth,timeGridWeek'
                         },
-                        options: {
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                    ticks: {
-                                        callback: function(value) {
-                                            return '฿' + value.toLocaleString();
-                                        }
-                                    }
-                                }
-                            },
-                            responsive: true,
-                            plugins: {
-                                legend: {
-                                    display: false
-                                },
-                                tooltip: {
-                                    callbacks: {
-                                        label: function(context) {
-                                            return `รายได้: ${context.formattedValue} บาท`;
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        // ✨ สามารถดึงข้อมูลแบบไดนามิกได้เหมือนเดิม ✨
+                        events: 'test_grahp1.php'
                     });
-                })
-                .catch(error => console.error('Error fetching chart data:', error));
-        }
+                    calendarInstance.render();
+                } else {
+                    // ถ้าปฏิทินเคยถูกสร้างแล้ว ให้ปรับขนาดใหม่เผื่อหน้าจอเปลี่ยน
+                    calendarInstance.updateSize();
+                }
+            }
 
-        // จัดการการคลิกปุ่ม
-        timeRangeButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                timeRangeButtons.forEach(btn => btn.classList.remove('active'));
-                this.classList.add('active');
-                const period = this.dataset.period;
-                updateChart(period);
+            // --- ฟังก์ชันปิด Modal ---
+            function closeModal() {
+                modal.style.display = 'none';
+            }
+
+            // --- 4. ผูก Event Listeners ---
+            openBtn.addEventListener('click', openModal);
+            closeBtn.addEventListener('click', closeModal);
+
+            // ปิด Modal เมื่อคลิกที่พื้นหลังสีดำ
+            window.addEventListener('click', function(event) {
+                if (event.target == modal) {
+                    closeModal();
+                }
             });
         });
-
-        // โหลดข้อมูลครั้งแรกเป็น 'สัปดาห์นี้'
-        updateChart('week');
-    });
     </script>
+
 </body>
 
 </html>

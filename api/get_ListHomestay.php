@@ -30,9 +30,11 @@ if (!empty($_SESSION['Admin_email'])) {
 //รับ house_id มาจาก main-menu.php
 if (isset($_POST['house_id'])) {
     $property_id = $_POST['house_id'] ?? null;
+    $review_id = $_POST['review_id'] ?? null;
     $property = null;
     $property = $propertyHandle->get_Property($property_id);
     $reviews = $reviewsHandler->get_Reviews($property_id);
+    $all_reviews = $reviewsHandler->get_All_Reviews($property_id);
     if (is_string($reviews)) {
         $_SESSION['err'] = "ไม่พบ ID";
         $reviews = [];

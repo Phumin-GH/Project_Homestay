@@ -12,62 +12,7 @@ use PHPMailer\PHPMailer\Exception;
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 $forgotHandler = new Forgot_Password($conn);
-if (isset($_POST['User_email'])) {
-    $User_email = $_POST['User_email'] ?? '';
-    $result = $forgotHandler->forgot_pwd_User($User_email);
-    if ($result === false) {
-        echo json_encode(["success" => false, "message" => "Email not found."]);
-        exit;
-    }
-    // $stmt = $conn->prepare("SELECT User_id FROM user WHERE User_email=?");
-    // $stmt->execute([$User_email]);
-    // $user = $stmt->fetch(PDO::FETCH_ASSOC);
-    // if (!$user) {
-    //     echo json_encode(["success" => false, "message" => "Email not found."]);
-    //     exit;
-    // }
-    // // สร้าง token
-    // $token = bin2hex(random_bytes(16));
-    // $expires = date("Y-m-d H:i:s", strtotime("+30 minutes"));
-    // $stmt = $conn->prepare("SELECT COUNT(Expires_at) FROM user WHERE User_id = ?");
-    // $stmt->execute([$user['User_id']]);
-    // $count = $stmt->fetchColumn();
-    // if ($count > 0) {
-    //     $stmt = $conn->prepare("UPDATE user SET  Expires_at = null WHERE User_id = ?");
-    //     $stmt->execute([$user['User_id']]);
-    // }
-    // $stmt = $conn->prepare("UPDATE user SET Token =?, Expires_at = ? WHERE User_id = ?");
-    // $stmt->execute([$token, $expires, $user['User_id']]);
-} elseif (isset($_POST['Host_email'])) {
-    $Host_email = $_POST['Host_email'] ?? '';
-    $result = $forgotHandler->forgot_pwd_Host($Host_email);
-    if ($result === false) {
-        echo json_encode(["success" => false, "message" => "Email not found."]);
-        exit;
-    }
-    // $stmt = $conn->prepare("SELECT Host_id FROM host WHERE Host_email=?");
-    // $stmt->execute([$Host_email]);
-    // $host = $stmt->fetch(PDO::FETCH_ASSOC);
-    // if (!$host) {
-    //     echo json_encode(["success" => false, "message" => "Email not found."]);
-    //     exit;
-    // }
-    // // สร้าง token
-    // $token = bin2hex(random_bytes(16));
-    // $expires = date("Y-m-d H:i:s", strtotime("+30 minutes"));
-    // $stmt = $conn->prepare("SELECT COUNT(Expires_at) FROM host WHERE Host_id = ?");
-    // $stmt->execute([$host['Host_id']]);
-    // $count = $stmt->fetchColumn();
-    // if ($count > 0) {
-    //     $stmt = $conn->prepare("UPDATE host SET  Expires_at = null WHERE Host_id = ?");
-    //     $stmt->execute([$host['Host_id']]);
-    // }
-    // $stmt = $conn->prepare("UPDATE host SET Token =?, Expires_at = ? WHERE Host_id = ?");
-    // $stmt->execute([$token, $expires, $host['Host_id']]);
-} else {
-    echo json_encode(["success" => false, "message" => "Pls provide email"]);
-    exit;
-}
+
 $mail = new PHPMailer(true);
 try {
     // ตั้งค่า SMTP
@@ -82,14 +27,25 @@ try {
     // ผู้ส่ง
     $mail->setFrom($_ENV['EMAIL'], 'Homestay Management');
     // ผู้รับ
-    if (isset($_POST['Host_email'])) {
-        $Email = $Host_email;
-    } elseif (isset($_POST['User_email'])) {
-        $Email = $User_email;
+    if (isset($_POST['User_email'])) {
+        $Email = $_POST['User_email'] ?? '';
+        $token = $forgotHandler->forgot_pwd_User($Email);
+        if (is_string($token)) {
+            echo json_encode(["success" => false, "message" => $token]);
+            exit;
+        }
+    } elseif (isset($_POST['Host_email'])) {
+        $Email = $_POST['Host_email'] ?? '';
+        $token = $forgotHandler->forgot_pwd_Host($Email);
+        if (is_string($token)) {
+            echo json_encode(["success" => false, "message" => $token]);
+            exit;
+        }
+    } else {
+        echo json_encode(["success" => false, "message" => "Pls provide email"]);
+        exit;
     }
     $mail->addAddress($Email, 'User');
-
-    // เนื้อหา
     $mail->isHTML(true);
     $mail->Subject = 'Reset Password Link';
     $resetLink = "http://localhost/homestay/views/reset-password.php?token=$token";

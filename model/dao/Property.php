@@ -23,7 +23,7 @@ class Property
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$host_id]);
         $total_properties = $stmt->fetchColumn();
-        return  $total_properties;
+        return $total_properties;
     }
     public function Total_income($email)
     {
@@ -66,7 +66,31 @@ class Property
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$email]);
         $host_id = $stmt->fetchColumn();
-        return  $host_id;
+        return $host_id;
+    }
+    public function search_house($searchTerm)
+    {
+        $sql = "SELECT p.Property_id,p.Property_name,p.Property_province,
+p.Property_district,p.Property_subdistrict,p.Property_image,
+h.Host_firstname,h.Host_lastname,p.Property_image,
+AVG(rv.Rating) AS Rating 
+        FROM property p
+        INNER JOIN host h on p.Host_id = h.Host_id
+        LEFT JOIN review rv on p.Property_id = rv.Property_id 
+        WHERE p.Property_status = 'approve'";
+        $params = [];
+        if (!empty($searchTerm)) {
+            $sql .= "AND( p.Property_name LIKE ? OR p.Property_province LIKE ?)";
+            $likeTerm = "%" . $searchTerm . "%";
+            $params[] = $likeTerm;
+            $params[] = $likeTerm;
+        }
+        $sql .= "GROUP BY p.Property_id,p.Property_name,p.Property_province,p.Property_district,p.Property_subdistrict,h.Host_firstname,
+        h.Host_lastname,p.Property_image";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute($params);
+        $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $products;
     }
     public function room_calendar($property_id)
     {
@@ -80,69 +104,14 @@ class Property
         $events = [];
         foreach ($bookings_from_db as $booking) {
             $events[] = [
-                'title'  => 'ห้อง' . $booking['Room_number'],
-                'start'  => $booking['Check_in'],
-                'end'    => $booking['Check_out'],
+                'title' => 'ห้อง' . $booking['Room_number'],
+                'start' => $booking['Check_in'],
+                'end' => $booking['Check_out'],
                 'allDay' => true,
 
             ];
         }
         return $events;
-        // if ($roomId <= 0 || $year <= 0 || $month <= 0 || $month > 12) {
-
-        //     return 'invalid params';
-        // }
-
-        // // Calculate month range
-        // $monthStart = new DateTime(sprintf('%04d-%02d-01', $year, $month));
-        // $monthEnd = clone $monthStart;
-        // $monthEnd->modify('last day of this month');
-
-        // // Fetch bookings overlapping the month (pending or checked_in considered occupied)
-        // $sql = "SELECT Check_in, Check_out FROM booking
-        //     WHERE Room_id = ?
-        //       AND (Check_status = 'Pending' OR Check_status = 'Checked_in')
-        //       AND Booking_status = 'successful'
-        //       AND (
-        //             (Check_in <= :endDate AND Check_out > :startDate)
-        //          OR (Check_in < :endDate AND Check_out >= :startDate)
-        //          OR (Check_in >= :startDate AND Check_out <= :endDate)
-        //       )";
-
-        // $stmt = $this->conn->prepare($sql);
-        // $stmt->execute([
-        //     $roomId,
-        //     ':endDate' => $monthEnd->format('Y-m-d'),
-        //     ':startDate' => $monthStart->format('Y-m-d')
-        // ]);
-        // $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        // // Expand to individual dates (inclusive of check-in, exclusive of check-out typical)
-        // $bookedDates = [];
-        // foreach ($rows as $row) {
-        //     $start = new DateTime($row['Check_in']);
-        //     $end = new DateTime($row['Check_out']);
-
-        //     // Clamp to month window
-        //     if ($start < $monthStart) {
-        //         $start = clone $monthStart;
-        //     }
-        //     if ($end > (clone $monthEnd)->modify('+1 day')) {
-        //         $end = (clone $monthEnd)->modify('+1 day');
-        //     }
-
-        //     for ($d = clone $start; $d < $end; $d->modify('+1 day')) {
-        //         $bookedDates[$d->format('Y-m-d')] = true;
-        //     }
-        // }
-
-        // $result = [
-        //     'success' => true,
-        //     'year' => $year,
-        //     'month' => $month,
-        //     'booked' => array_keys($bookedDates)
-        // ];
-        // return $result;
     }
     public function get_AllProperty()
     {
@@ -314,7 +283,8 @@ class Property
                     }
                     if (isset($_FILES['multi_image'])) {
                         $uploadDir = __DIR__ . '/../../public/images/';
-                        if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+                        if (!is_dir($uploadDir))
+                            mkdir($uploadDir, 0777, true);
                         foreach ($_FILES['multi_image']['tmp_name'] as $key => $tmpName) {
                             $fileName = $_FILES['multi_image']['name'][$key];
                             $uniqueName = uniqid('img_') . "_" . basename($fileName);
@@ -370,7 +340,8 @@ class Property
                     $del->execute([$property_id]);
                 }
                 $uploadDir = __DIR__ . '/../../public/images/';
-                if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+                if (!is_dir($uploadDir))
+                    mkdir($uploadDir, 0777, true);
                 foreach ($_FILES['multi_image']['tmp_name'] as $key => $tmpName) {
                     $fileName = $_FILES['multi_image']['name'][$key];
                     $uniqueName = uniqid('img_') . "_" . basename($fileName);

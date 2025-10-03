@@ -171,7 +171,7 @@ if (!isset($_SESSION['Host_email'])) {
                                     <span class="status-badge">
                                         <i class="fas fa-check-circle"></i>
                                         <?php
-                                        echo isset($hosts['Host_Status']) && $hosts['Host_Status'] == 'active' ? 'ใช้งานได้' : 'ปิดใช้งาน';
+                                        echo isset($hosts['Host_Status']) && $hosts['Host_Status'] == 'active' ? 'ใช้งานได้' : 'รอตรวจสอบ';
                                         ?>
                                     </span>
 

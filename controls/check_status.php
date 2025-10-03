@@ -2,7 +2,8 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-header('Content-Type: application/json');
+date_default_timezone_set("Asia/Bangkok");
+header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . '/../model/config/db_connect.php';
 require_once __DIR__ . '/../model/dao/Payment.php';
 require_once __DIR__ . '/../model/dao/Booking.php';
@@ -28,6 +29,17 @@ if (isset($_POST['qrCode']) && isset($_POST['booking_id'])) {
     $exYear = $_POST['expYear'] ?? 0;
     $cvv = $_POST['cvv'] ?? 0;
     $amount = $_POST['amount'] ?? 0;
+    $date = date('Y-m-d');
+    $Month = date('m', strtotime($date));
+    $Year = date('Y', strtotime($date));
+
+    $realYM = $Year * 100 + $Month;
+    $exYM = $exYear * 100 + $exMonth;
+
+    if ($exYM < $realYM) {
+        echo json_encode(["success" => false, "message" => "ข้อมูล เดือน ปี ไม่ถูกต้อง"]);
+        exit();
+    }
     $result = $paymetHandler->insertCreditCard($booking_id, $name, $number, $exMonth, $exYear, $cvv, $amount);
     if ($result === true) {
         echo json_encode(["success" => true, "message" => " Payment successful! "]);

@@ -263,6 +263,9 @@
                 passwordInput.focus();
             }
         });
+
+    });
+    document.addEventListener("DOMContentLoaded", () => {
         document.getElementById('forgot-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const User_email = e.target.email.value.trim();
@@ -282,6 +285,7 @@
             alert(data.message);
             // window.location.reload();
         });
+
     });
     </script>
 </body>

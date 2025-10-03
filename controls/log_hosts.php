@@ -5,12 +5,14 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once __DIR__ . '/../model/config/db_connect.php';
 require_once __DIR__ . '/../model/dao/Host.php';
 $hostHandler = new Host($conn);
-$email = $_SESSION['Host_email'];
-$hosts = $hostHandler->getDataHost($email);
-if ($email) {
-    $avatar_initial = strtoupper(substr($email, 0, 1));
-} else {
-    $avatar_initial = "?";
+if (isset($_SESSION['Host_email'])) {
+    $email = $_SESSION['Host_email'];
+    $hosts = $hostHandler->getDataHost($email);
+    if ($email) {
+        $avatar_initial = strtoupper(substr($email, 0, 1));
+    } else {
+        $avatar_initial = "?";
+    }
 }
 if (isset($_POST['host_signup'])) {
     $email = trim($_POST['email']);

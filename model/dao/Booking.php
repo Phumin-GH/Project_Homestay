@@ -25,13 +25,13 @@ class Booking
         return $total_booking;
     }
     // Method สำหรับการเข้าสู่ระบบ
-    public function book_online($email, $property_id, $room_id, $check_in_date, $check_out_date,  $nights, $guests, $total_price)
+    public function book_online($email, $property_id, $room_id, $check_in_date, $check_out_date, $nights, $guests, $total_price)
     {
         $stmt = $this->conn->prepare("SELECT User_id FROM user WHERE User_email = ?");
         $stmt->execute([$email]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
         if (!$user) {
-            return  "ไม่พบข้อมูลผู้ใช้";
+            return "ไม่พบข้อมูลผู้ใช้";
         }
         $insertSQL = "INSERT INTO booking 
             (User_id, Property_id, Room_id, Check_in, Check_out, Guests, Night, Total_price) 
@@ -60,8 +60,8 @@ class Booking
     }
     public function calcuratePrice($room_id, $nights, $guests)
     {
-        if (!$room_id || !$nights  || !$guests) {
-            return  "กรุณาเลือกห้องพัก";
+        if (!$room_id || !$nights || !$guests) {
+            return "กรุณาเลือกห้องพัก";
         }
         $stmt = $this->conn->prepare("SELECT Room_price FROM room WHERE Room_id = ?");
         $stmt->execute([$room_id]);
@@ -178,7 +178,7 @@ class Booking
             WHERE 
                 Room_id = ?
                 AND Property_id = ?
-                AND (Booking_status = 'Pending' OR Check_status = 'Checked_in')
+                AND (Booking_status = 'successful'OR Check_status = 'Pending' OR Check_status = 'Checked_in')
                 AND Check_in < ?  
                 AND Check_out > ? 
             UNION ALL
@@ -191,8 +191,8 @@ class Booking
                 AND Check_in < ?
                 AND Check_out > ?
         ) AS combined_bookings
-
         ");
+
         $stmt->execute([
             $room_id,
             $property_id,
@@ -203,12 +203,13 @@ class Booking
             $check_out,
             $check_in
         ]);
-        $count = (int)$stmt->fetchColumn();
+        $count = (int) $stmt->fetchColumn();
         if ($count > 0) {
             return false;
         }
         return true;
     }
+
     public function get_Refund_Book($email)
     {
         $stmt = $this->conn->prepare("SELECT User_id FROM user WHERE User_email = ?  ");
@@ -226,14 +227,12 @@ class Booking
         WHERE b.User_id = ? && b.Booking_status= 'cancel' && Payment_status = 'paid' &&
         ((rf.Host_check='approve'  AND rf.Refund_status='approve')OR
         (rf.Host_check='pending'  AND rf.Refund_status='pending')OR
-        (rf.Host_check='approve'  AND rf.Refund_status='pending')
-        )
+        (rf.Host_check='approve'  AND rf.Refund_status='pending'))
         ORDER BY rf.Refund_date DESC");
         $stmt->execute([$user['User_id']]);
         $refund_booking = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $refund_booking;
     }
-
     public function get_pending($property_id)
     {
         $sql = $sql = "SELECT 'Online' AS Source,

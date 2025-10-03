@@ -4,7 +4,7 @@ if (!isset($_SESSION["Admin_email"])) {
     header("Location: admin-login.php");
     exit();
 }
-require_once  __DIR__ . "/../../controls/log_hosts.php";
+require_once  __DIR__ . "/../../controls/log_admin.php";
 require_once __DIR__ . "/../../api/get_ListHomestay.php";
 require_once __DIR__ . "/../../api/get_listFavorites.php";
 ?>
@@ -335,13 +335,11 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                         </div>
                     </div>
                 </div>
-
             </div>
-
             <div class="container" style="margin-top:2rem;">
                 <div class="section-title">รีวิวจากผู้เข้าพัก</div>
-                <?php if (count($reviews) > 0): ?>
-                <?php foreach ($reviews as $review): ?>
+                <?php if (count($all_reviews) > 0): ?>
+                <?php foreach ($all_reviews as $review): ?>
                 <div style="border-bottom:1px solid #eee; padding:1rem 0;">
                     <div style="font-weight:600; color:#1a7f37; color: #1e5470;">
                         <?php echo htmlspecialchars($review['User_email']); ?>
@@ -358,11 +356,28 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                             <button class="dropdown-toggle" aria-label="ตัวเลือกเพิ่มเติม">
                                 <i class="fa-solid fa-ellipsis-vertical"></i>
                             </button>
+
                             <div class="dropdown-menu">
                                 <a class="dropdown-item report-review-btn" name="delete"
                                     data-review-id="<?php echo $review['Review_id'] ?>">
                                     <i class="fa-solid fa-flag"></i> ลบรีวิว
                                 </a>
+                                <?php if ($review['Review_status'] === "normal"): ?>
+                                <a class="dropdown-item report-review-btn" name="hidden"
+                                    data-review-id="<?php echo $review['Review_id'] ?>">
+                                    <i class="fa-solid fa-flag"></i> ซ่อนรีวิว
+                                </a>
+                                <?php elseif ($review['Review_status'] === "hidden"): ?>
+                                <a class="dropdown-item report-review-btn" name="show"
+                                    data-review-id="<?php echo $review['Review_id'] ?>">
+                                    <i class="fa-solid fa-flag"></i> แสดงรีวิว
+                                </a>
+                                <?php else: ?>
+                                <a class="dropdown-item report-review-btn" name="show"
+                                    data-review-id="<?php echo $review['Review_id'] ?>">
+                                    <i class="fa-solid fa-flag"></i> ลบรีวิว
+                                </a>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
@@ -405,8 +420,101 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                 }
             });
         });
-        const report_btns = document.querySelectorAll('.report-review-btn');
-        // const report_btn = document.getElementsByName('delete');
+        const hidden_btns = document.getElementsByName('hidden');
+        hidden_btns.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                const reviewId = this.dataset.reviewId;
+                if (!reviewId) {
+                    alert('ไม่พบ review ID');
+                    return;
+                }
+                if (confirm("คุณยืนยันที่จะซ่อนรีวิวจากบ้านพัก")) {
+                    btn.disabled = true;
+                    btn.textContent = 'กำลังซ่อน...';
+
+                    fetch('../../controls/report_action.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: new URLSearchParams({
+                                review_id: reviewId,
+                                submit_hidden_rv: true
+                            })
+                        })
+                        .then(res => {
+                            if (!res.ok) throw new Error('Network response was not ok');
+                            return res.json();
+                        })
+                        .then(data => {
+                            if (data.success === true) {
+                                alert(data.message);
+                                window.location.reload();
+                            } else {
+                                alert(data.message);
+                                // เปิดปุ่มกลับ
+                                btn.disabled = false;
+                                btn.textContent = 'ซ่อนรีวิว';
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('เกิดข้อผิดพลาด: ' + error.message);
+                            // เปิดปุ่มกลับ
+                            btn.disabled = false;
+                            btn.textContent = 'ลบรีวิว';
+                        });
+                }
+            })
+        })
+        const show_btns = document.getElementsByName('show');
+        show_btns.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                const reviewId = this.dataset.reviewId;
+                if (!reviewId) {
+                    alert('ไม่พบ review ID');
+                    return;
+                }
+                if (confirm("คุณยืนยันที่จะแสดงรีวิวจากบ้านพัก")) {
+                    btn.disabled = true;
+                    btn.textContent = 'กำลังแสดง...';
+
+                    fetch('../../controls/report_action.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: new URLSearchParams({
+                                review_id: reviewId,
+                                submit_show_rv: true
+                            })
+                        })
+                        .then(res => {
+                            if (!res.ok) throw new Error('Network response was not ok');
+                            return res.json();
+                        })
+                        .then(data => {
+                            if (data.success === true) {
+                                alert(data.message);
+                                window.location.reload();
+                            } else {
+                                alert(data.message);
+                                // เปิดปุ่มกลับ
+                                btn.disabled = false;
+                                btn.textContent = 'แสดงรีวิว';
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('เกิดข้อผิดพลาด: ' + error.message);
+                            // เปิดปุ่มกลับ
+                            btn.disabled = false;
+                            btn.textContent = 'ลบรีวิว';
+                        });
+                }
+            })
+        })
+        const report_btns = document.getElementsByName('delete');
         report_btns.forEach(function(btn) {
             btn.addEventListener('click', function() {
                 const reviewId = this.dataset.reviewId;

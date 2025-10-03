@@ -1,53 +1,38 @@
 <?php
+// /api/get_monthly_revenue.php
+
+// 1. ตั้งค่า Header ให้ส่งข้อมูลกลับไปเป็น JSON
 header('Content-Type: application/json');
-require_once __DIR__ . '/model/config/db_connect.php'; // ตรวจสอบให้แน่ใจว่า Path ถูกต้อง
 
-// รับค่า 'period' จาก URL, ถ้าไม่ส่งมาให้ใช้ 'week' เป็นค่าเริ่มต้น
-// $period = $_GET['period'] ?? 'week';
-$period = $_POST['period'] ?? 'week';
-$sql = "";
+require_once __DIR__ . '/model/config/db_connect.php';
 
-// สร้างเงื่อนไข SQL ตามช่วงเวลาที่เลือก
-switch ($period) {
-    case 'month':
-        // ข้อมูล 30 วันย้อนหลัง, จัดกลุ่มข้อมูลรายวัน
-        $sql = "SELECT DATE(Create_at) AS label, SUM(Total_price) AS value 
-                FROM booking 
-                WHERE Create_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) AND Booking_status = 'successful'
-                GROUP BY label ORDER BY label ASC";
-        break;
-    case 'year':
-        // ข้อมูล 12 เดือนย้อนหลัง, จัดกลุ่มข้อมูลรายเดือน
-        $sql = "SELECT DATE_FORMAT(Create_at, '%Y-%m') AS label, SUM(Total_price) AS value 
-                FROM booking
-                WHERE Create_at >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH) AND Booking_status = 'successful'
-                GROUP BY label ORDER BY label ASC";
-        break;
-    case 'week':
-    default:
-        // ข้อมูล 7 วันย้อนหลัง, จัดกลุ่มข้อมูลรายวัน
-        $sql = "SELECT DATE(Create_at) AS label, SUM(Total_price) AS value 
-                FROM booking
-                WHERE Create_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) AND Booking_status = 'successful'
-                GROUP BY label ORDER BY label ASC";
-        break;
+$stmt = $conn->prepare("
+    SELECT
+    b.Booking_id,
+    r.Room_number, -- ดึง Room_number จากตาราง room
+    b.Check_in,
+    b.Check_out
+FROM booking b
+-- การ JOIN ตาราง room ควรจะอ้างอิงจากข้อมูลใน booking โดยตรง
+LEFT JOIN room r ON b.Room_id = r.Room_id 
+LEFT JOIN property p ON r.Property_id = p.Property_id -- เชื่อม property ผ่าน room จะดีกว่า
+WHERE 
+    b.Booking_status = 'successful' 
+    AND p.Property_id = 1 AND (Check_status = 'Pending' OR Check_status = 'Checked_in')");
+$stmt->execute();
+$bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// 4. แปลงข้อมูลให้อยู่ในรูปแบบ Event Object ที่ FullCalendar เข้าใจ
+$events = [];
+foreach ($bookings as $booking) {
+    $events[] = [
+        'id' => $booking['Booking_id'],
+        'title' => 'จองแล้ว: ' . $booking['Room_number'], // ข้อความที่จะแสดงบนปฏิทิน
+        'start' => $booking['Check_in'],                   // วันที่เริ่ม
+        'end' => $booking['Check_out'],                  // วันที่สิ้นสุด (FullCalendar จะไม่รวมวันนี้)
+        'color' => '#28a745',                              // (ตัวเลือก) กำหนดสีของ Event
+    ];
 }
 
-try {
-    $stmt = $conn->query($sql);
-    $dataFromDb = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // จัดรูปแบบข้อมูลให้เป็น labels และ data สำหรับ Chart.js
-    $labels = [];
-    $data = [];
-    foreach ($dataFromDb as $row) {
-        $labels[] = $row['label'];
-        $data[] = (float)$row['value'];
-    }
-
-    // ส่งข้อมูลกลับไปเป็น JSON
-    echo json_encode(['labels' => $labels, 'data' => $data]);
-} catch (PDOException $e) {
-    http_response_code(500);
-    echo json_encode(['error' => $e->getMessage()]);
-}
+// 5. ส่งข้อมูลกลับไปเป็น JSON
+echo json_encode($events);

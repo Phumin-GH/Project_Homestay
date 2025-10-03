@@ -27,7 +27,7 @@ require_once __DIR__ . '/../../api/get_ListVerify.php';
     }
 
     .page-header {
-        background: #1e5470;
+        background: linear-gradient(155deg, #1e5470 0%, #74adc9ff 100%);
         color: white;
         padding: 2rem;
         border-radius: 16px;
@@ -198,6 +198,10 @@ require_once __DIR__ . '/../../api/get_ListVerify.php';
             padding: 1rem;
         }
 
+        .form-row-4 {
+            grid-template-columns: 1fr;
+        }
+
         .property-header {
             flex-direction: column;
         }
@@ -212,6 +216,99 @@ require_once __DIR__ . '/../../api/get_ListVerify.php';
         .property-actions {
             flex-direction: column;
         }
+    }
+
+    .modal {
+        display: none;
+        /* เริ่มต้นซ่อน */
+        position: fixed;
+        z-index: 500;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+        background-color: #fff;
+        margin: 10% auto;
+        padding: 20px;
+        border-radius: 8px;
+        width: 900px;
+        position: relative;
+        overflow-y: auto;
+        max-height: 55vh;
+    }
+
+    .close {
+        position: absolute;
+        right: 15px;
+        top: 10px;
+        font-size: 24px;
+        cursor: pointer;
+    }
+
+    .action-btn {
+        padding: 0.6rem 1.2rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 500;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        margin-top: 1.5rem;
+        gap: 0.5rem;
+    }
+
+    .action-btn:hover {
+        transform: translateY(-1px);
+    }
+
+    .contact-btn {
+        background-color: #1e5470;
+        color: white;
+    }
+
+    .contact-btn:hover {
+        background-color: #2a6f97;
+    }
+
+    .form-row-4 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid #e5e5e5;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.2s ease;
+        box-sizing: border-box;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 600;
+        color: #1a1a1a;
+        font-size: 16px;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: #1e5470;
     }
     </style>
 </head>
@@ -295,6 +392,8 @@ require_once __DIR__ . '/../../api/get_ListVerify.php';
                                 <div><strong>พิกัด:</strong>
                                     <?php echo htmlspecialchars($property['Property_latitude']); ?>,
                                     <?php echo htmlspecialchars($property['Property_longitude']); ?></div>
+                                <button class="action-btn contact-btn"
+                                    data-property-id="<?php echo htmlspecialchars($property['Property_id']); ?>">รายละเอียดห้องพัก</button>
                             </div>
                             <?php if (!empty($property['Property_image'])): ?>
                             <img src="../../public/<?php echo htmlspecialchars($property['Property_image']); ?>"
@@ -315,6 +414,7 @@ require_once __DIR__ . '/../../api/get_ListVerify.php';
 
                             </div>
                         </div>
+
                         <div class="property-actions">
                             <form method="POST"
                                 action="../../controls/approve_property.php?id=<?php echo htmlspecialchars($property['Property_id']); ?>"
@@ -328,8 +428,36 @@ require_once __DIR__ . '/../../api/get_ListVerify.php';
                                 <button class="btn btn-reject" name="cancel"><i class="fas fa-times"></i>
                                     ปฏิเสธ</button>
                             </form>
-
-
+                        </div>
+                    </div>
+                    <div id="cancelModal_<?php echo $property['Property_id']; ?>" class="modal">
+                        <div class="modal-content">
+                            <label class="form-label">
+                                ห้องพัก <span class="required">*</span>
+                            </label>
+                            <span class="close">&times;</span>
+                            <?php foreach ($property['rooms'] as $room): ?>
+                            <div class="form-row-4">
+                                <label class="form-label-detail">เลขห้อง:<input type="text" placeholder="1"
+                                        class="form-input" value="<?php echo htmlspecialchars($room['Room_number']); ?>"
+                                        readonly></label>
+                                <label class="form-label-detail">ราคา:<input type="number" placeholder="550"
+                                        class="form-input" value="<?php echo htmlspecialchars($room['Room_price']); ?>"
+                                        readonly></label>
+                                <label class="form-label-detail">ประเภทห้อง:<input type="text" placeholder="ห้องเดี่ยว"
+                                        value="<?php echo htmlspecialchars($room['Room_capacity']); ?>"
+                                        class="form-input"></label>
+                                <label class="form-label-detail" readonly>สิ่งอำนวยความสะดวก:<input type="email"
+                                        placeholder="พัดลม,กาต้มน้ำ"
+                                        value="<?php echo htmlspecialchars($room['Room_utensils']); ?> "
+                                        class="form-input" readonly></label>
+                                <label class=" form-label-detail">สถานะ:
+                                    <input type="text" placeholder="พัดลม,กาต้มน้ำ"
+                                        value="<?php echo htmlspecialchars($room['Room_status']); ?> "
+                                        class="form-input" readonly></label>
+                                </label>
+                            </div>
+                            <?php endforeach; ?>
                         </div>
                     </div>
                     <?php endforeach; ?>
@@ -344,7 +472,32 @@ require_once __DIR__ . '/../../api/get_ListVerify.php';
             </div>
         </div>
     </div>
+
+
+
     <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const refund_btn = document.querySelectorAll('.contact-btn');
+        refund_btn.forEach(btn => {
+            btn.onclick = function() {
+                // const propertyId = this.closest('.property-card')
+                //     .querySelector('form').action.split('=')[1];
+                const propertyId = this.dataset.propertyId;
+                const modal = document.getElementById("cancelModal_" + propertyId);
+                if (modal) {
+                    modal.style.display = "block";
+                    const span = modal.querySelector(".close");
+                    span.onclick = () => modal.style.display = "none";
+                    window.onclick = (e) => {
+                        if (e.target == modal) {
+                            modal.style.display = "none";
+                        }
+                    };
+                }
+            };
+        });
+    })
+
     function toggleSidebar() {
         const sidebar = document.getElementById('sidebar');
         const mainContent = document.querySelector('.main-with-sidebar');

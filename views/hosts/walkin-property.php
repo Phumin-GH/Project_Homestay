@@ -371,7 +371,7 @@ require_once __DIR__ . "/../../api/get_ListHomestay.php";
             })
             .catch(error => {
                 console.error('Fetch error:', error);
-                bookingMessage.innerText = 'เกิดข้อผิดพลาด: ' + error;
+                // bookingMessage.innerText = 'เกิดข้อผิดพลาด: ' + error;
                 bookingMessage.style.color = '#c0392b';
                 total_price.value = '0.00';
                 console.err('Error' + error);

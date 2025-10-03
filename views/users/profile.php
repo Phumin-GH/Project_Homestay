@@ -64,8 +64,7 @@ if (isset($_GET['logout'])) {
                 <li><a href="bookings.php"><i class="fas fa-calendar"></i><span class="menu-label"
                             title="รายการจอง">Bookings</span></a>
                 </li>
-                <li><a href="reviews.php" title="รีวิวสถานที่พัก"><i class="fas fa-star"></i><span
-                            class="menu-label">Review</span></a></li>
+
                 <li><a href="../../controls/logout.php"><i class="fas fa-sign-out-alt"></i><span
                             class="menu-label">Logout</span></a>
                 </li>

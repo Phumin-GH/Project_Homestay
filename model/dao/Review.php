@@ -22,11 +22,26 @@ class Review
         $reviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $reviews;
     }
+    public function get_All_Reviews($property_id)
+    {
+        if (!$property_id) {
+            return "ไม่พบข้อมูลบ้านพัก!";
+        }
+        $sql = "SELECT u.User_email,r.Review_id,r.Rating,r.Comment,r.Review_status,r.Create_at FROM review r 
+        INNER JOIN user u ON r.User_id = u.User_id 
+        INNER JOIN property p ON r.Property_id = p.Property_id
+        WHERE r.Property_id =?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$property_id]);
+        $all_reviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $all_reviews;
+    }
     public function get_violation()
     {
-        $sql = "SELECT rp.Report_id,rp.Review_id,reporter.User_email AS Reported_by,owner.User_email AS Reported_user,rp.Report_reason,rp.Create_at
+        $sql = "SELECT rp.Report_id,rv.Property_id,rp.Review_id,reporter.User_email AS Reported_by,owner.User_email AS Reported_user,rp.Report_reason,rp.Create_at
         FROM review_reports rp
         INNER JOIN review rv ON rp.Review_id = rv.Review_id
+        INNER JOIN property p ON rv.Property_id = p.Property_id 
         INNER JOIN user owner ON  rv.User_id = owner.User_id
         INNER JOIN user reporter ON  rp.User_id = reporter.User_id
         WHERE rp.Report_status = 'pending'";
@@ -112,6 +127,52 @@ class Review
             return $e->getMessage();
         }
     }
+    public function hidden_review($review_id)
+    {
+        $sql = "SELECT COUNT(*) FROM review WHERE Review_id = ? AND Review_status = 'hidden'";
+        $stmt = $this->conn->prepare($sql);
+        try {
+            $stmt->execute([$review_id]);
+            $result = $stmt->fetchColumn();
+            if ($result > 0) {
+                return "รีวิวนี้ซ่อนอยู่แล้ว";
+            } else {
+                $sql = "UPDATE review SET Review_status = 'hidden' WHERE Review_id = ?";
+                $stmt = $this->conn->prepare($sql);
+                try {
+                    $stmt->execute([$review_id]);
+                    return true;
+                } catch (Exception $e) {
+                    return $e->getMessage();
+                }
+            }
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+    public function show_review($review_id)
+    {
+        $sql = "SELECT COUNT(*) FROM review WHERE Review_id = ? AND Review_status = 'normal'";
+        $stmt = $this->conn->prepare($sql);
+        try {
+            $stmt->execute([$review_id]);
+            $result = $stmt->fetchColumn();
+            if ($result > 0) {
+                return "รีวิวนี้แสดงอยู่แล้ว";
+            } else {
+                $sql = "UPDATE review SET Review_status = 'normal' WHERE Review_id = ?";
+                $stmt = $this->conn->prepare($sql);
+                try {
+                    $stmt->execute([$review_id]);
+                    return true;
+                } catch (Exception $e) {
+                    return $e->getMessage();
+                }
+            }
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
     public function addReview($user_email, $property_id, $rating, $comment)
     {
         if (!$user_email || !$property_id || !$rating || !$comment) {
@@ -123,6 +184,13 @@ class Review
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
         if (!$user) {
             return  "ไม่พบผู้ใช้";
+        }
+        $sql = "SELECT COUNT(Comment) FROM review WHERE Property_id =? AND User_id=?,AND Comment=?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$property_id, $user['User_id'], $comment]);
+        $count = $stmt->fetchColumn();
+        if ($count > 0) {
+            return  "ไม่สามารถสแปมข้อความได้";
         }
         $insertSQL = "INSERT INTO review (User_id, Property_id, Rating, Comment) VALUES (?, ?, ?, ?)";
         $stmt = $this->conn->prepare($insertSQL);

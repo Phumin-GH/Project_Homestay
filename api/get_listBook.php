@@ -31,6 +31,6 @@ if (isset($_SESSION['method'])) {
     $errorMessage = "ไม่พบข้อมูลช่องทางการชำระเงินใน Session";
 }
 // set expire 20 นาที
-$expires_at = time() + 1200;
+$expires_at = time() + 800;
 $expires_at_iso8601 = date('c', $expires_at);
 $expires_at_timestamp = strtotime($expires_at_iso8601) * 1000;
