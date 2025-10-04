@@ -278,7 +278,7 @@ require_once __DIR__ . '/../../api/get_listFavorites.php';
                     <h1><i class="fa-solid fa-heart-circle-plus"></i>รายการโปรดของคุณ</h1>
                     <p>บันทึกบ้านที่คุณสนใจ</p>
                 </div>
-
+                <div id="card"></div>
                 <?php if (count($favorites) > 0): ?>
                     <h2>รายการโปรดทั้งหมด ( <?php echo count($favorites) ?> )</h2>
                     <div class="favorites-grid">

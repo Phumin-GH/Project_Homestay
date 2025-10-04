@@ -35,19 +35,22 @@ switch ($chartType) {
         }
         break;
     case 'property':
-        $sql = "SELECT p.Property_name AS House, COUNT(b.Booking_id) AS booking_count
+        $sql = "SELECT House, SUM(booking_count) AS Booking_count FROM(
+SELECT p.Property_name AS House, COUNT(b.Booking_id) AS booking_count
             FROM booking b
             INNER JOIN property p ON b.Property_id = p.Property_id
             LEFT JOIN host h ON p.Host_id = h.Host_id
-            WHERE b.Booking_status = 'successful' AND b.Create_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) AND h.Host_id =2
+            WHERE b.Booking_status = 'successful' AND b.Create_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) 
+            
             GROUP BY p.Property_id, p.Property_name
             UNION ALL 
             SELECT p.Property_name AS House, COUNT(w.Walkin_id) AS booking_count
             FROM walkin w
             INNER JOIN property p ON w.Property_id = p.Property_id
             LEFT JOIN host h ON p.Host_id = h.Host_id
-            WHERE w.Walkin_status = 'successful' AND w.Create_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) AND h.Host_id =2
-            GROUP BY p.Property_id, p.Property_name
+            WHERE w.Walkin_status = 'successful' AND w.Create_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) 
+            GROUP BY p.Property_id, p.Property_name) AS con
+            GROUP BY House
             ORDER BY booking_count DESC LIMIT 5;";
 
         $stmt = $conn->prepare($sql);
@@ -56,7 +59,7 @@ switch ($chartType) {
         $data = ['labels' => [], 'data' => []];
         foreach ($results as $row) {
             $data['labels'][] = $row['House'];
-            $data['data'][] = (int) $row['booking_count'];
+            $data['data'][] = (int) $row['Booking_count'];
         }
         break;
     case 'users':

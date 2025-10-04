@@ -51,10 +51,12 @@
         var calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
             locale: 'th',
+            aspectRatio: 1.8,
             headerToolbar: {
                 left: 'prev,next today',
                 center: 'title',
-                right: 'dayGridMonth,timeGridWeek,listWeek'
+                right: 'dayGridMonth'
+                // right: 'dayGridMonth,timeGridWeek,listWeek'
             },
             events: 'test_data_cal.php',
             backgroundColor: '#ff5733',

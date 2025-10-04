@@ -270,13 +270,6 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
             border: 2px solid #1e5470;
         }
 
-        .book-btn:disabled {
-            cursor: not-allowed;
-            background: #f5f5f5;
-            color: #666464;
-            border: 1px solid #ddd;
-        }
-
         @media (max-width: 900px) {
             .header {
                 flex-direction: column;
@@ -449,6 +442,17 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
             box-shadow: 0 4px 12px rgba(26, 127, 55, 0.3);
         }
 
+        .btn-calendar {
+            background: #1e5470;
+            color: white;
+        }
+
+        .btn-calendar:hover {
+            background: #277297ff;
+            /* transform: translateY(-1px); */
+            box-shadow: 0 4px 12px rgba(26, 127, 55, 0.3);
+        }
+
         .btn:active {
             transform: translateY(0);
         }
@@ -531,8 +535,8 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
         }
 
         .Imgslider {
-            width: 900px;
-            max-width: 90vw;
+            /* width: 900px;
+            max-width: 90vw; */
             height: 500px;
             margin: 0rem 2.5rem;
             position: relative;
@@ -850,6 +854,58 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
         .action-btn:hover {
             transform: translateY(-1px);
         }
+
+        /* Container หลักที่ใช้ Grid Layout */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            /* สร้าง 2 คอลัมน์และปรับขนาดอัตโนมัติ */
+            gap: 2rem;
+            /* ระยะห่างระหว่างกล่อง */
+            margin-top: 25px;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e0e0e0;
+            /* เส้นคั่นบางๆ */
+        }
+
+        /* สไตล์ของแต่ละกล่อง (Service, Activity) */
+        .feature-item {
+            padding: 1.5rem;
+            background-color: #f9f9f9;
+            /* สีพื้นหลังอ่อนๆ */
+            border-radius: 12px;
+            border: 1px solid #e0e0e0;
+        }
+
+        /* จัดเรียง Icon และ Title ให้อยู่ในแถวเดียวกัน */
+        .feature-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            color: #1e5470;
+            /* สีหลักของธีม */
+        }
+
+        /* ไอคอน */
+        .feature-icon {
+            font-size: 1.5rem;
+            margin-right: 0.75rem;
+        }
+
+        /* Title (Service, Activity) */
+        .feature-title {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        /* Description */
+        .feature-description {
+            margin: 0;
+            font-size: 1rem;
+            color: #555;
+            line-height: 1.6;
+        }
     </style>
     </style>
 </head>
@@ -925,18 +981,14 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                             รองรับ: <?php /*echo htmlspecialchars($house['Property_capacity'] ?? 'N/A');*/ ?> คน</div> -->
                     </div>
                 </div>
-                <!-- รูปภาพหลักของที่พัก -->
+
                 <div class="Imgslider">
                     <?php
-                    // ใช้ตัวแปร $index เพื่อนับรอบ และกำหนด class="active" ให้รูปแรก
                     $index = 0;
                     foreach ($images as $imageUrl) {
-                        // ตรวจสอบว่าเป็นรูปแรกหรือไม่ (index = 0)
                         if ($index == 0) {
-                            // ถ้าใช่ ให้เพิ่ม class="active" เพื่อให้แสดงเป็นรูปแรก
                             echo '<img src="../../public/' . htmlspecialchars($imageUrl['Pro_image']) . '" class="active">';
                         } else {
-                            // ถ้ารูปถัดๆ ไป ก็แสดง <img> แบบปกติ
                             echo '<img src="../../public/' . htmlspecialchars($imageUrl['Pro_image']) . '">';
                         }
                         $index++;
@@ -945,7 +997,31 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                     <button class="Imgslider-btn prev">&#10094;</button>
                     <button class="Imgslider-btn next">&#10095;</button>
                 </div>
-                <div class="section-title">ห้องพัก</div>
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <div class="feature-header">
+                            <i class="fas fa-concierge-bell feature-icon"></i>
+                            <h3 class="feature-title">Service</h3>
+                        </div>
+                        <p class="feature-description">
+                            <?php echo  nl2br(htmlspecialchars($property['Services_name'] . ': ' . "\n" . $property['Services_description'])); ?>
+                        </p>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-header">
+                            <i class="fas fa-hiking feature-icon"></i>
+                            <h3 class="feature-title">Activity</h3>
+                        </div>
+                        <p class="feature-description">
+                            <?php
+                            echo nl2br(htmlspecialchars($property['Activity_name'] . " :" . "\n" . $property['Activity_description']));
+                            ?>
+
+                        </p>
+                    </div>
+                </div>
+                <h2 class="section-title">ห้องพัก</h2>
                 <div class="rooms-list" id="roomsList">
                     <?php foreach ($rooms as $room): ?>
                         <div class="room-card <?php echo htmlspecialchars($room['Room_status'] != 'Available' ? ' disable' : ''); ?>"
@@ -967,18 +1043,17 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                 </div>
                 <div class="booking-map-flex">
                     <div class="map-section" style="flex:1; min-width:280px;">
-                        <!-- <div class="section-title">แผนที่ที่พัก</div> -->
-                        <!-- <iframe class="map-frame" src="<?php /* echo $maps_url; */ ?>" allowfullscreen=""></iframe> -->
-                        <?php /*if ($maps_url):*/ ?>
                         <div id="map" style="width:100%; height:660px; border-radius:10px; margin-top:0.7rem;"></div>
-                        <?php /*else: */ ?>
-                        <!-- <div style="color:#888;">ไม่มีข้อมูลแผนที่</div> -->
-                        <?php /* endif;*/ ?>
                     </div>
                     <div class="booking-section" style="flex:1; min-width:280px;">
-                        <!-- <div class="section-title">ปฏิทินการจอง</div>
-                        <div class="calendar" id="calendar"></div> -->
-                        <div class="booking-form" id="booking-form"
+                        <div
+                            style="justify-content: space-around; margin-top:1.5rem; background:#fafdff; border-radius:8px; padding:1.2rem; border:1px solid #e0e7ef;">
+                            <div class="section-title">ปฏิทินการจอง
+                                <button class="btn btn-calendar">ดูปฏิทิน</button>
+                            </div>
+                        </div>
+                        <!--<div class="calendar" id="calendar"></div> -->
+                        <div id="booking-form"
                             style="margin-top:1.5rem; background:#fafdff; border-radius:8px; padding:1.2rem; border:1px solid #e0e7ef;">
                             <p id="bookingSection"></p>
                             <p id="bookingMessage"></p>
@@ -1003,7 +1078,6 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                                 <input type="hidden" id="diffDay" name="diffDay" min="1" max="1000" value="">
                                 <input type="hidden" id="propertyid" name="propertyid" min="1" max="1000" value="">
                                 <input type="hidden" id="total_price" name="total_price" min="1" value="">
-
                             </div>
                             <div style="margin-bottom:1rem;">
                                 <label for="guests">จำนวนผู้เข้าพัก</label><br>
@@ -1013,11 +1087,9 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                             <h3 style="margin-top:1rem; font-weight:bold;">รวมราคา</h3>
                             <div style="margin-top:1rem; ">
                                 <p>จำนวนคืนที่เข้าพัก : <span class="para" id="nights">1</span> คืน</p>
-
                                 <p>ราคารวม : <span class="para" name="display_price" id="display_price">0.00</span> บาท
                                 </p>
                             </div>
-                            <!-- <button class="book-btn" name="bookBtn" id="bookBtn" style="width:100%;" onclick="openConfirm_Booking()">จอง</button> -->
                             <div class="action-btn">
                                 <button class="btn btn-cancel" name="resetBtn" id="resetBtn"
                                     type="button">Reset</button>
@@ -1050,31 +1122,8 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                     </div>
                 </div>
             </div>
-            <?php
-            // --- User Review Section ---
-            // ดึงรีวิวจากฐานข้อมูล (review: Property_id, User_name, Review_text, Review_rating, Review_date)
-            // $reviews = [];
-            // if (isset($property_id)) {
-            //     $stmt = $conn->prepare("SELECT * FROM review WHERE Property_id = ? ORDER BY Review_date DESC");
-            //     $stmt->execute([$property_id]);
-            //     $reviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            // }
-            ?>
             <div class="container" style="margin-top:2rem;">
                 <div style="margin-top:2rem;">
-                    <?php
-                    // --- Handle Review Submission ---
-                    // if (isset($_POST['submit_review']) && isset($_SESSION['User_email'])) {
-                    //     $review_text = trim($_POST['review_text']);
-                    //     $review_rating = (int)$_POST['review_rating'];
-                    //     $user_name = $_SESSION['User_email'];
-                    //     if ($review_text && $review_rating) {
-                    //         $stmt = $conn->prepare("INSERT INTO review (Property_id, User_name, Review_text, Review_rating, Review_date) VALUES (?, ?, ?, ?, NOW())");
-                    //         $stmt->execute([$property_id, $user_name, $review_text, $review_rating]);
-                    //         echo "<meta http-equiv='refresh' content='0'>"; // refresh page to show new review
-                    //     }
-                    // }
-                    ?>
                     <div class="section-title">รีวิวบ้านพัก</div>
                     <form id="reviewForm">
                         <div style="font-weight:500; margin-bottom:0.5rem;">เพิ่มรีวิวของคุณ</div>
@@ -1154,14 +1203,12 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                 </form>
             </div>
         </div>
-        <footer>
-            <p>&copy; 2024 Homestay Booking. All rights reserved.</p>
-        </footer>
+
         <!-- <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/main.min.js"></script> -->
 
         <script>
             // Initialize payment button listeners after DOM is loaded
-            document.addEventListener('DOMContentLoaded', function () {
+            document.addEventListener('DOMContentLoaded', function() {
                 const rooms = document.querySelectorAll('.room-card');
                 let selectedRoomId = null;
                 let selectedPropertyId = null;
@@ -1199,7 +1246,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                 });
 
                 rooms.forEach(card => {
-                    card.addEventListener('click', function () {
+                    card.addEventListener('click', function() {
                         if (card.dataset.status !== 'Available') return;
                         rooms.forEach(c => c.classList.remove('selected'));
                         card.classList.add('selected');
@@ -1213,7 +1260,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                         calculatePrice();
                     });
                 });
-                checkinInput.addEventListener('change', function () {
+                checkinInput.addEventListener('change', function() {
                     if (checkinInput.value) {
                         // แปลงค่าวันที่เช็คอินเป็น Date object
                         let checkinDate = new Date(checkinInput.value);
@@ -1262,19 +1309,19 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                     diffDayDisplay.value = diffDays;
                     nightsDisplay.innerText = diffDays;
                     fetch('../../controls/bookings_room.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded' // หรือ 'application/json' แล้วแปลง body เป็น JSON.stringify(...)
-                        },
-                        body: new URLSearchParams({
-                            property_id: selectedPropertyId,
-                            room_id: selectedRoomId,
-                            nights: diffDays,
-                            guests: guestsInput.value,
-                            check_in_date: checkinInput.value,
-                            check_out_date: checkoutInput.value
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded' // หรือ 'application/json' แล้วแปลง body เป็น JSON.stringify(...)
+                            },
+                            body: new URLSearchParams({
+                                property_id: selectedPropertyId,
+                                room_id: selectedRoomId,
+                                nights: diffDays,
+                                guests: guestsInput.value,
+                                check_in_date: checkinInput.value,
+                                check_out_date: checkoutInput.value
+                            })
                         })
-                    })
                         .then(response => {
                             if (!response.ok) throw new Error('Network response was not ok');
                             return response.json();
@@ -1316,7 +1363,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
 
                 // Add ripple effect to buttons
                 document.querySelectorAll('.btn').forEach(button => {
-                    button.addEventListener('click', function (e) {
+                    button.addEventListener('click', function(e) {
                         addRipple(this, e);
                     });
                 });
@@ -1342,7 +1389,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                     console.error('No payment buttons found!');
                 } else {
                     payButtons.forEach(button => {
-                        button.addEventListener('click', function (e) {
+                        button.addEventListener('click', function(e) {
                             // เอา class selected ออกจากทุกปุ่ม
                             payButtons.forEach(btn => btn.classList.remove('selected'));
                             // ใส่ class ให้ปุ่มที่เลือก
@@ -1357,27 +1404,27 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                 }
 
                 const ConfirmBtn = document.getElementById('confirmBtn');
-                ConfirmBtn.addEventListener('click', function (e) {
+                ConfirmBtn.addEventListener('click', function(e) {
 
                     if (confirm('คุณยืนยันต้องการชำระใช่ไหม?')) {
                         //ตรวจสอบ room_id และ วันที่เช็คอิน,วันที่เช็คเอ้าท์ แล้วไม่เป็นค่าว่าง 
                         fetch('../../controls/bookings_room.php', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded'
-                            },
-                            //ส่งข้อมูลใน body ไปที่โฟลเดอร์ controls/bookings_room.php
-                            body: new URLSearchParams({
-                                room_id: selectedRoomId,
-                                property_id: selectedPropertyId,
-                                check_in_date: checkinInput.value,
-                                check_out_date: checkoutInput.value,
-                                nights: diffDayDisplay.value,
-                                guests: guestsInput.value,
-                                total_price: prices_amount.value,
-                                submit_onl: true
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded'
+                                },
+                                //ส่งข้อมูลใน body ไปที่โฟลเดอร์ controls/bookings_room.php
+                                body: new URLSearchParams({
+                                    room_id: selectedRoomId,
+                                    property_id: selectedPropertyId,
+                                    check_in_date: checkinInput.value,
+                                    check_out_date: checkoutInput.value,
+                                    nights: diffDayDisplay.value,
+                                    guests: guestsInput.value,
+                                    total_price: prices_amount.value,
+                                    submit_onl: true
+                                })
                             })
-                        })
                             //ผลลัพธ์
                             .then(response => {
                                 //ตรวจสอบค่าผลลัพธ์ที่เกี่ยวNetwork ถ้ามีปัญหาให้แจ้ง network response was not ok
@@ -1394,18 +1441,18 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                                     const bookingId = data.booking_id;
                                     if (!isNaN(latestTotalPrice) && latestTotalPrice > 0) {
                                         fetch('../../controls/bookings_room.php', {
-                                            method: 'POST',
-                                            headers: {
-                                                'Content-Type': 'application/x-www-form-urlencoded'
-                                            },
-                                            body: 'total_price=' + encodeURIComponent(
-                                                latestTotalPrice) +
-                                                '&booking_id=' + encodeURIComponent(
-                                                    bookingId) +
-                                                '&method=' + encodeURIComponent(
-                                                    selectedPayment) + '&submit_onl=' +
-                                                encodeURIComponent(true)
-                                        })
+                                                method: 'POST',
+                                                headers: {
+                                                    'Content-Type': 'application/x-www-form-urlencoded'
+                                                },
+                                                body: 'total_price=' + encodeURIComponent(
+                                                        latestTotalPrice) +
+                                                    '&booking_id=' + encodeURIComponent(
+                                                        bookingId) +
+                                                    '&method=' + encodeURIComponent(
+                                                        selectedPayment) + '&submit_onl=' +
+                                                    encodeURIComponent(true)
+                                            })
                                             .then(response => response.json())
                                             .then(data => {
                                                 if (data.gateway === "qrcode") {
@@ -1481,16 +1528,16 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                     button.addEventListener("click", async () => {
                         const action = button.dataset.method;
                         fetch("../../controls/list_fav.php", {
-                            method: "POST",
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded'
-                            },
-                            body: new URLSearchParams({
-                                property_id: houseId,
-                                action: action
-                            })
+                                method: "POST",
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded'
+                                },
+                                body: new URLSearchParams({
+                                    property_id: houseId,
+                                    action: action
+                                })
 
-                        })
+                            })
                             .then(response => response.json())
                             .then(result => {
 
@@ -1531,7 +1578,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
             function closeConfirm_Booking() {
                 document.getElementById('Confirm_booking').style.display = 'none';
             }
-            window.onclick = function (event) {
+            window.onclick = function(event) {
                 const modal = document.getElementById('Confirm_booking');
                 if (event.target === modal) {
                     closeConfirm_Booking();
@@ -1586,7 +1633,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
 
             const propertyId = "<?php echo $property['Property_id']; ?>";
             const formReviews = document.getElementById('reviewForm');
-            formReviews.addEventListener('submit', function (e) {
+            formReviews.addEventListener('submit', function(e) {
                 e.preventDefault();
                 const formData = new FormData(formReviews);
                 formData.append('property_id', propertyId);
@@ -1612,17 +1659,17 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
 
                 });
             });
-            document.addEventListener('DOMContentLoaded', function () {
+            document.addEventListener('DOMContentLoaded', function() {
                 const allDropdownToggles = document.querySelectorAll('.dropdown-toggle');
                 allDropdownToggles.forEach(toggle => {
-                    toggle.addEventListener('click', function (event) {
+                    toggle.addEventListener('click', function(event) {
                         event.stopPropagation();
                         const dropdownMenu = this.nextElementSibling;
                         dropdownMenu.classList.toggle('show');
                     });
                 });
 
-                window.addEventListener('click', function (event) {
+                window.addEventListener('click', function(event) {
                     const openDropdowns = document.querySelectorAll('.dropdown-menu.show');
                     openDropdowns.forEach(menu => {
                         if (!menu.parentElement.contains(event.target)) {
@@ -1638,7 +1685,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                 const reason_raw = document.getElementById('reason');
                 const review_id_raw = document.getElementById('reviewIdInput');
                 report_btn.forEach(btn => {
-                    btn.onclick = function () {
+                    btn.onclick = function() {
                         const reviewId = this.dataset.reviewId;
                         document.getElementById('reviewIdInput').value = reviewId;
                         modal.style.display = "block";
@@ -1666,16 +1713,16 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                     const review_id = review_id_raw.value;
 
                     fetch('../../controls/report_action.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        body: new URLSearchParams({
-                            review_id: review_id,
-                            reason: reason,
-                            submit_rv_user: true
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: new URLSearchParams({
+                                review_id: review_id,
+                                reason: reason,
+                                submit_rv_user: true
+                            })
                         })
-                    })
                         .then(res => {
                             if (!res.ok) throw new Error('network response was not ok');
                             return res.json();

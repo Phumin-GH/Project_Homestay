@@ -154,9 +154,14 @@ AVG(rv.Rating) AS Rating
     }
     public function get_Property($property_id)
     {
-        $stmt = $this->conn->prepare("SELECT AVG(rv.Rating) as Rating ,p.*, h.Host_firstname, h.Host_lastname FROM property p 
+        $stmt = $this->conn->prepare("SELECT AVG(rv.Rating) as Rating ,p.*, 
+        h.Host_firstname, h.Host_lastname ,sv.Services_name,
+        sv.Services_description,atv.Activity_name,atv.Activity_description
+        FROM property p 
         INNER JOIN host h ON p.Host_id = h.Host_id
         INNER JOIN review rv ON p.Property_id = rv.Property_id
+        INNER JOIN services sv ON p.Property_id = sv.Property_id
+        INNER JOIN activity atv ON p.Property_id = atv.Property_id
         WHERE p.Property_id = ?
         GROUP BY h.Host_firstname,h.Host_lastname
         ");

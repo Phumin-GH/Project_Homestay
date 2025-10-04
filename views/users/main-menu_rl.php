@@ -228,8 +228,8 @@ require_once __DIR__ . "/../../api/get_ListHomestay.php";
                     <div class="search-container">
                         <div class="search-box">
                             <input type="text" id="searchInput" placeholder="Search homestays..." />
-                            <input type="date" id="checkInDate" />
-                            <input type="date" id="checkOutDate" />
+                            <!-- <input type="date" id="checkInDate" />
+                            <input type="date" id="checkOutDate" /> -->
                             <button type="button"><i class="fas fa-search"></i></button>
                         </div>
                     </div>
@@ -261,7 +261,7 @@ require_once __DIR__ . "/../../api/get_ListHomestay.php";
                                         ต.<?php echo htmlspecialchars($house["Property_subdistrict"]); ?>
                                     <p>
 
-                                    <form method="post" action="detail_house.php" style="display:inline;">
+                                    <form method="post" action="detail_house_cp.php" style="display:inline;">
                                         <input type="hidden" name="house_id"
                                             value="<?php echo htmlspecialchars($house["Property_id"]); ?>">
                                         <button type="submit" class="book-btn">

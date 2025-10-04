@@ -230,48 +230,22 @@ require_once __DIR__ . "/../../api/get_ListHomestay.php";
                             <input type="text" id="searchInput" placeholder="Search homestays..." />
                             <!-- <input type="date" id="checkInDate" />
                             <input type="date" id="checkOutDate" /> -->
-                            <button type="button"><i class="fas fa-search"></i></button>
+                            <select name="filter" id="filter">
+                                <option value="">บ้านพักยอดนิยม</option>
+                                <option value="">บ้านราคาถูก</option>
+                                <option value="">3</option>
+                                <option value="">4</option>
+                                <option value="">5</option>
+                            </select>
+                            <button type="button" id="searchBtn"><i class="fas fa-search"></i></button>
                         </div>
                     </div>
                 </section>
 
                 <section class="homestay-list">
                     <h2>Available Homestays</h2>
-                    <div class="homestay-grid">
-                        <!-- include '../controls/get_homestay.php';  -->
-                        <?php foreach ($homestay as $house): ?>
-                        <div class="homestay-card">
-                            <div class="homestay-info">
-                                <img src="../../public/<?php echo htmlspecialchars($house["Property_image"]); ?>"
-                                    alt="<?php echo htmlspecialchars($house["Property_name"]) ?>"><br>
-                                <h3><?php echo htmlspecialchars($house["Property_name"]); ?></h3>
-                                <!-- <button class="favorite-btn" onclick="favorite(<?php echo (int) $house['Host_id']; ?>)">
-                                    <i class="fas fa-heart"></i>
-                                </button> -->
+                    <div class="homestay-grid" id="homestay-container">
 
-                                <p> <?php echo htmlspecialchars($house["Host_firstname"] . " " . $house["Host_lastname"]) ?>
-                                </p>
-                                <span style="color:#f5b301; font-size:1.1rem; margin-left:0.5rem;">
-                                    <i class="fa-solid fa-star"></i>
-                                </span>
-                                <?php echo round($house['Rating'], 1) ?>
-                                <p class="location"><i class="fa-solid fa-location-pin"></i>
-                                    จ.<?php echo htmlspecialchars($house["Property_province"]); ?>
-                                    อ.<?php echo htmlspecialchars($house["Property_district"]); ?>
-                                    ต.<?php echo htmlspecialchars($house["Property_subdistrict"]); ?>
-                                <p>
-
-                                <form method="post" action="detail_house.php" style="display:inline;">
-                                    <input type="hidden" name="house_id"
-                                        value="<?php echo htmlspecialchars($house["Property_id"]); ?>">
-                                    <button type="submit" class="book-btn">
-                                        <i class="fa-solid fa-house"></i> ดูรายละเอียด
-                                    </button>
-                                </form>
-
-                            </div>
-                        </div>
-                        <?php endforeach; ?>
                     </div>
                 </section>
             </main>
@@ -283,6 +257,71 @@ require_once __DIR__ . "/../../api/get_ListHomestay.php";
     </footer>
 
     <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const filter = document.getElementById('filter');
+        const productContainer = document.getElementById('homestay-container');
+
+        function fetchHomestays(searchTerm = '') {
+            fetch('../../controls/search_homestay.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        'search_query': searchTerm
+                    })
+                })
+                .then(response => response.json())
+
+                .then(products => {
+
+                    // เคลียร์ข้อมูลเก่าใน container
+                    productContainer.innerHTML = '';
+
+                    if (products.length > 0) {
+                        // วนลูปสร้างการ์ดสินค้าจากข้อมูลที่ได้
+                        products.forEach(product => {
+                            const productCard = document.createElement('div');
+                            productCard.className = 'homestay-card';
+                            productCard.innerHTML = `
+                                <div class='homestay-info'>
+                                <img src='../../public/${product.Property_image}' alt='${product.Property_image}'>
+                                <h3>${product.Property_name}</h3>
+                                <div >
+                                <span style='color:#f5b301; font-size:1.1rem; margin-left:0.5rem;'>
+                                <i class='fa-solid fa-star'> </i> ${Number(product.Rating, 1).toFixed(1)}
+                                </span>
+                                </div>
+                                <p>${product.Host_firstname} ${product.Host_lastname}</p>
+                                <p class='location'><i class='fa-solid fa-location-pin'></i>
+                                    จ.${product.Property_province} อ.${product.Property_district} ต.${product.Property_subdistrict}
+                                </p>
+                                <form method='post' action='detail_house_cp.php' style='display:inline;'>
+                                    <input type='hidden' name='house_id'
+                                        value=${product.Property_id}>
+                                    <button type='submit' class='book-btn'>
+                                        <i class='fa-solid fa-house'></i> ดูรายละเอียด
+                                    </button>
+                                </form>
+                                </div>`;
+                            productContainer.appendChild(productCard);
+                        });
+                    } else {
+                        productContainer.innerHTML = '<p>ไม่พบสินค้าที่ตรงกับคำค้นหา</p>';
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+        searchBtn.addEventListener('click', function() {
+            fetchHomestays(searchInput.value);
+        });
+        // filter.addEventListener('change', function() {
+        //     fetchHomestays(filter.value);
+        // })
+        fetchHomestays();
+    })
     const slides = document.querySelectorAll(".banner-slider img");
     const prevBtn = document.querySelector(".prev");
     const nextBtn = document.querySelector(".next");

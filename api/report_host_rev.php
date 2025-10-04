@@ -38,7 +38,8 @@ if (isset($_GET['type'])) {
             break;
 
         case 'property':
-            $sql = "SELECT p.Property_name AS House, COUNT(b.Booking_id) AS booking_count
+            $sql = "SELECT House, SUM(booking_count) AS Booking_count FROM(
+SELECT p.Property_name AS House, COUNT(b.Booking_id) AS booking_count
             FROM booking b
             INNER JOIN property p ON b.Property_id = p.Property_id
             LEFT JOIN host h ON p.Host_id = h.Host_id
@@ -52,7 +53,8 @@ if (isset($_GET['type'])) {
             LEFT JOIN host h ON p.Host_id = h.Host_id
             WHERE w.Walkin_status = 'successful' AND w.Create_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) 
             AND h.Host_id =?
-            GROUP BY p.Property_id, p.Property_name
+            GROUP BY p.Property_id, p.Property_name) AS con
+            GROUP BY House
             ORDER BY booking_count DESC LIMIT 5;";
 
             $stmt = $conn->prepare($sql);
@@ -63,7 +65,7 @@ if (isset($_GET['type'])) {
             $data = ['labels' => [], 'data' => []];
             foreach ($results as $row) {
                 $data['labels'][] = $row['House'];
-                $data['data'][] = (int) $row['booking_count'];
+                $data['data'][] = (int) $row['Booking_count'];
             }
             echo json_encode($data, JSON_UNESCAPED_UNICODE);
             break;

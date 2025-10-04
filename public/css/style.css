@@ -289,53 +289,48 @@ header {
   padding: 0.5rem;
   border-radius: 12px;
   border: 1px solid #dee2e6;
-  align-items: center; /* Vertically align items */
+  align-items: center;
 }
-
-/* Common styles for all input fields */
+.search-box select,
+.search-box option,
 .search-box input {
   padding: 0.85rem 1rem;
-  border: none; /* Remove default border */
+  border: none;
   border-radius: 8px;
   font-size: 1rem;
   background-color: #f8f9fa;
   color: #495057;
   transition: all 0.3s ease;
-  outline: none; /* Remove default outline */
+  outline: none;
 }
 
-/* Style for the text input, making it take up available space */
 .search-box input[type="text"] {
-  flex: 1 1 250px; /* Flex-grow, flex-shrink, and basis */
+  flex: 1 1 250px;
   min-width: 200px;
 }
 
-/* Style for date inputs */
 .search-box input[type="date"] {
-  flex: 1 1 150px; /* Allow date inputs to grow but have a smaller base size */
-  color-scheme: light; /* Ensures consistent date picker UI */
+  flex: 1 1 150px;
+  color-scheme: light;
 }
 
-/* Add a subtle icon inside the date picker */
 .search-box input[type="date"]::-webkit-calendar-picker-indicator {
   opacity: 0.6;
   cursor: pointer;
 }
 
-/* Focus state for all inputs */
 .search-box input:focus {
   background-color: #ffffff;
   box-shadow: 0 0 0 3px rgba(30, 84, 112, 0.15);
 }
 
-/* Search button styling */
 .search-box button {
   background: linear-gradient(135deg, #2a6f97, #1e5470);
   color: white;
   border: none;
-  padding: 0.85rem; /* Make it square-ish */
-  width: 50px; /* Fixed width */
-  height: 50px; /* Fixed height */
+  padding: 0.85rem;
+  width: 50px;
+  height: 50px;
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -345,7 +340,6 @@ header {
   align-items: center;
 }
 
-/* Hover and active states for the button */
 .search-box button:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(30, 84, 112, 0.3);
@@ -356,23 +350,21 @@ header {
   box-shadow: none;
 }
 
-/* Responsive design for smaller screens */
 @media (max-width: 768px) {
   .search-box {
-    flex-direction: column; /* Stack items vertically */
-    align-items: stretch; /* Make all items full-width */
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .search-box input,
   .search-box button {
-    width: 100%; /* Ensure full width for all elements */
+    width: 100%;
   }
 }
-/* Homestay List Section */
+
 .homestay-list {
   max-width: 30rem;
   margin: 2.5rem auto;
-  /* padding: 2rem; */
 }
 
 .homestay-list h2 {
