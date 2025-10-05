@@ -95,5 +95,31 @@ SELECT p.Property_name AS House, COUNT(b.Booking_id) AS booking_count
             echo json_encode($stats_data);
             break;
         case 'gateway':
+            $sql = "SELECT gateway,SUM(total_gateway) AS final_total 
+FROM 
+(SELECT b.Payment_gateway AS gateway, COUNT(*) AS total_gateway 
+ FROM booking b
+LEFT JOIN property p ON p.Property_id = b.Property_id
+ LEFT JOIN host h ON p.Host_id = h.Host_id
+ WHERE b.Payment_gateway IS NOT NULL AND b.Payment_gateway != '' AND h.Host_id = ?
+ GROUP BY gateway 
+ UNION ALL 
+ SELECT w.Walkin_gateway AS gateway, COUNT(*) AS total_gateway 
+ FROM walkin w
+ LEFT JOIN property p ON w.Property_id = p.Property_id
+ LEFT JOIN host h ON p.Host_id = h.Host_id
+ WHERE w.Walkin_gateway IS NOT NULL AND w.Walkin_gateway != '' AND h.Host_id = ?
+ GROUP BY gateway ) AS combined_gateways 
+GROUP BY gateway ORDER BY final_total;";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute([$result, $result]);
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $data = ['labels' => [], 'data' => []];
+            foreach ($results as $row) {
+                $data['labels'][] = ucfirst($row['gateway']);
+                $data['data'][] = (int) $row['final_total'];
+            }
+            echo json_encode($data);
+            break;
     }
 }

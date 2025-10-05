@@ -195,79 +195,6 @@ header {
   }
 }
 
-/* Search Section */
-/* .search-sections {
-  background: #ffffff;
-  padding: 2rem;
-  border-radius: 16px;
-  margin: 1.5rem 40rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  border: 1px solid #e5e5e5;
-  width: 1500px;
-}
-
-.search-containers {
-  max-width: 150rem;
-  margin: 1rem auto;
-}
-
-.search-boxs {
-  display: flex;
-  gap: 1rem;
-   grid-row-start: ; 
-  background: #f8f9fa;
-  padding: 1rem;
-  border-radius: 12px;
-  border: 1px solid #e5e5e5;
-}
-
-.search-boxs input[type="text"] {
-  flex: 1;
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  background: #f8f9fa;
-   transition: border-color 0.2s ease; 
-}
-
-.search-boxs input[type="text"]:focus {
-  outline: none;
-  border-color: #1e5470;
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-  border: 1px solid #e5e5e5;
-  border-radius: 15;
-  transition: border-color 0.2s ease;
-}
-
-.search-boxs input[type="date"] {
-  padding: 0.75rem 1rem;
-  border: 1px solid #e5e5e5;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  background: white;
-  transition: border-color 0.2s ease;
-}
-
-.search-boxs input[type="date"]:focus {
-  outline: none;
-  border-color: #1e5470;
-}
-
-.search-boxs button {
-  background: #1e5470;
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-weight: 500;
-}
-
-.search-boxs button:hover {
-  background: #1e5470;
-  transform: translateY(-1px);
-} */
 .search-section {
   width: 100%;
   max-width: 125rem;
@@ -292,7 +219,6 @@ header {
   align-items: center;
 }
 .search-box select,
-.search-box option,
 .search-box input {
   padding: 0.85rem 1rem;
   border: none;

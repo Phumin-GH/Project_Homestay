@@ -122,6 +122,8 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
             display: grid;
             grid-template-columns: repeat(5, 1fr);
             gap: 1.2rem;
+            /* overflow-x: auto; */
+
         }
 
         @media (max-width: 600px) {
@@ -850,6 +852,57 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
             transform: translateY(-1px);
         }
 
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            /* สร้าง 2 คอลัมน์และปรับขนาดอัตโนมัติ */
+            gap: 2rem;
+            /* ระยะห่างระหว่างกล่อง */
+            margin-top: 25px;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e0e0e0;
+            /* เส้นคั่นบางๆ */
+        }
+
+        /* สไตล์ของแต่ละกล่อง (Service, Activity) */
+        .feature-item {
+            padding: 1.5rem;
+            background-color: #f9f9f9;
+            /* สีพื้นหลังอ่อนๆ */
+            border-radius: 12px;
+            border: 1px solid #e0e0e0;
+        }
+
+        /* จัดเรียง Icon และ Title ให้อยู่ในแถวเดียวกัน */
+        .feature-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            color: #1e5470;
+            /* สีหลักของธีม */
+        }
+
+        /* ไอคอน */
+        .feature-icon {
+            font-size: 1.5rem;
+            margin-right: 0.75rem;
+        }
+
+        /* Title (Service, Activity) */
+        .feature-title {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        /* Description */
+        .feature-description {
+            margin: 0;
+            font-size: 1rem;
+            color: #555;
+            line-height: 1.6;
+        }
+
         #calendar-wrapper {
             display: none;
             margin-top: 2rem;
@@ -960,6 +1013,30 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                     ?>
                     <button class="Imgslider-btn prev">&#10094;</button>
                     <button class="Imgslider-btn next">&#10095;</button>
+                </div>
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <div class="feature-header">
+                            <i class="fas fa-concierge-bell feature-icon"></i>
+                            <h3 class="feature-title">Service</h3>
+                        </div>
+                        <p class="feature-description">
+                            <?php echo  nl2br(htmlspecialchars($property['Services_name'] . ': ' . "\n" . $property['Services_description'])); ?>
+                        </p>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-header">
+                            <i class="fas fa-hiking feature-icon"></i>
+                            <h3 class="feature-title">Activity</h3>
+                        </div>
+                        <p class="feature-description">
+                            <?php
+                            echo nl2br(htmlspecialchars($property['Activity_name'] . " :" . "\n" . $property['Activity_description']));
+                            ?>
+
+                        </p>
+                    </div>
                 </div>
                 <div class="section-title">ห้องพัก</div>
                 <div class="rooms-list" id="roomsList">

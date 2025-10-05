@@ -133,6 +133,12 @@ if (!isset($_SESSION["Host_email"])) {
 
         .form-row-4 {
             display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-row-5 {
+            display: grid;
             grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
             gap: 1rem;
         }
@@ -395,6 +401,10 @@ if (!isset($_SESSION["Host_email"])) {
                 grid-template-columns: 1fr;
             }
 
+            .form-row-5 {
+                grid-template-columns: 1fr;
+            }
+
             .upload-wrapper {
                 flex-direction: column;
             }
@@ -451,10 +461,8 @@ if (!isset($_SESSION["Host_email"])) {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            /* ทำให้อยู่ระดับเดียวกันแนวตั้ง */
             gap: 0.5rem;
-            /* เว้นระยะห่างระหว่างแต่ละ box */
-            margin: 1rem 2.5rem 0 2.5rem;
+            margin: 1rem 2.5rem 1.5rem 2.5rem;
         }
 
         .box-img {
@@ -592,7 +600,6 @@ if (!isset($_SESSION["Host_email"])) {
                                     <input type="text" id="property_subdistrict" name="subdistrict" class="form-input"
                                         value="<?php echo htmlspecialchars($house['Property_subdistrict']); ?>" required>
                                 </div>
-
                             </div>
 
                             <!-- Google Maps Section -->
@@ -616,14 +623,7 @@ if (!isset($_SESSION["Host_email"])) {
                                     <div id="map"></div>
 
                                 </div>
-                                <!--<form method="POST" action="save_location.php">
-                                <label>Latitude: <input type="text" id="latitude" name="latitude" readonly></label><br>
-                                <label>Longitude: <input type="text" id="longitude" name="longitude"
-                                        readonly></label><br><br>
-                                <button type="submit">บันทึกพิกัด</button>
-                            </form>-->
 
-                                <!-- Coordinates Display -->
                                 <div class="coordinates-display">
                                     <div class="coordinate-item">
                                         <div class="coordinate-label">ละติจูด (Latitude)</div>
@@ -674,10 +674,37 @@ if (!isset($_SESSION["Host_email"])) {
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">
+                                        สิ่งอำนวยความสะดวกและกิจกรรม <span class="required">*</span>
+                                    </label>
+                                    <div class="form-row-4">
+                                        <label class="form-label-details">ชื่อบริการ :<input type="text" placeholder="1"
+                                                class="form-input"
+                                                value="<?php echo htmlspecialchars($house['Services_name']); ?>"
+                                                name="services_name"></label>
+                                        <label class="form-label-details">รายละเอียดบริการ :<textarea
+                                                name="services_description"
+                                                placeholder="<?php echo htmlspecialchars($house['Services_description']); ?>"
+                                                class="form-input">
+                                                <?php echo htmlspecialchars($house['Services_description']); ?>
+                                                </textarea></label>
+                                        <label class="form-label-details">ชื่อกิจกรรม :<input type="text" placeholder="1"
+                                                class="form-input"
+                                                value="<?php echo htmlspecialchars($house['Activity_name']); ?>"
+                                                name="activity_name"></label>
+                                        <label class="form-label-details">รายละเอียดกิจกรรม :<textarea
+                                                name="activity_description"
+                                                placeholder="<?php echo htmlspecialchars($house['Activity_description']); ?>"
+                                                class="form-input">
+                                                                            <?php echo htmlspecialchars($house['Activity_description']); ?>
+                                                                            </textarea></label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">
                                         ห้องพัก <span class="required">*</span>
                                     </label>
                                     <?php foreach ($room as $i => $num): ?>
-                                        <div class="form-row-4">
+                                        <div class="form-row-5">
                                             <input type="hidden" id="room_id" name="roomId[]"
                                                 value="<?php echo $num['Room_id']; ?>">
 
@@ -710,24 +737,22 @@ if (!isset($_SESSION["Host_email"])) {
                                                     <option value="Closed">ปิด</option>
                                                 </select>
                                             </label>
-                                            <!-- <button type="button" class="btn btn-del" id="del-input">ลบ<i
-                                            class="fa-solid fa-trash"></i></button> -->
                                         </div>
                                     <?php endforeach; ?>
-
                                 </div>
                                 <div class="form-group">
                                     <label class="form-add-label">
                                         เพิ่มห้องพัก <span class="required">*</span>
                                     </label>
                                     <div class="form-add-actions">
-                                        <button id="addForm" class="btn btn-add"><i class="fa-solid fa-plus"></i>
+                                        <button id="addForm-rooms" class="btn btn-add"><i class="fa-solid fa-plus"></i>
                                             เพิ่มฟอร์ม</button>
-                                        <button id="removeAll" class="btn btn-remove"><i class="fa-solid fa-trash"></i>
+                                        <button id="removeAll-rooms" class="btn btn-remove"><i
+                                                class="fa-solid fa-trash"></i>
                                             ลบทั้งหมด</button>
                                     </div>
 
-                                    <div id="forms"></div>
+                                    <div id="forms-rooms"></div>
 
                                 </div>
                                 <div class="form-actions">
@@ -756,7 +781,7 @@ if (!isset($_SESSION["Host_email"])) {
     </div>
     <script>
         const head = document.getElementsByClassName('page-header')[0];
-        head.addEventListener('click', function () {
+        head.addEventListener('click', function() {
             window.location.href = "add-property.php";
         })
 
@@ -785,7 +810,7 @@ if (!isset($_SESSION["Host_email"])) {
 
 
         function attachDragEnd(markerInstance) {
-            markerInstance.on('dragend', function () {
+            markerInstance.on('dragend', function() {
                 const pos = markerInstance.getLatLng();
                 document.getElementById("latitude").value = pos.lat.toFixed(6);
                 document.getElementById("longitude").value = pos.lng.toFixed(6);
@@ -796,7 +821,7 @@ if (!isset($_SESSION["Host_email"])) {
         attachDragEnd(marker);
 
         // เมื่อคลิกที่แผนที่
-        map.on('click', function (e) {
+        map.on('click', function(e) {
             const lat = e.latlng.lat.toFixed(6);
             const lng = e.latlng.lng.toFixed(6);
 
@@ -808,7 +833,7 @@ if (!isset($_SESSION["Host_email"])) {
         });
 
         // เมื่อมีการเลือกอำเภอ
-        document.getElementById("property_district").addEventListener("change", function () {
+        document.getElementById("property_district").addEventListener("change", function() {
             const province = document.getElementById("property_province").value;
             const district = this.value;
 
@@ -819,11 +844,11 @@ if (!isset($_SESSION["Host_email"])) {
                 `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`;
 
             fetch(apiUrl, {
-                method: GET,
-                headers: {
-                    'User-Agent': 'HomestayManagement/1.0 (phumin.duangchanta@gmail.com)'
-                }
-            })
+                    method: GET,
+                    headers: {
+                        'User-Agent': 'HomestayManagement/1.0 (phumin.duangchanta@gmail.com)'
+                    }
+                })
                 .then(res => res.json())
                 .then(data => {
                     if (data && data.length > 0) {
@@ -842,9 +867,9 @@ if (!isset($_SESSION["Host_email"])) {
         });
     </script>
     <script>
-        const formsDiv = document.getElementById("forms");
-        const addBtn = document.getElementById("addForm");
-        const removeAllBtn = document.getElementById("removeAll");
+        const formsDiv = document.getElementById("forms-rooms");
+        const addBtn = document.getElementById("addForm-rooms");
+        const removeAllBtn = document.getElementById("removeAll-rooms");
         let formCount = 0;
         const maxForms = 10;
         const totalRoom = <?php echo count($room); ?>;
@@ -854,7 +879,7 @@ if (!isset($_SESSION["Host_email"])) {
             if (formCount < currentForms) {
                 formCount++;
                 const form = document.createElement("div");
-                form.classList.add("form-row-4");
+                form.classList.add("form-row-5");
                 form.setAttribute("id", "form-" + formCount);
                 form.innerHTML = `
           <label class="form-label">เลขห้อง:<span class="required">*</span><input type="text" name="roomNum[]" placeholder="1" class="form-input"></label>
@@ -877,6 +902,9 @@ if (!isset($_SESSION["Host_email"])) {
             formsDiv.innerHTML = "";
             formCount = 0;
         });
+
+
+
         document.addEventListener("DOMContentLoaded", () => {
             const multi_image = document.getElementById("multi_image");
             const single_image = document.getElementById("single_image");
@@ -888,7 +916,7 @@ if (!isset($_SESSION["Host_email"])) {
             const dropMultiZone = document.getElementById("dropMulti-zone");
             const dropSingleZone = document.getElementById("dropSingle-zone");
             // Preview image + file info
-            multi_image.addEventListener("change", function () {
+            multi_image.addEventListener("change", function() {
                 const files = this.files;
                 const Multipreview = document.getElementById("multiImage-preview");
                 // เคลียร์ preview เก่า
@@ -935,7 +963,7 @@ if (!isset($_SESSION["Host_email"])) {
                 multi_image.dispatchEvent(new Event("change"));
                 dropMultiZone.style.background = "transparent";
             });
-            single_image.addEventListener("change", function () {
+            single_image.addEventListener("change", function() {
                 const file = this.files[0];
                 if (file) {
                     if (!file.type.startsWith("image/")) {
@@ -977,7 +1005,7 @@ if (!isset($_SESSION["Host_email"])) {
         });
         const btnInput = document.getElementById('edit_property');
         const formInput = document.getElementById('formInput');
-        btnInput.addEventListener('click', function (event) {
+        btnInput.addEventListener('click', function(event) {
             event.preventDefault(); // ป้องกันการส่งฟอร์มแบบปกติ
 
             const formData = new FormData(formInput);
@@ -986,22 +1014,26 @@ if (!isset($_SESSION["Host_email"])) {
             for (let i = 0; i < multiFiles.length; i++) {
                 formData.append("multi_image[]", multiFiles[i]);
             }
+            console.log("--- Checking FormData Contents ---");
+            for (let pair of formData.entries()) {
+                // pair[0] คือ key
+                // pair[1] คือ value
+                console.log(pair[0] + ': ', pair[1]);
+            }
+            console.log("--------------------------------");
             fetch('../../controls/add_edit_property.php', {
-                method: 'POST',
-                body: formData,
+                    method: 'POST',
+                    body: formData,
 
-            })
+                })
                 .then(response => response.json())
                 .then(data => {
-                    // แสดงข้อความตอบกลับจากเซิร์ฟเวอร์
                     if (data.success == true) {
                         alert('Success');
                         console.log(data.message);
                         window.location.href = "manage-property.php";
                     } else {
                         alert(data.message);
-                        console.log(data);
-                        // ถ้าต้องการรีเฟรชหน้าเว็บหลังจากส่งข้อมูลสำเร็จ
                         window.location.reload();
                     }
                 })

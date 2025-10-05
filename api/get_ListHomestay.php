@@ -2,6 +2,7 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+
 include_once __DIR__ . '/../model/config/db_connect.php';
 require_once __DIR__ . '/../model/dao/Property.php';
 require_once __DIR__ . '/../model/dao/Review.php';
@@ -29,8 +30,9 @@ if (!empty($_SESSION['Admin_email'])) {
 
 //รับ house_id มาจาก main-menu.php
 if (isset($_POST['house_id'])) {
-    $property_id = $_POST['house_id'] ?? null;
-    $review_id = $_POST['review_id'] ?? null;
+
+    $property_id = (int) ($_POST['house_id'] ?? null);
+    $review_id = (int) ($_POST['review_id'] ?? null);
     $property = null;
     $property = $propertyHandle->get_Property($property_id);
     $reviews = $reviewsHandler->get_Reviews($property_id);
