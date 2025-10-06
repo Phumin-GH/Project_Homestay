@@ -596,43 +596,43 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
             right: 15px;
         }
 
-        /* .modal {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0, 0, 0, 0.6);
-    }
-
-    
-    .modal-content {
-        background-color: #ffffff;
-        margin: 8% auto;
-       
-        padding: 2rem;
-        border-radius: 16px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        max-width: 650px;
-        
-        position: relative;
-        animation: fadeIn 0.3s;
-    }
-
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: scale(0.95);
+        .modal-payment {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.6);
         }
 
-        to {
-            opacity: 1;
-            transform: scale(1);
+
+        .modal-content {
+            background-color: #ffffff;
+            margin: 8% auto;
+
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            max-width: 650px;
+
+            position: relative;
+            animation: fadeIn 0.3s;
         }
-    } */
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
 
         .close-button {
             color: #aaa;
@@ -1126,7 +1126,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                     </div>
                 </div>
             </div>
-            <div id="Confirm_booking" class="modal" style="display: none;">
+            <div id="Confirm_booking" class="modal-payment" style="display: none;">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h2 class="modal-title">ขั้นตอนการชำระเงิน</h2>
@@ -1255,6 +1255,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');
+            const propertyId = "<?php echo $property['Property_id']; ?>";
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
                 locale: 'th',
@@ -1267,7 +1268,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                     right: 'dayGridMonth'
                     // right: 'dayGridMonth,timeGridWeek,listWeek'
                 },
-                events: '../../test_data_cal.php',
+                events: `../../api/test_data_cal.php?id=${propertyId}`,
 
             });
             console.error(calendar);

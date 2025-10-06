@@ -24,7 +24,7 @@ class Payment
 
         $sql = "SELECT b.Booking_id,b.Charge_id,h.Host_firstname,h.Host_phone,u.User_email,u.Firstname,u.Lastname,p.Property_name,
         p.Property_province,p.Property_district,p.Property_subdistrict,r.Room_number,r.Room_capacity,b.Guests,
-        b.Check_in,b.Check_out,b.Total_price,b.Create_at
+        b.Check_in,b.Check_out,b.Total_price,b.Create_at,b.Payment_gateway
         FROM Booking b 
         INNER JOIN Property p ON b.Property_id = p.Property_id
         INNER JOIN User u ON b.User_id = u.User_id
@@ -54,6 +54,7 @@ class Payment
                 'guests' => $list_book['Guests'],
                 'total_price' => $list_book['Total_price'],
                 'bookingDate' => $list_book['Create_at'],
+                'gateway' => $list_book['Payment_gateway'],
             ];
             return true;
         } else {
@@ -280,7 +281,7 @@ class Payment
         }
     }
 
-    public function update_payment_booking($charge_id, $booking_id, $qrCode)
+    private function update_payment_booking($charge_id, $booking_id, $qrCode)
     {
 
         $sql = "UPDATE booking SET Charge_id = ?,Booking_status = 'successful',Payment_gateway = 'Qrcode',
@@ -297,7 +298,7 @@ class Payment
             return $e->getMessage();
         }
     }
-    public function update_payment_transaction($booking_id)
+    private function update_payment_transaction($booking_id)
     {
         $sql = "SELECT Total_price FROM booking WHERE Booking_id =?";
         $stmt = $this->conn->prepare($sql);

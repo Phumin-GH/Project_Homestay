@@ -13,20 +13,46 @@ session_start();
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <style>
-    #password-strength {
+        /* #password-strength {
         width: 100%;
         height: 8px;
         background-color: #ddd;
         border-radius: 4px;
         margin-top: 5px;
-    }
+    } */
+        #strength-bar {
+            height: 100%;
+            width: 0%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
 
-    #strength-bar {
-        height: 100%;
-        width: 0%;
-        border-radius: 4px;
-        transition: width 0.3s ease;
-    }
+        #password-strength {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e5e5e5;
+        }
+
+        #password-requirements {
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+
+        #password-requirements p {
+            margin: 0.5rem 0;
+            transition: color 0.3s;
+        }
+
+        #password-requirements p.valid {
+            color: #28a745;
+            text-decoration: line-through;
+        }
+
+        #password-requirements p.invalid {
+            color: #dc3545;
+        }
     </style>
 </head>
 
@@ -123,6 +149,13 @@ session_start();
                     <div id="password-strength">
                         <div id="strength-bar"></div>
                         <p id="password-message"></p>
+                        <div id="password-requirements">
+                            <p id="check_length">มีอักษรภาษาอังกฤษ 8 ตัวขึ้นไป</p>
+                            <p id="check_lowcase">มีอักษรภาษาอังกฤษ [a-z] อย่างน้อย 1 ตัว</p>
+                            <p id="check_upcase">มีอักษรภาษาอังกฤษ [A-Z] อย่างน้อย 1 ตัว</p>
+                            <p id="check_special_character">อักขระพิเศษ !@#$%^&*()_\-+{}[\]|\\</p>
+                            <p id="check_number">มีตัวเลข อย่างน้อย 1 ตัว</p>
+                        </div>
                     </div>
                 </div>
 
@@ -168,147 +201,143 @@ session_start();
 
 
     <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const authContainer = document.getElementById("auth-container");
-        const loginTab = document.getElementById("login-tab");
-        const signupTab = document.getElementById("signup-tab");
-        const loginForm = document.getElementById("login-form");
-        const signupForm = document.getElementById("signup-form");
-        const forgotPasswordLink = document.getElementById("forgot-password-link");
-        const forgotPasswordModal = document.getElementById("forgot-password");
-        const closeForgotModalBtn = document.getElementById("close-forgot");
-        const closeAuthBtn = document.getElementById("close-auth");
-        forgotPasswordLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            forgotPasswordModal.classList.add('active');
-        });
-
-        // Tab switching
-        loginTab.addEventListener("click", () => {
-            loginTab.classList.add("active");
-            signupTab.classList.remove("active");
-            loginForm.classList.add("active");
-            signupForm.classList.remove("active");
-        });
-
-        signupTab.addEventListener("click", () => {
-            signupTab.classList.add("active");
-            loginTab.classList.remove("active");
-            signupForm.classList.add("active");
-            loginForm.classList.remove("active");
-        });
-
-        // Close auth container
-        closeAuthBtn.addEventListener("click", () => {
-            window.location.href = "../../index.php";
-        });
-
-        // Form submission handling
-        const forms = document.querySelectorAll("form");
-        forms.forEach((form) => {
-            form.addEventListener("submit", (e) => {
-                const submitBtn = form.querySelector('button[type="submit"]');
-                submitBtn.classList.add("loading");
-                submitBtn.innerHTML =
-                    '<i class="fas fa-spinner fa-spin"></i> Processing...';
+        document.addEventListener("DOMContentLoaded", () => {
+            const authContainer = document.getElementById("auth-container");
+            const loginTab = document.getElementById("login-tab");
+            const signupTab = document.getElementById("signup-tab");
+            const loginForm = document.getElementById("login-form");
+            const signupForm = document.getElementById("signup-form");
+            const forgotPasswordLink = document.getElementById("forgot-password-link");
+            const forgotPasswordModal = document.getElementById("forgot-password");
+            const closeForgotModalBtn = document.getElementById("close-forgot");
+            const closeAuthBtn = document.getElementById("close-auth");
+            forgotPasswordLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                forgotPasswordModal.classList.add('active');
             });
-        });
+            loginTab.addEventListener("click", () => {
+                loginTab.classList.add("active");
+                signupTab.classList.remove("active");
+                loginForm.classList.add("active");
+                signupForm.classList.remove("active");
+            });
+            signupTab.addEventListener("click", () => {
+                signupTab.classList.add("active");
+                loginTab.classList.remove("active");
+                signupForm.classList.add("active");
+                loginForm.classList.remove("active");
+            });
+            closeAuthBtn.addEventListener("click", () => {
+                window.location.href = "../../index.php";
+            });
+            const forms = document.querySelectorAll("form");
+            forms.forEach((form) => {
+                form.addEventListener("submit", (e) => {
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    submitBtn.classList.add("loading");
+                    submitBtn.innerHTML =
+                        '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                });
+            });
+            const confirmPasswordInput = document.getElementById(
+                "signup-confirm-password"
+            );
+            const passwordInput = document.getElementById("signup-password");
 
-        // Password confirmation validation
-        const confirmPasswordInput = document.getElementById(
-            "signup-confirm-password"
-        );
-        const passwordInput = document.getElementById("signup-password");
+            if (confirmPasswordInput && passwordInput) {
+                confirmPasswordInput.addEventListener("input", () => {
+                    if (passwordInput.value !== confirmPasswordInput.value) {
+                        confirmPasswordInput.setCustomValidity("Passwords do not match");
+                    } else {
+                        confirmPasswordInput.setCustomValidity("");
+                    }
+                });
+            }
+            const urlParams = new URLSearchParams(window.location.search);
+            const tab = urlParams.get('tab');
+            if (tab === 'signup') {
+                document.getElementById('signup-tab').classList.add('active');
+                document.getElementById('signup-form').classList.add('active');
+                document.getElementById('login-tab').classList.remove('active');
+                document.getElementById('login-form').classList.remove('active');
+            } else if (tab === 'login') {
+                document.getElementById('login-tab').classList.add('active');
+                document.getElementById('login-form').classList.add('active');
+                document.getElementById('signup-tab').classList.remove('active');
+                document.getElementById('signup-form').classList.remove('active');
+            }
 
-        if (confirmPasswordInput && passwordInput) {
-            confirmPasswordInput.addEventListener("input", () => {
-                if (passwordInput.value !== confirmPasswordInput.value) {
-                    confirmPasswordInput.setCustomValidity("Passwords do not match");
+            const message = document.getElementById("password-message");
+            const strengthBar = document.getElementById("strength-bar");
+            // const btn = document.getElementById("signup-submit");
+            const password = document.getElementById('password-requirements');
+            const signUpPassword = document.getElementById("signup-password");
+            let strong =
+                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+{}[\]|\\,.?])[A-Za-z\d!@#$%^&*()_\-+{}[\]|\\,.?]{8,}$/;
+            let medium = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{5,}$/;
+            let weak = /^.{1,}$/;
+            signUpPassword.addEventListener("input", () => {
+                const pwd = signUpPassword.value;
+                if (pwd.match(strong)) {
+                    strengthBar.style.width = "100%";
+                    strengthBar.style.backgroundColor = "green";
+                    // message.innerHTML =
+                    //     "รหัสผ่านแข็งแรง: มีตัวเล็ก ตัวใหญ่ ตัวเลข อักขระพิเศษ และความยาว 10+";
+                    // message.style.color = "green";
+                    password.classList.remove('invaid');
+                    password.classList.add('vaid');
+
+                } else if (pwd.match(medium)) {
+                    strengthBar.style.width = "60%";
+                    strengthBar.style.backgroundColor = "orange";
+                    // message.innerHTML = "รหัสผ่านปานกลาง: มีตัวเล็ก ตัวใหญ่ ตัวเลข และความยาว8ตัวขึ้นไป";
+                    // message.style.color = "orange";
+                } else if (pwd.match(weak)) {
+                    strengthBar.style.width = "30%";
+                    strengthBar.style.backgroundColor = "red";
+                    // message.innerHTML = "รหัสผ่านอ่อนแอ: ต้องมีตัวเล็ก ตัวใหญ่ ตัวเลข และความยาว8ตัวขึ้นไป";
+                    // message.style.color = "red";
                 } else {
-                    confirmPasswordInput.setCustomValidity("");
+                    strengthBar.style.width = "0%";
+                    // message.innerHTML = "รหัสผ่าน: ต้องมีตัวเล็ก ตัวใหญ่ ตัวเลข และความยาว8ตัวขึ้นไป";
+                    password.classList.remove('vaid');
+                    password.classList.add('invaid');
+
                 }
             });
-        }
-        const urlParams = new URLSearchParams(window.location.search);
-        const tab = urlParams.get('tab');
-        if (tab === 'signup') {
-            document.getElementById('signup-tab').classList.add('active');
-            document.getElementById('signup-form').classList.add('active');
-            document.getElementById('login-tab').classList.remove('active');
-            document.getElementById('login-form').classList.remove('active');
-        } else if (tab === 'login') {
-            document.getElementById('login-tab').classList.add('active');
-            document.getElementById('login-form').classList.add('active');
-            document.getElementById('signup-tab').classList.remove('active');
-            document.getElementById('signup-form').classList.remove('active');
-        }
+            // btn.addEventListener('click', (e) => {
+            //     e.preventDefault();
+            //     const pwd = signUpPassword.value;
+            //     if (!pwd.match(strong)) {
+            //         // ป้องกัน form submit
+            //         e.preventDefault();
+            //         message.textContent =
+            //             "รหัสผ่านต้องแข็งแรง: มีตัวเล็ก ตัวใหญ่ ตัวเลข อักขระพิเศษ และความยาว 10+";
+            //         message.style.color = "red";
+            //         passwordInput.focus();
+            //     }
+            // });
 
-        const message = document.getElementById("password-message");
-        const strengthBar = document.getElementById("strength-bar");
-        const btn = document.getElementById("signup-submit");
-        const signUpPassword = document.getElementById("signup-password");
-        let strong =
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+{}[\]|\\,.?])[A-Za-z\d!@#$%^&*()_\-+{}[\]|\\,.?]{10,}$/;
-        let medium = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
-        let weak = /^.{1,}$/;
-        signUpPassword.addEventListener("input", () => {
-            const pwd = signUpPassword.value;
-            if (pwd.match(strong)) {
-                strengthBar.style.width = "100%";
-                strengthBar.style.backgroundColor = "green";
-                message.innerHTML =
-                    "รหัสผ่านแข็งแรง: มีตัวเล็ก ตัวใหญ่ ตัวเลข อักขระพิเศษ และความยาว 10+";
-                message.style.color = "green";
-            } else if (pwd.match(medium)) {
-                strengthBar.style.width = "60%";
-                strengthBar.style.backgroundColor = "orange";
-                message.innerHTML = "รหัสผ่านปานกลาง: มีตัวเล็ก ตัวใหญ่ ตัวเลข และความยาว8ตัวขึ้นไป";
-                message.style.color = "orange";
-            } else if (pwd.match(weak)) {
-                strengthBar.style.width = "30%";
-                strengthBar.style.backgroundColor = "red";
-                message.innerHTML = "รหัสผ่านอ่อนแอ: ต้องมีตัวเล็ก ตัวใหญ่ ตัวเลข และความยาว8ตัวขึ้นไป";
-                message.style.color = "red";
-            } else {
-                strengthBar.style.width = "0%";
-                message.innerHTML = "รหัสผ่าน: ต้องมีตัวเล็ก ตัวใหญ่ ตัวเลข และความยาว8ตัวขึ้นไป";
-
-            }
-        });
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-
-            const pwd = signUpPassword.value;
-            if (!pwd.match(strong)) {
-                // ป้องกัน form submit
+            document.getElementById('forgot-form').addEventListener('submit', async (e) => {
                 e.preventDefault();
-                message.textContent =
-                    "รหัสผ่านต้องแข็งแรง: มีตัวเล็ก ตัวใหญ่ ตัวเลข อักขระพิเศษ และความยาว 10+";
-                message.style.color = "red";
-                passwordInput.focus();
-            }
-        });
-
-        document.getElementById('forgot-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const Host_email = e.target.email.value.trim();
-            const msgEl = document.getElementById('msg');
-
-            const res = await fetch('../../controls/forgot-password.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: new URLSearchParams({
-                    Host_email
-                })
+                const Host_email = e.target.email.value.trim();
+                const msgEl = document.getElementById('msg');
+                alert(Host_email);
+                const res = await fetch('../../controls/forgot-password.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams({
+                        Host_email
+                    })
+                });
+                const data = await res.json();
+                msgEl.textContent = data.message;
+                alert(data.message);
+                window.location.reload();
             });
-            const data = await res.json();
-            msgEl.textContent = data.message;
-            alert(data.message);
-            window.location.reload();
         });
-    });
     </script>
 </body>
 

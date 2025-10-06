@@ -151,7 +151,7 @@ if (!$token) {
             const confirm_password = document.getElementById('confirm_password').value.trim();
             const token = "<?php echo htmlspecialchars($token); ?>";
             try {
-                const response = await fetch('controls/process_reset.php', {
+                const response = await fetch('../../controls/process_reset.php', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded'

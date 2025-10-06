@@ -1,13 +1,9 @@
 <?php
-require_once __DIR__ . "/model/config/db_connect.php";
-
-$sql = "SELECT b.Booking_id,r.Room_number,b.Room_id, b.User_id, b.Check_in, b.Check_out 
-        FROM booking b
-        INNER JOIN room r ON b.Room_id = r.Room_id
-        WHERE b.Property_id = 1";
-$stmt = $conn->prepare($sql);
-$stmt->execute();
-$bookings_from_db = $stmt->fetchAll(PDO::FETCH_ASSOC);
+require_once __DIR__ . "/../model/config/db_connect.php";
+require_once __DIR__ . "/../model/dao/Property.php";
+$calendar = new Property($conn);
+$property_id = (int)$_GET['id'] ?? 0;
+$bookings_from_db = $calendar->Calendar_Room($property_id);
 
 $events = [];
 foreach ($bookings_from_db as $booking) {

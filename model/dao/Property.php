@@ -254,7 +254,8 @@ AVG(rv.Rating) AS Rating
         }
         if (
             empty($house_name) || empty($province) || empty($district) ||
-            empty($subdistrict) || empty($latitude) || empty($longitude) || empty($image['name'])
+            empty($subdistrict) || empty($latitude) || empty($longitude) ||
+            empty($image['name'])
         ) {
             return "กรุณากรอกข้อมูลให้ครบ";
         }
@@ -275,6 +276,7 @@ AVG(rv.Rating) AS Rating
                     return "ยังไม่สามารถลงทะเบียนได้";
                 } elseif ($host['Host_Status'] == 'pending_verify' || $host['Host_Status'] == 'active') {
                     $email = $_SESSION["Host_email"];
+
                     $stmt = $this->conn->prepare("INSERT INTO property 
     (Host_id, Property_name, Property_province, Property_district, Property_subdistrict, Property_latitude, Property_longitude, Property_image) 
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
@@ -289,29 +291,32 @@ AVG(rv.Rating) AS Rating
                         $stmt = $this->conn->prepare("INSERT INTO room (Room_number, Room_price, Room_capacity, Room_utensils, Property_id) VALUES (?, ?, ?, ?, ?)");
                         $stmt->execute([$num, $price, $cap, $uten, $NewProperty]);
                     }
-                    $sql_atv = "INSERT INTO  property 
-                    (Services_name,Services_description) VALUES (?,?,?)
-                    WHERE Property_id = ? ";
-                    $sql_sv = "INSERT INTO property 
-                    SET Services_name=?,Services_description=?
-                    WHERE Property_id = ? ";
-                    $stmt = $this->conn->prepare($sql_sv);
-                    $stmt = $this->conn->prepare($sql_atv);
-                    try {
-                        $stmt->execute([
+                    if (isset($Des_Activity) || isset($Des_Service) || isset($Name_Activity) || isset($Name_Service)) {
+                        try {
 
-                            $Name_Activity,
-                            $Des_Activity,
-                            $NewProperty
-                        ]);
+                            $sql_atv = "INSERT INTO  services 
+                    (Property_id,Services_name,Services_description) VALUES (?,?,?)
+                    ";
+                            $stmt = $this->conn->prepare($sql_atv);
+                            $stmt->execute([
 
-                        $stmt->execute([
-                            $Name_Service,
-                            $Des_Service,
-                            $NewProperty
-                        ]);
-                    } catch (PDOException $e) {
-                        return $e->getMessage();
+                                $NewProperty,
+                                $Name_Activity,
+                                $Des_Activity
+                            ]);
+                            $sql_sv = "INSERT INTO activity
+                    (Property_id,Activity_name,Activity_description)
+                    VALUES(?,?,?)";
+                            $stmt = $this->conn->prepare($sql_sv);
+                            $stmt->execute([
+                                $NewProperty,
+                                $Name_Service,
+                                $Des_Service
+                            ]);
+                        } catch (PDOException $e) {
+
+                            return $e->getMessage();
+                        }
                     }
                     if (isset($_FILES['multi_image'])) {
                         $uploadDir = __DIR__ . '/../../public/images/';
@@ -327,8 +332,6 @@ AVG(rv.Rating) AS Rating
                             }
                         }
                     }
-                    // echo json_encode(["success" => true, "message" => "ส่งข้อมูลแล้ว รอแอดมินอนุมัติ."]);
-                    // exit();
                     return true;
                 }
             } catch (PDOException $e) {
@@ -336,10 +339,20 @@ AVG(rv.Rating) AS Rating
             }
         }
     }
+    public function Calendar_Room($property_id)
+    {
+        $sql = "SELECT b.Booking_id,r.Room_number,b.Room_id, b.User_id, b.Check_in, b.Check_out 
+        FROM booking b
+        INNER JOIN room r ON b.Room_id = r.Room_id
+        WHERE b.Property_id = $property_id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        $bookings_from_db = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $bookings_from_db;
+    }
     public function edit_Property($property_id, $house_name, $province, $district, $subdistrict, $latitude, $longitude, $roomIds, $roomNums, $roomPrices, $roomCaps, $roomUtens, $status_room, $Name_Service, $Des_Service, $Name_Activity, $Des_Activity)
     {
         try {
-
             if (!isset($_FILES['singleImage']) || $_FILES['singleImage']['error'] !== UPLOAD_ERR_OK) {
                 $stmtImg = $this->conn->prepare("SELECT Property_image FROM property WHERE Property_id = ?");
                 $stmtImg->execute([$property_id]);
@@ -415,31 +428,37 @@ AVG(rv.Rating) AS Rating
                         $property_id,
                         $host['Host_id']
                     ]);
-                    $sql_atv = "UPDATE services
-                    SET Services_name=?,Services_description=?
-                    WHERE Property_id = ? ";
-                    $sql_sv = "UPDATE activity
-                    SET Services_name=?,Services_description=?
-                    WHERE Property_id = ? ";
-                    $stmt = $this->conn->prepare($sql_sv);
-                    $stmt = $this->conn->prepare($sql_atv);
-                    try {
-                        $stmt->execute([
+                    // if (!empty($Name_Activity)) {
+                    //     $sql_sv = "UPDATE services
+                    // SET Services_name=?,Services_description=?
+                    // WHERE Property_id = ? ";
+                    //     $stmt_sv = $this->conn->prepare($sql_sv);
+                    //     try {
+                    //         $stmt_sv->execute([
+                    //             $Name_Service,
+                    //             $Des_Service,
+                    //             $property_id
+                    //         ]);
+                    //     } catch (PDOException $e) {
+                    //         return $e->getMessage();
+                    //     }
+                    // }
+                    // if (!empty($Name_Activity)) {
+                    //     $sql_atv = "UPDATE activity
+                    // SET Services_name=?,Services_description=?
+                    // WHERE Property_id = ? ";
+                    //     $stmt_atv = $this->conn->prepare($sql_atv);
+                    //     try {
+                    //         $stmt_atv->execute([
 
-                            $Name_Activity,
-                            $Des_Activity,
-                            $property_id
-                        ]);
-
-                        $stmt->execute([
-                            $Name_Service,
-                            $Des_Service,
-                            $property_id
-                        ]);
-                    } catch (PDOException $e) {
-                        return $e->getMessage();
-                    }
-
+                    //             $Name_Activity,
+                    //             $Des_Activity,
+                    //             $property_id
+                    //         ]);
+                    //     } catch (PDOException $e) {
+                    //         return $e->getMessage();
+                    //     }
+                    // }
                     for ($i = 0; $i < count($roomNums); $i++) {
                         $room_id = $roomIds[$i] ?? null;
                         $num = $roomNums[$i];
@@ -454,41 +473,24 @@ AVG(rv.Rating) AS Rating
                             $is_duplicate = $check_stmt->fetchColumn();
                             if ($is_duplicate > 0) {
                                 return "ข้อมูลหมายเลขห้องพัก '" . htmlspecialchars($num) . "' ซ้ำกับห้องอื่น";
-                            }
-                            if (!empty($room_id)) {
+                            } else {
                                 $stmt = $this->conn->prepare("UPDATE room SET Room_number=?, Room_status=?, Room_price=?, Room_capacity=?, Room_utensils=? WHERE Room_id=?");
                                 $stmt->execute([$num, $status, $price, $cap, $uten, $room_id]);
+                            }
+                        } else {
+                            $check_sql = "SELECT COUNT(*) FROM room WHERE Room_number = ? AND Property_id = ?";
+                            $check_stmt = $this->conn->prepare($check_sql);
+                            $check_stmt->execute([$num, $property_id]);
+                            $is_duplicate = $check_stmt->fetchColumn();
+                            if ($is_duplicate > 0) {
+                                return "ข้อมูลหมายเลขห้องพัก '" . htmlspecialchars($num) . "' มีอยู่แล้ว";
                             } else {
                                 $stmt = $this->conn->prepare("INSERT INTO room (Room_number, Room_price, Room_capacity, Room_utensils, Property_id, Room_status) VALUES (?, ?, ?, ?, ?, ?)");
                                 $stmt->execute([$num, $price, $cap, $uten, $property_id, $status]);
                             }
                         }
-                        // if (!empty($room_id)) {
-                        //     $check_sql = "SELECT COUNT(*) FROM room WHERE Room_number = ? AND Property_id = ? AND Room_id != ?";
-                        //     $check_stmt = $this->conn->prepare($check_sql);
-                        //     $check_stmt->execute([$num, $property_id, $room_id]); // <<-- เพิ่ม room_id เข้าไป
-                        //     $is_duplicate = $check_stmt->fetchColumn();
-                        //     if ($is_duplicate > 0) {
-                        //         return "ข้อมูลหมายเลขห้องพัก '" . htmlspecialchars($num) . "' ซ้ำกับห้องอื่น";
-                        //     } else {
-                        //         $stmt = $this->conn->prepare("UPDATE room SET Room_number=?, Room_status=?, Room_price=?, Room_capacity=?, Room_utensils=? WHERE Room_id=?");
-                        //         $stmt->execute([$num, $status, $price, $cap, $uten, $room_id]);
-                        //     }
-                        // } else {
-                        //     $check_sql = "SELECT COUNT(*) FROM room WHERE Room_number = ? AND Property_id = ?";
-                        //     $check_stmt = $this->conn->prepare($check_sql);
-                        //     $check_stmt->execute([$num, $property_id]);
-                        //     $is_duplicate = $check_stmt->fetchColumn();
-                        //     if ($is_duplicate > 0) {
-                        //         return "ข้อมูลหมายเลขห้องพัก '" . htmlspecialchars($num) . "' มีอยู่แล้ว";
-                        //     } else {
-                        //         $stmt = $this->conn->prepare("INSERT INTO room (Room_number, Room_price, Room_capacity, Room_utensils, Property_id, Room_status) VALUES (?, ?, ?, ?, ?, ?)");
-                        //         $stmt->execute([$num, $price, $cap, $uten, $property_id, $status]);
-                        //     }
-                        // }
                     }
                     return true;
-                    // }
                 } else {
                     return "สถานะเจ้าของบ้านไม่ถูกต้อง.";
                 }

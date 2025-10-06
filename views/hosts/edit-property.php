@@ -20,464 +20,464 @@ if (!isset($_SESSION["Host_email"])) {
     <link rel="stylesheet" href="../../public/css/main-menu.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        /* .form-container {
+    /* .form-container {
 
         margin: 0 auto;
         padding: 2rem;
         margin: 0 2.5rem 0 2.5rem;
     } */
-        .page-header {
-            background: #277297ff;
-            color: white;
-            padding: 3rem 2rem;
-            border-radius: 16px;
-            margin-bottom: 3rem;
-            text-align: center;
-            border-bottom: 1px solid #e5e5e5;
-            overflow: hidden;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+    .page-header {
+        background: #277297ff;
+        color: white;
+        padding: 3rem 2rem;
+        border-radius: 16px;
+        margin-bottom: 3rem;
+        text-align: center;
+        border-bottom: 1px solid #e5e5e5;
+        overflow: hidden;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .page-header h1 {
+        font-size: 2rem;
+        font-weight: 500;
+        margin: 0;
+        display: inline-block;
+        position: relative;
+        padding-bottom: 0.5rem;
+        transition: color 0.3s ease;
+    }
+
+    .page-header h1::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 2px;
+        background-color: whitesmoke;
+        transition: width 0.4s ease;
+    }
+
+    .page-header:hover {
+        background: #277297ff;
+        box-shadow: 0 4px 12px rgba(26, 127, 55, 0.3);
+        transform: translateY(-3px);
+    }
+
+    .page-header:hover h1::after {
+        width: 100%;
+    }
+
+    .page-header i {
+        font-size: 24px;
+    }
+
+    .form-card {
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e5e5e5;
+        padding: 2rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 600;
+        color: #1a1a1a;
+        font-size: 16px;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-label-details {
+        display: block;
+        font-weight: 300;
+        color: #1a1a1a;
+        font-size: 16px;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-add-label {
+        display: block;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 0.5rem;
+        border-top: 1px solid #e5e5e5;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid #e5e5e5;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.2s ease;
+        box-sizing: border-box;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: #1e5470;
+    }
+
+    .form-row-3 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .form-row-4 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .form-row-5 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .map-container {
+        position: relative;
+        margin-bottom: 1.5rem;
+        z-index: 0;
+    }
+
+    .map-instructions {
+        background: #e3f2fd;
+        border: 1px solid #1e5470;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        color: #1e5470;
+    }
+
+    .map-instructions i {
+        margin-right: 0.5rem;
+    }
+
+    #map {
+        width: 100%;
+        height: 400px;
+        border-radius: 8px;
+        border: 2px solid #e5e5e5;
+    }
+
+    .coordinates-display {
+        background: #f8f9fa;
+        border: 1px solid #e5e5e5;
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 1rem 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .coordinate-item {
+        text-align: center;
+    }
+
+    .coordinate-label {
+        font-size: 0.875rem;
+        color: #666;
+        margin-bottom: 0.25rem;
+    }
+
+    .coordinate-value {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: #1a1a1a;
+    }
+
+    .no-coordinates {
+        color: #999;
+        font-style: italic;
+    }
+
+    .file-input-container {
+        padding: 1rem;
+        position: relative;
+        min-height: 16rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        border: 3px dashed #ccc;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: border-color 0.3s ease, background 0.3s ease;
+    }
+
+    .file-input-container:hover {
+        background: #F2F7FE;
+        border-color: #277297ff;
+        box-shadow: 0 4px 12px rgba(26, 127, 55, 0.3);
+    }
+
+    .file-input-container input[type="file"] {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .file-input-container .file-icon {
+        font-size: 4rem;
+        color: #277297ff;
+        margin-bottom: 0.5rem;
+    }
+
+    .file-input-container .file-info,
+    .files-info {
+        font-size: 1.1rem;
+        color: #333;
+    }
+
+    .preview-image {
+        margin-top: 1rem;
+        max-width: 200px;
+        max-height: 200px;
+        border-radius: 6px;
+        object-fit: cover;
+        display: none;
+        border: 2px solid #ddd;
+    }
+
+    .description {
+        margin: 1rem 0;
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .zone-action {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 1rem;
+        gap: 1rem;
+    }
+
+    .zone-help {
+        font-size: 0.85rem;
+        background: #F3F4F6;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-add {
+        background: #1e5470;
+        color: white;
+
+    }
+
+    .btn-add:hover {
+        background: #029ab2ff;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1)
+    }
+
+    .btn-remove {
+        background: white;
+        color: #b60303ff;
+        border: 2px solid #b60303ff;
+    }
+
+    .btn-remove:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    @keyframes identifier {
+        0% {
+            transform: translateX(5px);
         }
 
-        .page-header h1 {
-            font-size: 2rem;
-            font-weight: 500;
-            margin: 0;
-            display: inline-block;
-            position: relative;
-            padding-bottom: 0.5rem;
-            transition: color 0.3s ease;
+        50% {
+            transform: translateX(-5px);
         }
 
-        .page-header h1::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 2px;
-            background-color: whitesmoke;
-            transition: width 0.4s ease;
+        100% {
+            transform: translateX(0px);
         }
 
-        .page-header:hover {
-            background: #277297ff;
-            box-shadow: 0 4px 12px rgba(26, 127, 55, 0.3);
-            transform: translateY(-3px);
-        }
+    }
 
-        .page-header:hover h1::after {
-            width: 100%;
-        }
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid #e5e5e5;
+    }
 
-        .page-header i {
-            font-size: 24px;
-        }
+    .form-add-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+        margin: 0.5rem 0 1rem 0;
+        padding-top: 2rem;
+    }
 
-        .form-card {
-            background: #ffffff;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            border: 1px solid #e5e5e5;
-            padding: 2rem;
-        }
+    .alert {
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+    }
 
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
+    .alert-success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
 
-        .form-label {
-            display: block;
-            font-weight: 600;
-            color: #1a1a1a;
-            font-size: 16px;
-            margin-bottom: 0.5rem;
-        }
+    .alert-error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
 
-        .form-label-details {
-            display: block;
-            font-weight: 300;
-            color: #1a1a1a;
-            font-size: 16px;
-            margin-bottom: 0.5rem;
-        }
+    .alert-info {
+        background: #d1ecf1;
+        color: #0c5460;
+        border: 1px solid #bee5eb;
+    }
 
-        .form-add-label {
-            display: block;
-            font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 0.5rem;
-            border-top: 1px solid #e5e5e5;
-        }
+    .required {
+        color: #dc3545;
+    }
 
-        .form-input {
-            width: 100%;
-            padding: 0.75rem;
-            border: 2px solid #e5e5e5;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border-color 0.2s ease;
-            box-sizing: border-box;
-        }
+    .approval-notice {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        color: #856404;
+    }
 
-        .form-input:focus {
-            outline: none;
-            border-color: #1e5470;
+    .approval-notice i {
+        margin-right: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+        .form-container {
+            padding: 1rem;
         }
 
         .form-row-3 {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 1rem;
+            grid-template-columns: 1fr;
         }
 
         .form-row-4 {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr 1fr;
-            gap: 1rem;
+            grid-template-columns: 1fr;
         }
 
         .form-row-5 {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-            gap: 1rem;
-        }
-
-        .map-container {
-            position: relative;
-            margin-bottom: 1.5rem;
-            z-index: 0;
-        }
-
-        .map-instructions {
-            background: #e3f2fd;
-            border: 1px solid #1e5470;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            color: #1e5470;
-        }
-
-        .map-instructions i {
-            margin-right: 0.5rem;
-        }
-
-        #map {
-            width: 100%;
-            height: 400px;
-            border-radius: 8px;
-            border: 2px solid #e5e5e5;
-        }
-
-        .coordinates-display {
-            background: #f8f9fa;
-            border: 1px solid #e5e5e5;
-            border-radius: 8px;
-            padding: 1rem;
-            margin: 1rem 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .coordinate-item {
-            text-align: center;
-        }
-
-        .coordinate-label {
-            font-size: 0.875rem;
-            color: #666;
-            margin-bottom: 0.25rem;
-        }
-
-        .coordinate-value {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: #1a1a1a;
-        }
-
-        .no-coordinates {
-            color: #999;
-            font-style: italic;
-        }
-
-        .file-input-container {
-            padding: 1rem;
-            position: relative;
-            min-height: 16rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            border: 3px dashed #ccc;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: border-color 0.3s ease, background 0.3s ease;
-        }
-
-        .file-input-container:hover {
-            background: #F2F7FE;
-            border-color: #277297ff;
-            box-shadow: 0 4px 12px rgba(26, 127, 55, 0.3);
-        }
-
-        .file-input-container input[type="file"] {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            opacity: 0;
-            cursor: pointer;
-        }
-
-        .file-input-container .file-icon {
-            font-size: 4rem;
-            color: #277297ff;
-            margin-bottom: 0.5rem;
-        }
-
-        .file-input-container .file-info,
-        .files-info {
-            font-size: 1.1rem;
-            color: #333;
-        }
-
-        .preview-image {
-            margin-top: 1rem;
-            max-width: 200px;
-            max-height: 200px;
-            border-radius: 6px;
-            object-fit: cover;
-            display: none;
-            border: 2px solid #ddd;
-        }
-
-        .description {
-            margin: 1rem 0;
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.9rem;
-            color: #666;
-        }
-
-        .zone-action {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 1rem;
-            gap: 1rem;
-        }
-
-        .zone-help {
-            font-size: 0.85rem;
-            background: #F3F4F6;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-        }
-
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-add {
-            background: #1e5470;
-            color: white;
-
-        }
-
-        .btn-add:hover {
-            background: #029ab2ff;
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1)
-        }
-
-        .btn-remove {
-            background: white;
-            color: #b60303ff;
-            border: 2px solid #b60303ff;
-        }
-
-        .btn-remove:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        @keyframes identifier {
-            0% {
-                transform: translateX(5px);
-            }
-
-            50% {
-                transform: translateX(-5px);
-            }
-
-            100% {
-                transform: translateX(0px);
-            }
-
-        }
-
-        .form-actions {
-            display: flex;
-            gap: 1rem;
-            justify-content: flex-end;
-            margin-top: 2rem;
-            padding-top: 2rem;
-            border-top: 1px solid #e5e5e5;
-        }
-
-        .form-add-actions {
-            display: flex;
-            gap: 1rem;
-            justify-content: flex-end;
-            margin: 0.5rem 0 1rem 0;
-            padding-top: 2rem;
-        }
-
-        .alert {
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-        }
-
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        .alert-info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
-        }
-
-        .required {
-            color: #dc3545;
-        }
-
-        .approval-notice {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-            color: #856404;
-        }
-
-        .approval-notice i {
-            margin-right: 0.5rem;
-        }
-
-        @media (max-width: 768px) {
-            .form-container {
-                padding: 1rem;
-            }
-
-            .form-row-3 {
-                grid-template-columns: 1fr;
-            }
-
-            .form-row-4 {
-                grid-template-columns: 1fr;
-            }
-
-            .form-row-5 {
-                grid-template-columns: 1fr;
-            }
-
-            .upload-wrapper {
-                flex-direction: column;
-            }
-
-            .form-actions {
-                flex-direction: column;
-            }
-
-            .form-add-actions {
-                flex-direction: column;
-            }
-
-            .btn-del {
-                flex-direction: column;
-            }
-
-            #map {
-                height: 300px;
-            }
-
-            .main-content {
-                padding: 1rem;
-            }
-
-            .form-label {
-                font-size: 14px;
-            }
-
-            .coordinates-display {
-                flex-direction: column;
-                gap: 1rem;
-            }
-        }
-
-        .info-section h3 {
-            color: #1a1a1a;
-            margin-bottom: 1.5rem;
-            font-size: 1.25rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .info-section h3::before {
-            content: "";
-            width: 4px;
-            height: 20px;
-            background: #1e5470;
-            border-radius: 2px;
+            grid-template-columns: 1fr;
         }
 
         .upload-wrapper {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 0.5rem;
-            margin: 1rem 2.5rem 1.5rem 2.5rem;
+            flex-direction: column;
         }
 
-        .box-img {
-            width: 30rem;
-            height: 20rem;
-            object-fit: cover;
-            border-radius: 8px;
-            margin-right: 1rem;
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .form-add-actions {
+            flex-direction: column;
+        }
+
+        .btn-del {
+            flex-direction: column;
+        }
+
+        #map {
+            height: 300px;
         }
 
         .main-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 1.5rem;
+            padding: 1rem;
         }
+
+        .form-label {
+            font-size: 14px;
+        }
+
+        .coordinates-display {
+            flex-direction: column;
+            gap: 1rem;
+        }
+    }
+
+    .info-section h3 {
+        color: #1a1a1a;
+        margin-bottom: 1.5rem;
+        font-size: 1.25rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .info-section h3::before {
+        content: "";
+        width: 4px;
+        height: 20px;
+        background: #1e5470;
+        border-radius: 2px;
+    }
+
+    .upload-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 1rem 2.5rem 1.5rem 2.5rem;
+    }
+
+    .box-img {
+        width: 30rem;
+        height: 20rem;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-right: 1rem;
+    }
+
+    .main-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1.5rem;
+    }
     </style>
 </head>
 
@@ -501,8 +501,8 @@ if (!isset($_SESSION["Host_email"])) {
             </button>
             <ul class="sidebar-menu">
                 <?php if ($hosts['Host_Status'] == 'pending_verify'): ?>
-                    <li><a href="add-property.php" title="ลงทะเบียนบ้านพักใหม่"><i class="fas fa-user-plus"></i>
-                            <span class="menu-label">ลงทะเบียนบ้านพักใหม่</span></a></li>
+                <li><a href="add-property.php" title="ลงทะเบียนบ้านพักใหม่"><i class="fas fa-user-plus"></i>
+                        <span class="menu-label">ลงทะเบียนบ้านพักใหม่</span></a></li>
                 <?php endif; ?>
                 <li><a href="host-dashboard.php" title="รายงาน"><i class="fa-solid fa-ranking-star"></i><span
                             class="menu-label">Dashboard</span></a></li>
@@ -510,16 +510,16 @@ if (!isset($_SESSION["Host_email"])) {
                             class="menu-label">Profile</span></a>
                 </li>
                 <?php if ($hosts['Host_Status'] == 'active'): ?>
-                    <li><a href="manage-property.php" title="จัดการบ้านพัก" class="active"><i class="fas fa-plus"></i><span
-                                class="menu-label">Manage
-                                Property</span></a></li>
-                    <li><a href="list_booking.php" title="รายการที่จองเข้ามา"><i class="fa-solid fa-list-ul"></i><span
-                                class="menu-label">List Bookings</span></a></li>
-                    <li><a href="refund_booking.php" title="การขอคืนเงิน"><i
-                                class="fa-solid fa-money-bill-transfer"></i><span class="menu-label">List Refund</span></a>
-                    </li>
-                    <li><a href="walkin-property.php" title="การจอง"><i class="fa-solid fa-person-walking"></i><span
-                                class="menu-label">Walkin</span></a></li>
+                <li><a href="manage-property.php" title="จัดการบ้านพัก" class="active"><i class="fas fa-plus"></i><span
+                            class="menu-label">Manage
+                            Property</span></a></li>
+                <li><a href="list_booking.php" title="รายการที่จองเข้ามา"><i class="fa-solid fa-list-ul"></i><span
+                            class="menu-label">List Bookings</span></a></li>
+                <li><a href="refund_booking.php" title="การขอคืนเงิน"><i
+                            class="fa-solid fa-money-bill-transfer"></i><span class="menu-label">List Refund</span></a>
+                </li>
+                <li><a href="walkin-property.php" title="การจอง"><i class="fa-solid fa-person-walking"></i><span
+                            class="menu-label">Walkin</span></a></li>
                 <?php endif; ?>
                 <li><a href="../../controls/logout.php" title="ออกจากระบบ"><i class="fas fa-sign-out-alt"></i><span
                             class="menu-label">Logout</span></a></li>
@@ -541,22 +541,124 @@ if (!isset($_SESSION["Host_email"])) {
                 </div>
 
                 <?php if (count($house) > 0): ?>
-                    <div class="form-card">
-                        <div class="info-section">
-                            <h3><i class="fa-duotone fa-solid fa-house-chimney"></i> ข้อมูลบ้านพัก</h3>
+                <div class="form-card">
+                    <div class="info-section">
+                        <h3><i class="fa-duotone fa-solid fa-house-chimney"></i> ข้อมูลบ้านพัก</h3>
+                    </div>
+                    <!-- <form method="POST" enctype="multipart/form-data" action="../controls/add_edit_property.php"> -->
+                    <form id="formInput">
+                        <div class="upload-wrapper">
+                            <img class="box-img"
+                                src="../../public/<?php echo htmlspecialchars($house['Property_image']); ?>" alt="">
+                            <div class="file-input-container" id="dropSingle-zone">
+                                <div class="file-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                                <input type="file" id="single_image" name="singleImage" accept="image/*">
+                                <p class="file-info">ลาก & คลิก เพื่ออัปโหลดไฟล์</p>
+                                <div class="description">
+                                    <span>Max file size : 25MB</span>
+                                    <span id="file-size"></span>
+                                </div>
+                                <div class="zone-action">
+                                    <div class="zone-help">
+                                        <p><i class="fa-solid fa-circle-info"></i> รองรับไฟล์ .jpg .png</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="image-preview" class="preview-image"></div>
+
                         </div>
-                        <!-- <form method="POST" enctype="multipart/form-data" action="../controls/add_edit_property.php"> -->
-                        <form id="formInput">
-                            <div class="upload-wrapper">
-                                <img class="box-img"
-                                    src="../../public/<?php echo htmlspecialchars($house['Property_image']); ?>" alt="">
-                                <div class="file-input-container" id="dropSingle-zone">
+
+                        <div class="form-group">
+                            <label for="property_name" class="form-label">
+                                ชื่อบ้านพัก <span class="required">*</span>
+                            </label>
+                            <input type="text" id="property_name" name="house_name" class="form-input"
+                                value="<?php echo htmlspecialchars($house['Property_name']); ?>" required>
+                            <input type="hidden" name="property_id"
+                                value="<?php echo htmlspecialchars($house['Property_id']); ?>">
+                        </div>
+
+                        <div class="form-row-3">
+                            <div class="form-group">
+                                <label for="property_province" class="form-label">
+                                    จังหวัด <span class="required">*</span>
+                                </label>
+                                <input type="text" id="property_province" name="province" class="form-input"
+                                    value="<?php echo htmlspecialchars($house['Property_province']); ?>" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="property_district" class="form-label">
+                                    อำเภอ <span class="required">*</span>
+                                </label>
+                                <input type="text" id="property_district" name="district" class="form-input"
+                                    value="<?php echo htmlspecialchars($house['Property_district']); ?>" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="property_subdistrict" class="form-label">
+                                    ตำบล <span class="required">*</span>
+                                </label>
+                                <input type="text" id="property_subdistrict" name="subdistrict" class="form-input"
+                                    value="<?php echo htmlspecialchars($house['Property_subdistrict']); ?>" required>
+                            </div>
+                        </div>
+
+                        <!-- Google Maps Section -->
+                        <div class="form-group">
+                            <label class="form-label">
+                                เลือกตำแหน่งบนแผนที่ <span class="required">*</span>
+                            </label>
+                            <!-- <div class="map-instructions">
+                                <i class="fas fa-info-circle"></i>
+                                คลิกบนแผนที่เพื่อเลือกตำแหน่งของบ้านพัก หรือใช้ช่องค้นหาด้านล่าง
+                            </div> -->
+
+                            <!-- Search Box -->
+                            <!--<div class="form-group">
+                                <input type="text" id="search-box" class="form-input"
+                                    placeholder="ค้นหาสถานที่ เช่น กรุงเทพ, เชียงใหม่, ภูเก็ต">
+                            </div>-->
+
+                            <!-- Map Container -->
+                            <div class="map-container">
+                                <div id="map"></div>
+
+                            </div>
+
+                            <div class="coordinates-display">
+                                <div class="coordinate-item">
+                                    <div class="coordinate-label">ละติจูด (Latitude)</div>
+
+                                    <div class="coordinate-value">
+                                        <input class="form-input" type="text" id="latitude" name="latitude"
+                                            value="<?php echo htmlspecialchars($house['Property_latitude']); ?>"
+                                            placeholder="ละติจูด (Latitude)" readonly required>
+
+                                        <!--<span class="no-coordinates">ยังไม่ได้เลือกตำแหน่ง</span>-->
+                                    </div>
+                                </div>
+                                <div class="coordinate-item">
+                                    <div class="coordinate-label">ลองติจูด (Longitude)</div>
+
+                                    <div class="coordinate-value">
+                                        <input class="form-input" type="text" id="longitude" name="longitude"
+                                            value="<?php echo htmlspecialchars($house['Property_longitude']); ?>"
+                                            placeholder="ลองติจูด (Longitude)" readonly required>
+                                        <!--<span class="no-coordinates">ยังไม่ได้เลือกตำแหน่ง</span>-->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="property_image" class="form-label">
+                                    รูปบ้านพัก <span class="required">*</span>
+                                </label>
+                                <div class="file-input-container" id="dropMulti-zone">
                                     <div class="file-icon"><i class="fas fa-cloud-upload-alt"></i></div>
-                                    <input type="file" id="single_image" name="singleImage" accept="image/*">
-                                    <p class="file-info">ลาก & คลิก เพื่ออัปโหลดไฟล์</p>
+                                    <input type="file" id="multi_image" name="multipleimage[]" accept="image/*"
+                                        multiple>
+                                    <p class="files-info">ลาก & คลิก เพื่ออัปโหลดไฟล์</p>
                                     <div class="description">
                                         <span>Max file size : 25MB</span>
-                                        <span id="file-size"></span>
+                                        <span id="files-size"></span>
                                     </div>
                                     <div class="zone-action">
                                         <div class="zone-help">
@@ -564,485 +666,372 @@ if (!isset($_SESSION["Host_email"])) {
                                         </div>
                                     </div>
                                 </div>
-                                <div id="image-preview" class="preview-image"></div>
-
+                                <div id="multiImage-preview" class="preview-image"></div>
                             </div>
-
-                            <div class="form-group">
-                                <label for="property_name" class="form-label">
-                                    ชื่อบ้านพัก <span class="required">*</span>
-                                </label>
-                                <input type="text" id="property_name" name="house_name" class="form-input"
-                                    value="<?php echo htmlspecialchars($house['Property_name']); ?>" required>
-                                <input type="hidden" name="property_id"
-                                    value="<?php echo htmlspecialchars($house['Property_id']); ?>">
-                            </div>
-
-                            <div class="form-row-3">
-                                <div class="form-group">
-                                    <label for="property_province" class="form-label">
-                                        จังหวัด <span class="required">*</span>
-                                    </label>
-                                    <input type="text" id="property_province" name="province" class="form-input"
-                                        value="<?php echo htmlspecialchars($house['Property_province']); ?>" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="property_district" class="form-label">
-                                        อำเภอ <span class="required">*</span>
-                                    </label>
-                                    <input type="text" id="property_district" name="district" class="form-input"
-                                        value="<?php echo htmlspecialchars($house['Property_district']); ?>" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="property_subdistrict" class="form-label">
-                                        ตำบล <span class="required">*</span>
-                                    </label>
-                                    <input type="text" id="property_subdistrict" name="subdistrict" class="form-input"
-                                        value="<?php echo htmlspecialchars($house['Property_subdistrict']); ?>" required>
-                                </div>
-                            </div>
-
-                            <!-- Google Maps Section -->
                             <div class="form-group">
                                 <label class="form-label">
-                                    เลือกตำแหน่งบนแผนที่ <span class="required">*</span>
+                                    สิ่งอำนวยความสะดวกและกิจกรรม <span class="required">*</span>
                                 </label>
-                                <!-- <div class="map-instructions">
-                                <i class="fas fa-info-circle"></i>
-                                คลิกบนแผนที่เพื่อเลือกตำแหน่งของบ้านพัก หรือใช้ช่องค้นหาด้านล่าง
-                            </div> -->
-
-                                <!-- Search Box -->
-                                <!--<div class="form-group">
-                                <input type="text" id="search-box" class="form-input"
-                                    placeholder="ค้นหาสถานที่ เช่น กรุงเทพ, เชียงใหม่, ภูเก็ต">
-                            </div>-->
-
-                                <!-- Map Container -->
-                                <div class="map-container">
-                                    <div id="map"></div>
-
-                                </div>
-
-                                <div class="coordinates-display">
-                                    <div class="coordinate-item">
-                                        <div class="coordinate-label">ละติจูด (Latitude)</div>
-
-                                        <div class="coordinate-value">
-                                            <input class="form-input" type="text" id="latitude" name="latitude"
-                                                value="<?php echo htmlspecialchars($house['Property_latitude']); ?>"
-                                                placeholder="ละติจูด (Latitude)" readonly required>
-
-                                            <!--<span class="no-coordinates">ยังไม่ได้เลือกตำแหน่ง</span>-->
-                                        </div>
-                                    </div>
-                                    <div class="coordinate-item">
-                                        <div class="coordinate-label">ลองติจูด (Longitude)</div>
-
-                                        <div class="coordinate-value">
-                                            <input class="form-input" type="text" id="longitude" name="longitude"
-                                                value="<?php echo htmlspecialchars($house['Property_longitude']); ?>"
-                                                placeholder="ลองติจูด (Longitude)" readonly required>
-                                            <!--<span class="no-coordinates">ยังไม่ได้เลือกตำแหน่ง</span>-->
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="property_image" class="form-label">
-                                        รูปบ้านพัก <span class="required">*</span>
-                                    </label>
-                                    <div class="file-input-container" id="dropMulti-zone">
-                                        <div class="file-icon"><i class="fas fa-cloud-upload-alt"></i></div>
-                                        <input type="file" id="multi_image" name="multipleimage[]" accept="image/*"
-                                            multiple>
-                                        <p class="files-info">ลาก & คลิก เพื่ออัปโหลดไฟล์</p>
-                                        <div class="description">
-                                            <span>Max file size : 25MB</span>
-                                            <span id="files-size"></span>
-                                        </div>
-                                        <div class="zone-action">
-                                            <div class="zone-help">
-                                                <p><i class="fa-solid fa-circle-info"></i> รองรับไฟล์ .jpg .png</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- Preview -->
-                                    <div id="multiImage-preview" class="preview-image"></div>
-                                    <!-- <img id="multiImage-preview" class="preview-image" alt="Preview"> -->
-                                    <!-- Info -->
-
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">
-                                        สิ่งอำนวยความสะดวกและกิจกรรม <span class="required">*</span>
-                                    </label>
-                                    <div class="form-row-4">
-                                        <label class="form-label-details">ชื่อบริการ :<input type="text" placeholder="1"
-                                                class="form-input"
-                                                value="<?php echo htmlspecialchars($house['Services_name']); ?>"
-                                                name="services_name"></label>
-                                        <label class="form-label-details">รายละเอียดบริการ :<textarea
-                                                name="services_description"
-                                                placeholder="<?php echo htmlspecialchars($house['Services_description']); ?>"
-                                                class="form-input">
+                                <div class="form-row-4">
+                                    <label class="form-label-details">ชื่อบริการ :<input type="text" placeholder="1"
+                                            class="form-input"
+                                            value="<?php echo htmlspecialchars($house['Services_name']); ?>"
+                                            name="services_name"></label>
+                                    <label class="form-label-details">รายละเอียดบริการ :<textarea
+                                            name="services_description"
+                                            placeholder="<?php echo htmlspecialchars($house['Services_description']); ?>"
+                                            class="form-input">
                                                 <?php echo htmlspecialchars($house['Services_description']); ?>
                                                 </textarea></label>
-                                        <label class="form-label-details">ชื่อกิจกรรม :<input type="text" placeholder="1"
-                                                class="form-input"
-                                                value="<?php echo htmlspecialchars($house['Activity_name']); ?>"
-                                                name="activity_name"></label>
-                                        <label class="form-label-details">รายละเอียดกิจกรรม :<textarea
-                                                name="activity_description"
-                                                placeholder="<?php echo htmlspecialchars($house['Activity_description']); ?>"
-                                                class="form-input">
+                                    <label class="form-label-details">ชื่อกิจกรรม :<input type="text" placeholder="1"
+                                            class="form-input"
+                                            value="<?php echo htmlspecialchars($house['Activity_name']); ?>"
+                                            name="activity_name"></label>
+                                    <label class="form-label-details">รายละเอียดกิจกรรม :<textarea
+                                            name="activity_description"
+                                            placeholder="<?php echo htmlspecialchars($house['Activity_description']); ?>"
+                                            class="form-input">
                                                                             <?php echo htmlspecialchars($house['Activity_description']); ?>
                                                                             </textarea></label>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">
-                                        ห้องพัก <span class="required">*</span>
-                                    </label>
-                                    <?php foreach ($room as $i => $num): ?>
-                                        <div class="form-row-5">
-                                            <input type="hidden" id="room_id" name="roomId[]"
-                                                value="<?php echo $num['Room_id']; ?>">
-
-                                            <label class="form-label-detail">เลขห้อง:<input type="text" placeholder="1"
-                                                    class="form-input"
-                                                    value="<?php echo htmlspecialchars($num['Room_number']); ?>"
-                                                    name="roomNum[]"></label>
-                                            <label class="form-label-detail">ราคา:<input type="email" placeholder="550"
-                                                    class="form-input"
-                                                    value="<?php echo htmlspecialchars($num['Room_price']); ?>"
-                                                    name="roomPrice[]"></label>
-                                            <label class="form-label-detail">ประเภทห้อง:<input type="text"
-                                                    placeholder="ห้องเดี่ยว"
-                                                    value="<?php echo htmlspecialchars($num['Room_capacity']); ?>"
-                                                    class="form-input" name="roomCap[]"></label>
-                                            <label class="form-label-detail">สิ่งอำนวยความสะดวก:<input type="email"
-                                                    placeholder="พัดลม,กาต้มน้ำ"
-                                                    value="<?php echo htmlspecialchars($num['Room_utensils']); ?> "
-                                                    class="form-input" name="roomUten[]"></label>
-                                            <label class="form-label-detail">สถานะ:<select class="form-input"
-                                                    name="selectValue[]">
-                                                    <option
-                                                        value="<?php echo htmlspecialchars(($num['Room_status'] == 'Available' ? "ว่าง" : ($num['Room_status'] == 'Reserved' ? "ไม่ว่าง" : ($num['Room_status'] == 'Closed' ? "ปิด" : "ไม่ทราบ")))); ?>">
-
-                                                        ปัจจุบัน
-                                                        (<?php echo htmlspecialchars(($num['Room_status'] == 'Available' ? "ว่าง" : ($num['Room_status'] == 'Reserved' ? "ไม่ว่าง" : ($num['Room_status'] == 'Closed' ? "ปิด" : "ไม่ทราบ")))); ?>
-                                                        )
-                                                    </option>
-                                                    <option value="Available">ว่าง</option>
-                                                    <option value="Closed">ปิด</option>
-                                                </select>
-                                            </label>
-                                        </div>
-                                    <?php endforeach; ?>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-add-label">
-                                        เพิ่มห้องพัก <span class="required">*</span>
-                                    </label>
-                                    <div class="form-add-actions">
-                                        <button id="addForm-rooms" class="btn btn-add"><i class="fa-solid fa-plus"></i>
-                                            เพิ่มฟอร์ม</button>
-                                        <button id="removeAll-rooms" class="btn btn-remove"><i
-                                                class="fa-solid fa-trash"></i>
-                                            ลบทั้งหมด</button>
-                                    </div>
-
-                                    <div id="forms-rooms"></div>
-
-                                </div>
-                                <div class="form-actions">
-                                    <button type="submit" class="btn btn-add" name="edit_property" id="edit_property">
-                                        <i class="fas fa-save"></i> บันทึกบ้านพัก
-                                    </button>
-                                    <button type="button" class="btn btn-remove"
-                                        onclick="window.location.href='manage-property.php'">
-                                        <i class="fas fa-arrow-left"></i> ยกเลิก
-                                    </button>
                                 </div>
                             </div>
-                        </form>
-                    </div>
+                            <div class="form-group">
+                                <label class="form-label">
+                                    ห้องพัก <span class="required">*</span>
+                                </label>
+                                <?php foreach ($room as $i => $num): ?>
+                                <div class="form-row-5">
+                                    <input type="hidden" id="room_id" name="roomId[]"
+                                        value="<?php echo $num['Room_id']; ?>">
+
+                                    <label class="form-label-detail">เลขห้อง:<input type="text" placeholder="1"
+                                            class="form-input"
+                                            value="<?php echo htmlspecialchars($num['Room_number']); ?>"
+                                            name="roomNum[]"></label>
+                                    <label class="form-label-detail">ราคา:<input type="email" placeholder="550"
+                                            class="form-input"
+                                            value="<?php echo htmlspecialchars($num['Room_price']); ?>"
+                                            name="roomPrice[]"></label>
+                                    <label class="form-label-detail">ประเภทห้อง:<input type="text"
+                                            placeholder="ห้องเดี่ยว"
+                                            value="<?php echo htmlspecialchars($num['Room_capacity']); ?>"
+                                            class="form-input" name="roomCap[]"></label>
+                                    <label class="form-label-detail">สิ่งอำนวยความสะดวก:<input type="email"
+                                            placeholder="พัดลม,กาต้มน้ำ"
+                                            value="<?php echo htmlspecialchars($num['Room_utensils']); ?> "
+                                            class="form-input" name="roomUten[]"></label>
+                                    <label class="form-label-detail">สถานะ:<select class="form-input"
+                                            name="selectValue[]">
+                                            <option
+                                                value="<?php echo htmlspecialchars(($num['Room_status'] == 'Available' ? "ว่าง" : ($num['Room_status'] == 'Reserved' ? "ไม่ว่าง" : ($num['Room_status'] == 'Closed' ? "ปิด" : "ไม่ทราบ")))); ?>">
+
+                                                ปัจจุบัน
+                                                (<?php echo htmlspecialchars(($num['Room_status'] == 'Available' ? "ว่าง" : ($num['Room_status'] == 'Reserved' ? "ไม่ว่าง" : ($num['Room_status'] == 'Closed' ? "ปิด" : "ไม่ทราบ")))); ?>
+                                                )
+                                            </option>
+                                            <option value="Available">ว่าง</option>
+                                            <option value="Closed">ปิด</option>
+                                        </select>
+                                    </label>
+                                </div>
+                                <?php endforeach; ?>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-add-label">
+                                    เพิ่มห้องพัก <span class="required">*</span>
+                                </label>
+                                <div class="form-add-actions">
+                                    <button id="addForm-rooms" class="btn btn-add"><i class="fa-solid fa-plus"></i>
+                                        เพิ่มฟอร์ม</button>
+                                    <button id="removeAll-rooms" class="btn btn-remove"><i
+                                            class="fa-solid fa-trash"></i>
+                                        ลบทั้งหมด</button>
+                                </div>
+
+                                <div id="forms-rooms"></div>
+
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-add" name="edit_property" id="edit_property">
+                                    <i class="fas fa-save"></i> บันทึกบ้านพัก
+                                </button>
+                                <button type="button" class="btn btn-remove"
+                                    onclick="window.location.href='manage-property.php'">
+                                    <i class="fas fa-arrow-left"></i> ยกเลิก
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
                 <?php else: ?>
-                    <div class="empty-state">
-                        <i class="ph ph-heart-break"></i>
-                        <h3>No Favorites Yet</h3>
-                        <p>Start exploring and save your favorite homestays to see them here.</p>
-                        <a href="manage-property.php" class="btn btn-primary">Browse Homestays</a>
-                    </div>
+                <div class="empty-state">
+                    <i class="ph ph-heart-break"></i>
+                    <h3>No Favorites Yet</h3>
+                    <p>Start exploring and save your favorite homestays to see them here.</p>
+                    <a href="manage-property.php" class="btn btn-primary">Browse Homestays</a>
+                </div>
                 <?php endif; ?>
             </div>
         </div>
     </div>
     </div>
     <script>
-        const head = document.getElementsByClassName('page-header')[0];
-        head.addEventListener('click', function() {
-            window.location.href = "add-property.php";
-        })
+    const head = document.getElementsByClassName('page-header')[0];
+    head.addEventListener('click', function() {
+        window.location.href = "add-property.php";
+    })
 
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const mainContent = document.querySelector('.main-with-sidebar');
-            sidebar.classList.toggle("collapsed");
-            mainContent.classList.toggle("sidebar-collapsed");
-        }
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.querySelector('.main-with-sidebar');
+        sidebar.classList.toggle("collapsed");
+        mainContent.classList.toggle("sidebar-collapsed");
+    }
     </script>
 
 
     <script>
-        const initialLat = <?php echo (float) $house['Property_latitude']; ?>;
-        const initialLng = <?php echo (float) $house['Property_longitude']; ?>;
+    const initialLat = <?php echo (float) $house['Property_latitude']; ?>;
+    const initialLng = <?php echo (float) $house['Property_longitude']; ?>;
 
-        const map = L.map('map').setView([initialLat, initialLng], 13);
+    const map = L.map('map').setView([initialLat, initialLng], 13);
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(map);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
 
-        let marker = L.marker([initialLat, initialLng], {
-            draggable: true
-        }).addTo(map);
+    let marker = L.marker([initialLat, initialLng], {
+        draggable: true
+    }).addTo(map);
 
 
-        function attachDragEnd(markerInstance) {
-            markerInstance.on('dragend', function() {
-                const pos = markerInstance.getLatLng();
-                document.getElementById("latitude").value = pos.lat.toFixed(6);
-                document.getElementById("longitude").value = pos.lng.toFixed(6);
-            });
-        }
-
-        // แนบ Event ให้กับ Marker ตัวแรก
-        attachDragEnd(marker);
-
-        // เมื่อคลิกที่แผนที่
-        map.on('click', function(e) {
-            const lat = e.latlng.lat.toFixed(6);
-            const lng = e.latlng.lng.toFixed(6);
-
-            marker.setLatLng(e.latlng); // ย้ายตำแหน่ง Marker ที่มีอยู่แล้วเสมอ
-
-            // อัปเดตค่าในฟอร์ม
-            document.getElementById("latitude").value = lat;
-            document.getElementById("longitude").value = lng;
+    function attachDragEnd(markerInstance) {
+        markerInstance.on('dragend', function() {
+            const pos = markerInstance.getLatLng();
+            document.getElementById("latitude").value = pos.lat.toFixed(6);
+            document.getElementById("longitude").value = pos.lng.toFixed(6);
         });
+    }
 
-        // เมื่อมีการเลือกอำเภอ
-        document.getElementById("property_district").addEventListener("change", function() {
-            const province = document.getElementById("property_province").value;
-            const district = this.value;
+    // แนบ Event ให้กับ Marker ตัวแรก
+    attachDragEnd(marker);
 
-            if (!province || !district) return; // ถ้าค่าว่างก็ไม่ต้องทำอะไร
+    // เมื่อคลิกที่แผนที่
+    map.on('click', function(e) {
+        const lat = e.latlng.lat.toFixed(6);
+        const lng = e.latlng.lng.toFixed(6);
 
-            const query = `${district} ${province}`;
-            const apiUrl =
-                `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`;
+        marker.setLatLng(e.latlng); // ย้ายตำแหน่ง Marker ที่มีอยู่แล้วเสมอ
 
-            fetch(apiUrl, {
-                    method: GET,
-                    headers: {
-                        'User-Agent': 'HomestayManagement/1.0 (phumin.duangchanta@gmail.com)'
-                    }
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data && data.length > 0) {
-                        const lat = data[0].lat;
-                        const lon = data[0].lon;
-                        // อัปเดตค่าในฟอร์ม
-                        document.getElementById("latitude").value = parseFloat(lat).toFixed(6);
-                        document.getElementById("longitude").value = parseFloat(lon).toFixed(6);
-                        map.flyTo([lat, lon], 13);
-                        marker.setLatLng([lat, lon]);
-                    } else {
-                        console.warn("ไม่พบพิกัดสำหรับ:", query);
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-        });
+        // อัปเดตค่าในฟอร์ม
+        document.getElementById("latitude").value = lat;
+        document.getElementById("longitude").value = lng;
+    });
+
+    // เมื่อมีการเลือกอำเภอ
+    document.getElementById("property_district").addEventListener("change", function() {
+        const province = document.getElementById("property_province").value;
+        const district = this.value;
+
+        if (!province || !district) return; // ถ้าค่าว่างก็ไม่ต้องทำอะไร
+
+        const query = `${district} ${province}`;
+        const apiUrl =
+            `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`;
+
+        fetch(apiUrl, {
+                method: GET,
+                headers: {
+                    'User-Agent': 'HomestayManagement/1.0 (phumin.duangchanta@gmail.com)'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.length > 0) {
+                    const lat = data[0].lat;
+                    const lon = data[0].lon;
+                    // อัปเดตค่าในฟอร์ม
+                    document.getElementById("latitude").value = parseFloat(lat).toFixed(6);
+                    document.getElementById("longitude").value = parseFloat(lon).toFixed(6);
+                    map.flyTo([lat, lon], 13);
+                    marker.setLatLng([lat, lon]);
+                } else {
+                    console.warn("ไม่พบพิกัดสำหรับ:", query);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    });
     </script>
     <script>
-        const formsDiv = document.getElementById("forms-rooms");
-        const addBtn = document.getElementById("addForm-rooms");
-        const removeAllBtn = document.getElementById("removeAll-rooms");
-        let formCount = 0;
-        const maxForms = 10;
-        const totalRoom = <?php echo count($room); ?>;
-        // ➕ เพิ่มฟอร์มใหม่
-        addBtn.addEventListener("click", () => {
-            let currentForms = maxForms - totalRoom;
-            if (formCount < currentForms) {
-                formCount++;
-                const form = document.createElement("div");
-                form.classList.add("form-row-5");
-                form.setAttribute("id", "form-" + formCount);
-                form.innerHTML = `
+    const formsDiv = document.getElementById("forms-rooms");
+    const addBtn = document.getElementById("addForm-rooms");
+    const removeAllBtn = document.getElementById("removeAll-rooms");
+    let formCount = 0;
+    const maxForms = 10;
+    const totalRoom = <?php echo count($room); ?>;
+    // ➕ เพิ่มฟอร์มใหม่
+    addBtn.addEventListener("click", () => {
+        let currentForms = maxForms - totalRoom;
+        if (formCount < currentForms) {
+            formCount++;
+            const form = document.createElement("div");
+            form.classList.add("form-row-5");
+            form.setAttribute("id", "form-" + formCount);
+            form.innerHTML = `
           <label class="form-label">เลขห้อง:<span class="required">*</span><input type="text" name="roomNum[]" placeholder="1" class="form-input"></label>
           <label class="form-label">ราคา:<span class="required">*</span><input type="email" name="roomPrice[]" placeholder="550" class="form-input"></label>
           <label class="form-label">ประเภทห้อง:<span class="required">*</span><input type="text" name="roomCap[]" placeholder="ห้องเดี่ยว" class="form-input"></label>
           <label class="form-label">สิ่งอำนวยความสะดวก:<span class="required">*</span><input type="email" name="roomUten[]" placeholder="พัดลม,กาต้มน้ำ" class="form-input"></label>
           <button type="button" class="btn btn-remove">ลบ<i class="fa-solid fa-delete-left"></i></button>`;
-                formsDiv.appendChild(form);
-                // ลบฟอร์มเดียว
-                form.querySelector(".btn-del").addEventListener("click", () => {
-                    form.remove();
-                    formCount--;
-                });
-            } else {
-                alert("สร้างฟอร์มได้สูงสุด " + (maxForms - totalRoom) + " ฟอร์มเท่านั้น!");
-            }
-        });
-        // ลบ form  ทั้งหมด
-        removeAllBtn.addEventListener("click", () => {
-            formsDiv.innerHTML = "";
-            formCount = 0;
-        });
-
-
-
-        document.addEventListener("DOMContentLoaded", () => {
-            const multi_image = document.getElementById("multi_image");
-            const single_image = document.getElementById("single_image");
-            const preview = document.getElementById("image-preview");
-            const info = document.querySelector(".file-info");
-            const infos = document.querySelector(".files-info");
-            const sizeInfos = document.getElementById("files-size");
-            const sizeInfo = document.getElementById("file-size");
-            const dropMultiZone = document.getElementById("dropMulti-zone");
-            const dropSingleZone = document.getElementById("dropSingle-zone");
-            // Preview image + file info
-            multi_image.addEventListener("change", function() {
-                const files = this.files;
-                const Multipreview = document.getElementById("multiImage-preview");
-                // เคลียร์ preview เก่า
-                Multipreview.innerHTML = "";
-                sizeInfos.textContent = "";
-                if (files.length > 0) {
-                    Array.from(files).forEach(file => {
-                        if (!file.type.startsWith("image/")) {
-                            infos.textContent = "❌ กรุณาเลือกไฟล์รูปภาพเท่านั้น";
-                            return;
-                        }
-                        // ขนาดไฟล์
-                        const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
-                        sizeInfos.textContent += `${file.name} - ${fileSizeMB} MB\n`;
-                        // แสดงรูป
-                        const reader = new FileReader();
-                        reader.onload = e => {
-                            const img = document.createElement("img");
-                            img.src = e.target.result;
-                            img.classList.add("preview-image");
-                            img.style.maxWidth = "150px";
-                            img.style.margin = "5px";
-                            Multipreview.appendChild(img);
-                        };
-                        reader.readAsDataURL(file);
-                    });
-
-                    infos.textContent = `${files.length} ไฟล์ถูกเลือกแล้ว`;
-                } else {
-                    infos.textContent = "ลาก & คลิก เพื่ออัปโหลดไฟล์";
-                }
-            })
-            // Drag & Drop Zone
-            dropMultiZone.addEventListener("dragover", e => {
-                e.preventDefault();
-                dropMultiZone.style.background = "#E0F2FE";
-            })
-            dropMultiZone.addEventListener("dragleave", () => {
-                dropMultiZone.style.background = "transparent";
-            })
-            dropMultiZone.addEventListener("drop", e => {
-                e.preventDefault();
-                multi_image.files = e.dataTransfer.files;
-                multi_image.dispatchEvent(new Event("change"));
-                dropMultiZone.style.background = "transparent";
+            formsDiv.appendChild(form);
+            // ลบฟอร์มเดียว
+            form.querySelector(".btn-del").addEventListener("click", () => {
+                form.remove();
+                formCount--;
             });
-            single_image.addEventListener("change", function() {
-                const file = this.files[0];
-                if (file) {
+        } else {
+            alert("สร้างฟอร์มได้สูงสุด " + (maxForms - totalRoom) + " ฟอร์มเท่านั้น!");
+        }
+    });
+    // ลบ form  ทั้งหมด
+    removeAllBtn.addEventListener("click", () => {
+        formsDiv.innerHTML = "";
+        formCount = 0;
+    });
+
+
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const multi_image = document.getElementById("multi_image");
+        const single_image = document.getElementById("single_image");
+        const preview = document.getElementById("image-preview");
+        const info = document.querySelector(".file-info");
+        const infos = document.querySelector(".files-info");
+        const sizeInfos = document.getElementById("files-size");
+        const sizeInfo = document.getElementById("file-size");
+        const dropMultiZone = document.getElementById("dropMulti-zone");
+        const dropSingleZone = document.getElementById("dropSingle-zone");
+        // Preview image + file info
+        multi_image.addEventListener("change", function() {
+            const files = this.files;
+            const Multipreview = document.getElementById("multiImage-preview");
+            // เคลียร์ preview เก่า
+            Multipreview.innerHTML = "";
+            sizeInfos.textContent = "";
+            if (files.length > 0) {
+                Array.from(files).forEach(file => {
                     if (!file.type.startsWith("image/")) {
-                        info.textContent = "กรุณาเลือกไฟล์รูปภาพ";
-                        preview.style.display = "none";
+                        infos.textContent = "❌ กรุณาเลือกไฟล์รูปภาพเท่านั้น";
                         return;
                     }
                     // ขนาดไฟล์
                     const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
-                    sizeInfo.textContent = `File size: ${fileSizeMB} MB`;
-                    info.textContent = file.name;
+                    sizeInfos.textContent += `${file.name} - ${fileSizeMB} MB\n`;
+                    // แสดงรูป
                     const reader = new FileReader();
                     reader.onload = e => {
-                        preview.src = e.target.result;
-                        preview.style.display = "block";
+                        const img = document.createElement("img");
+                        img.src = e.target.result;
+                        img.classList.add("preview-image");
+                        img.style.maxWidth = "150px";
+                        img.style.margin = "5px";
+                        Multipreview.appendChild(img);
                     };
                     reader.readAsDataURL(file);
-                } else {
-                    info.textContent = "ลาก & คลิก เพื่ออัปโหลดไฟล์";
+                });
+
+                infos.textContent = `${files.length} ไฟล์ถูกเลือกแล้ว`;
+            } else {
+                infos.textContent = "ลาก & คลิก เพื่ออัปโหลดไฟล์";
+            }
+        })
+        // Drag & Drop Zone
+        dropMultiZone.addEventListener("dragover", e => {
+            e.preventDefault();
+            dropMultiZone.style.background = "#E0F2FE";
+        })
+        dropMultiZone.addEventListener("dragleave", () => {
+            dropMultiZone.style.background = "transparent";
+        })
+        dropMultiZone.addEventListener("drop", e => {
+            e.preventDefault();
+            multi_image.files = e.dataTransfer.files;
+            multi_image.dispatchEvent(new Event("change"));
+            dropMultiZone.style.background = "transparent";
+        });
+        single_image.addEventListener("change", function() {
+            const file = this.files[0];
+            if (file) {
+                if (!file.type.startsWith("image/")) {
+                    info.textContent = "กรุณาเลือกไฟล์รูปภาพ";
                     preview.style.display = "none";
-                    sizeInfo.textContent = "";
+                    return;
+                }
+                // ขนาดไฟล์
+                const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+                sizeInfo.textContent = `File size: ${fileSizeMB} MB`;
+                info.textContent = file.name;
+                const reader = new FileReader();
+                reader.onload = e => {
+                    preview.src = e.target.result;
+                    preview.style.display = "block";
+                };
+                reader.readAsDataURL(file);
+            } else {
+                info.textContent = "ลาก & คลิก เพื่ออัปโหลดไฟล์";
+                preview.style.display = "none";
+                sizeInfo.textContent = "";
+            }
+        })
+
+        dropSingleZone.addEventListener("dragover", e => {
+            e.preventDefault();
+            dropSingleZone.style.background = "#E0F2FE";
+        })
+        dropSingleZone.addEventListener("dragleave", () => {
+            dropSingleZone.style.background = "transparent";
+        })
+        dropSingleZone.addEventListener("drop", e => {
+            e.preventDefault();
+            single_image.files = e.dataTransfer.files;
+            single_image.dispatchEvent(new Event("change"));
+            dropSingleZone.style.background = "transparent";
+        });
+
+    });
+    const btnInput = document.getElementById('edit_property');
+    const formInput = document.getElementById('formInput');
+    btnInput.addEventListener('click', function(event) {
+        event.preventDefault(); // ป้องกันการส่งฟอร์มแบบปกติ
+
+        const formData = new FormData(formInput);
+        formData.append("edit_property", "1");
+        const multiFiles = document.getElementById("multi_image").files;
+        for (let i = 0; i < multiFiles.length; i++) {
+            formData.append("multi_image[]", multiFiles[i]);
+        }
+        fetch('../../controls/add_edit_property.php', {
+                method: 'POST',
+                body: formData,
+
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success == true) {
+                    alert('Success');
+                    console.log(data.message);
+                    window.location.href = "manage-property.php";
+                } else {
+                    alert(data.message);
+                    window.location.reload();
                 }
             })
-
-            dropSingleZone.addEventListener("dragover", e => {
-                e.preventDefault();
-                dropSingleZone.style.background = "#E0F2FE";
-            })
-            dropSingleZone.addEventListener("dragleave", () => {
-                dropSingleZone.style.background = "transparent";
-            })
-            dropSingleZone.addEventListener("drop", e => {
-                e.preventDefault();
-                single_image.files = e.dataTransfer.files;
-                single_image.dispatchEvent(new Event("change"));
-                dropSingleZone.style.background = "transparent";
+            .catch(error => {
+                console.error('Error:', error);
+                alert('เกิดข้อผิดพลาดในการส่งข้อมูล' + error);
+                window.location.reload();
             });
-
-        });
-        const btnInput = document.getElementById('edit_property');
-        const formInput = document.getElementById('formInput');
-        btnInput.addEventListener('click', function(event) {
-            event.preventDefault(); // ป้องกันการส่งฟอร์มแบบปกติ
-
-            const formData = new FormData(formInput);
-            formData.append("edit_property", "1");
-            const multiFiles = document.getElementById("multi_image").files;
-            for (let i = 0; i < multiFiles.length; i++) {
-                formData.append("multi_image[]", multiFiles[i]);
-            }
-            console.log("--- Checking FormData Contents ---");
-            for (let pair of formData.entries()) {
-                // pair[0] คือ key
-                // pair[1] คือ value
-                console.log(pair[0] + ': ', pair[1]);
-            }
-            console.log("--------------------------------");
-            fetch('../../controls/add_edit_property.php', {
-                    method: 'POST',
-                    body: formData,
-
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success == true) {
-                        alert('Success');
-                        console.log(data.message);
-                        window.location.href = "manage-property.php";
-                    } else {
-                        alert(data.message);
-                        window.location.reload();
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('เกิดข้อผิดพลาดในการส่งข้อมูล');
-                    window.location.reload();
-                });
-        });
+    });
     </script>
 </body>
 

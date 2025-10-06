@@ -29,6 +29,7 @@ if (isset($_SESSION['email_data'])) {
         $hostPhone = $_SESSION['email_data']['host_phone'];
         $total_price = $_SESSION['email_data']['total_price'];
         $bookingDate = $_SESSION['email_data']['bookingDate'];
+        $Payment_gateway = $_SESSION['email_data']['gateway'];
 
         $stmt = $conn->prepare("SELECT Charge_id FROM Booking WHERE Booking_id = ? ");
         $stmt->execute([$bookingId]);
@@ -156,6 +157,7 @@ if (isset($_SESSION['email_data'])) {
         <tr>
             <td class='section-title'>รายละเอียดการจอง</td>
             <td class='date'>วันที่  {$bookingDate}</td>
+            <td class='date'>ชำระผ่าน {$Payment_gateway}</td>
         </tr>
     </table>
     <div class='border'></div>

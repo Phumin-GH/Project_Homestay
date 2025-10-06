@@ -80,7 +80,7 @@ class Review
             $host_id = $this->get_host_id($host_email);
             $result = $this->check_report_host($host_id, $review_id);
             if ($result > 0) {
-                return "ไม่สามารถดำเนินการซ้ำได้";
+                return "ไม่สามารถดำเนินการซ้ำได้ff";
             }
         }
         $sql = "INSERT INTO review_reports (Review_id,User_id,Host_id,Report_reason) VALUES (?,?,?,?)";
@@ -98,7 +98,7 @@ class Review
         $stmt = $this->conn->prepare($sql);
         try {
             $stmt->execute([$user_id, $review_id]);
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            $result = $stmt->fetchColumn();
             return $result;
         } catch (Exception $e) {
             return $e->getMessage();
@@ -110,7 +110,7 @@ class Review
         $stmt = $this->conn->prepare($sql);
         try {
             $stmt->execute([$host_id, $review_id]);
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            $result = $stmt->fetchColumn();
             return $result;
         } catch (Exception $e) {
             return $e->getMessage();
@@ -185,7 +185,7 @@ class Review
         if (!$user) {
             return  "ไม่พบผู้ใช้";
         }
-        $sql = "SELECT COUNT(Comment) FROM review WHERE Property_id =? AND User_id=?,AND Comment=?";
+        $sql = "SELECT COUNT(Comment) FROM review WHERE Property_id =? AND User_id=?AND Comment=?";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$property_id, $user['User_id'], $comment]);
         $count = $stmt->fetchColumn();
