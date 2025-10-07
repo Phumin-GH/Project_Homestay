@@ -161,11 +161,4 @@ class Host
         $stmt->execute([$baned, $host_id]);
         return true;
     }
-    public function delete_host($host_id)
-    {
-        $sql = "DELETE FROM host WHERE Host_id = ?";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$host_id]);
-        return true;
-    }
 }

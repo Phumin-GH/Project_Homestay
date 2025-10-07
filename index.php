@@ -183,9 +183,9 @@ require_once __DIR__ . "/api/get_ListHomestay.php";
                     <input type="date" id="checkOutDate" /> -->
                     <select name="filter" id="filter">
                         <option value=""> </option>
-                        <option value="เชียงใหม่">คะแนนรีวิวดีสุด</option>
-                        <option value="กาญจนบุรี">ราคาถูกที่สุด</option>
-                        <option value="ชลบุรี">ยอดนิยม</option>
+                        <option value="best_reviews">คะแนนรีวิวดีสุด</option>
+                        <option value="rate_poor">ราคาถูกที่สุด</option>
+                        <option value="popular">ยอดนิยม</option>
                     </select>
                     <button type="button" id="searchBtn"><i class="fas fa-search"></i></button>
                 </div>
@@ -225,14 +225,9 @@ require_once __DIR__ . "/api/get_ListHomestay.php";
                         })
                     })
                     .then(response => response.json())
-
                     .then(products => {
-
-                        // เคลียร์ข้อมูลเก่าใน container
                         productContainer.innerHTML = '';
-
                         if (products.length > 0) {
-                            // วนลูปสร้างการ์ดสินค้าจากข้อมูลที่ได้
                             products.forEach(product => {
                                 const productCard = document.createElement('div');
                                 productCard.className = 'homestay-card';
@@ -240,10 +235,11 @@ require_once __DIR__ . "/api/get_ListHomestay.php";
                                 <div class='homestay-info'>
                                 <img src='public/${product.Property_image}' alt='${product.Property_image}'>
                                 <h3>${product.Property_name}</h3>
-                                <div >
+                                <div style='display:flex;gap:5px;'>
                                 <span style='color:#f5b301; font-size:1.1rem; margin-left:0.5rem;'>
-                                <i class='fa-solid fa-star'> </i> ${Number(product.Rating, 1).toFixed(1)}
+                                <i class='fa-solid fa-star'> </i> ${Number(product.Rating, 1).toFixed(1)} 
                                 </span>
+                                <div style= font-size:1.1rem; margin-left:0.5rem;'> (${product.review_count})</div>
                                 </div>
                                 <p>${product.Host_firstname} ${product.Host_lastname}</p>
                                 <p class='location'><i class='fa-solid fa-location-pin'></i>
@@ -273,8 +269,8 @@ require_once __DIR__ . "/api/get_ListHomestay.php";
             scrollButton.onclick = function() {
 
                 targetDiv.scrollIntoView({
-                    behavior: 'smooth', // ทำให้การเลื่อนนุ่มนวล
-                    block: 'start' // จัดให้ส่วนบนของ div อยู่ด้านบนของจอ
+                    behavior: 'smooth',
+                    block: 'start'
                 });
             };
             scoll.addEventListener('click', function() {
@@ -319,42 +315,6 @@ require_once __DIR__ . "/api/get_ListHomestay.php";
             clearInterval(interval);
             interval = setInterval(nextSlide, 8000);
         }
-
-        // const slides = document.querySelectorAll(".Imgslider img");
-        // const prevBtn = document.querySelector(".prev");
-        // const nextBtn = document.querySelector(".next");
-        // let index = 0;
-        // let interval = setInterval(nextSlide, 5000); // ปรับเวลาเป็น 5 วินาที
-
-        // function showSlide(i) {
-        //     slides.forEach(slide => slide.classList.remove("active"));
-        //     slides[i].classList.add("active");
-        // }
-
-        // function nextSlide() {
-        //     index = (index + 1) % slides.length;
-        //     showSlide(index);
-        // }
-
-        // function prevSlide() {
-        //     index = (index - 1 + slides.length) % slides.length;
-        //     showSlide(index);
-        // }
-
-        // nextBtn.addEventListener("click", () => {
-        //     nextSlide();
-        //     resetInterval();
-        // });
-
-        // prevBtn.addEventListener("click", () => {
-        //     prevSlide();
-        //     resetInterval();
-        // });
-
-        // function resetInterval() {
-        //     clearInterval(interval);
-        //     interval = setInterval(nextSlide, 8000); // ให้เวลานานขึ้นหลังกดเอง
-        // }
     </script>
 </body>
 

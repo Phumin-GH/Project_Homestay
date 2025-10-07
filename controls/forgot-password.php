@@ -25,30 +25,33 @@ try {
     $mail->Port       = 587;
 
     // ผู้ส่ง
+    $tokens = '';
     $mail->setFrom($_ENV['EMAIL'], 'Homestay Management');
     // ผู้รับ
     if (isset($_POST['User_email'])) {
         $Email = $_POST['User_email'] ?? '';
         $token = $forgotHandler->forgot_pwd_User($Email);
-        if (is_string($token)) {
+        if ($token['success'] === false) {
             echo json_encode(["success" => false, "message" => $token]);
             exit;
         }
+        $tokens = $token['data'];
     } elseif (isset($_POST['Host_email'])) {
         $Email = $_POST['Host_email'] ?? '';
         $token = $forgotHandler->forgot_pwd_Host($Email);
-        if (is_string($token)) {
+        if ($token['success'] === false) {
             echo json_encode(["success" => false, "message" => $token]);
             exit;
         }
+        $tokens = $token['data'];
     } else {
-        echo json_encode(["success" => false, "message" => "Pls provide email"]);
+        echo json_encode(["success" => false, "message" => "ไม่พบอีเมลของคุณในระบบ"]);
         exit;
     }
     $mail->addAddress($Email, 'User');
     $mail->isHTML(true);
     $mail->Subject = 'Reset Password Link';
-    $resetLink = "http://localhost/homestay/views/reset-password.php?token=$token";
+    $resetLink = "http://localhost/homestay/views/reset-password.php?token=$tokens";
     $mail->Body    = "สวัสดีครับ,<br><br>
                       กรุณาคลิกที่ลิงก์ด้านล่างเพื่อเปลี่ยนรหัสผ่านของคุณ:<br>
                       <a href='$resetLink'>$resetLink</a>";
@@ -56,6 +59,8 @@ try {
     // ส่ง email (สำหรับทดสอบ, จริงๆ ใช้ PHPMailer หรือ SMTP)
     $mail->send();
     echo json_encode(["success" => true, "message" => "ส่งอีเมลสำเร็จ"]);
+    exit();
 } catch (Exception $e) {
     echo json_encode(["success" => false, "message" => "ไม่สามารถส่งอีเมลได้: {$mail->ErrorInfo}"]);
+    exit();
 }

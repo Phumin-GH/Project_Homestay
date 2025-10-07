@@ -70,26 +70,106 @@ class Property
     }
     public function search_house($searchTerm)
     {
-        $sql = "SELECT p.Property_id,p.Property_name,p.Property_province,
+        switch ($searchTerm) {
+            case 'best_reviews':
+                $sql = "SELECT p.Property_id,p.Property_name,p.Property_province, 
+                p.Property_district,p.Property_subdistrict,p.Property_image, 
+                h.Host_firstname,h.Host_lastname,p.Property_image, 
+                AVG(rev.Rating) AS Rating, 
+                COUNT(rev.Review_id) AS review_count 
+                FROM property p 
+                INNER JOIN review rev ON p.Property_id = rev.Property_id 
+                LEFT JOIN host h ON p.Host_id = h.Host_id 
+                WHERE p.Property_status = 'approve' 
+                GROUP BY p.Property_id,p.Property_name,p.Property_province, 
+                p.Property_district,p.Property_subdistrict,p.Property_image, 
+                h.Host_firstname,h.Host_lastname,p.Property_image 
+                HAVING AVG(rev.Rating) >= 3 
+                ORDER BY Rating DESC LIMIT 10";
+                $stmt = $this->conn->prepare($sql);
+                $stmt->execute([]);
+                $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                break;
+            case 'rate_poor';
+                $sql = "SELECT p.Property_id,p.Property_name,p.Property_province, 
+                p.Property_district,p.Property_subdistrict,p.Property_image, 
+                h.Host_firstname,h.Host_lastname,p.Property_image, 
+                AVG(rv.Rating) AS Rating, AVG(r.Room_price) AS avg_price, 
+                COUNT(rv.Review_id) AS review_count 
+                FROM property p 
+                INNER JOIN host h on p.Host_id = h.Host_id 
+                LEFT JOIN review rv on p.Property_id = rv.Property_id 
+                INNER JOIN room r on p.Property_id = r.Property_id 
+                WHERE p.Property_status = 'approve' 
+                GROUP BY p.Property_id,p.Property_name,p.Property_province, 
+                p.Property_district,p.Property_subdistrict,p.Property_image,
+                 h.Host_firstname,h.Host_lastname,p.Property_image 
+                HAVING AVG(r.Room_price) <= 1000 
+                ORDER BY avg_price ASC
+                LIMIT 10";
+                $stmt = $this->conn->prepare($sql);
+                $stmt->execute([]);
+                $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                break;
+            case 'popular':
+                $sql = "SELECT
+    p.Property_id,p.Property_name,p.Property_province,
+    p.Property_district,p.Property_subdistrict,p.Property_image,
+    h.Host_firstname,h.Host_lastname,
+    COALESCE(rs.avg_rating, 0) AS Rating,           
+    COALESCE(bc.total_bookings, 0) AS booking_count,
+    COALESCE(rs.review_count, 0) AS review_count
+    FROM property p
+    INNER JOIN host h ON p.Host_id = h.Host_id
+    LEFT JOIN (
+    SELECT 
+        Property_id, 
+        COUNT(*) AS total_bookings
+    FROM (
+        SELECT Property_id FROM booking WHERE Booking_status = 'successful'
+        UNION ALL
+        SELECT Property_id FROM walkin WHERE Walkin_status = 'successful'
+    ) AS all_bookings
+        GROUP BY Property_id
+    ) AS bc ON p.Property_id = bc.Property_id
+    LEFT JOIN (
+    SELECT
+        Property_id,
+        AVG(Rating) AS avg_rating,
+        COUNT(Review_id) AS review_count
+    FROM review
+    GROUP BY Property_id
+    ) AS rs ON p.Property_id = rs.Property_id
+    WHERE p.Property_status = 'approve'
+    ORDER BY booking_count DESC LIMIT 10;";
+                $stmt = $this->conn->prepare($sql);
+                $stmt->execute([]);
+                $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                break;
+            default:
+                $sql = "SELECT p.Property_id,p.Property_name,p.Property_province,
 p.Property_district,p.Property_subdistrict,p.Property_image,
 h.Host_firstname,h.Host_lastname,p.Property_image,
-AVG(rv.Rating) AS Rating 
+AVG(rv.Rating) AS Rating,
+COUNT(rv.Review_id) AS review_count 
         FROM property p
         INNER JOIN host h on p.Host_id = h.Host_id
         LEFT JOIN review rv on p.Property_id = rv.Property_id 
         WHERE p.Property_status = 'approve'";
-        $params = [];
-        if (!empty($searchTerm)) {
-            $sql .= "AND( p.Property_name LIKE ? OR p.Property_province LIKE ?)";
-            $likeTerm = "%" . $searchTerm . "%";
-            $params[] = $likeTerm;
-            $params[] = $likeTerm;
-        }
-        $sql .= "GROUP BY p.Property_id,p.Property_name,p.Property_province,p.Property_district,p.Property_subdistrict,h.Host_firstname,
+                $params = [];
+
+                $sql .= "AND( p.Property_name LIKE ? OR p.Property_province LIKE ?)";
+                $likeTerm = "%" . $searchTerm . "%";
+                $params[] = $likeTerm;
+                $params[] = $likeTerm;
+
+                $sql .= "GROUP BY p.Property_id,p.Property_name,p.Property_province,p.Property_district,p.Property_subdistrict,h.Host_firstname,
         h.Host_lastname,p.Property_image";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute($params);
-        $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                $stmt = $this->conn->prepare($sql);
+                $stmt->execute($params);
+                $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                break;
+        }
         return $products;
     }
     public function room_calendar($property_id)

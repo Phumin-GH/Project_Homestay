@@ -14,7 +14,6 @@ class Forgot_Password
         if (!$user) {
             return "ไม่พบข้อมูลผู้ใช้";
         }
-        // สร้าง token
         $token = bin2hex(random_bytes(16));
         $expires = date("Y-m-d H:i:s", strtotime("+30 minutes"));
         $stmt = $this->conn->prepare("SELECT COUNT(Expires_at) FROM user WHERE User_id = ?");
@@ -31,19 +30,19 @@ class Forgot_Password
             $stmt = $this->conn->prepare($sql);
             $stmt->execute([$user['User_id']]);
             $token = $stmt->fetchColumn();
-            return $token;
+            return ['success' => true, 'data' => $token];
         } catch (Exception $e) {
-            return $e->getMessage();
+            return ['success' => false, 'message' => $e->getMessage()];
         }
     }
     public function forgot_pwd_Host($Email)
     {
-        $Host_email = $_POST['Host_email'] ?? '';
+
         $stmt = $this->conn->prepare("SELECT Host_id FROM host WHERE Host_email=?");
         $stmt->execute([$Email]);
         $host = $stmt->fetch(PDO::FETCH_ASSOC);
         if (!$host) {
-            return "ไม่พบข้อมูลเจ้าของบ้าน";
+            return ['success' => false, 'message' => "ไม่พบข้อมูลเจ้าของบ้าน"];
         }
         // สร้าง token
         $token = bin2hex(random_bytes(16));
@@ -58,10 +57,14 @@ class Forgot_Password
         $stmt = $this->conn->prepare("UPDATE host SET Token =?, Expires_at = ? WHERE Host_id = ?");
         try {
             $stmt->execute([$token, $expires, $host['Host_id']]);
-            // $sql = "SELECT Token FROM user WHERE User_id =?";
-            return true;
+            $sql = "SELECT Token FROM host WHERE Host_id =?";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$host['Host_id']]);
+            $token = $stmt->fetchColumn();
+
+            return ['success' => true, 'data' => $token];
         } catch (Exception $e) {
-            return $e->getMessage();
+            return ['success' => false, 'message' => $e->getMessage()];
         }
     }
 }

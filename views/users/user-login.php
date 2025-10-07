@@ -10,19 +10,32 @@
     <link rel="website icon" type="png" href="/images/logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-    #password-strength {
-        width: 100%;
-        height: 8px;
-        background-color: #ddd;
-        border-radius: 4px;
-        margin-top: 5px;
+    .password-strength {
+        margin-top: 1rem;
+        padding: 1rem;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        border: 1px solid #e5e5e5;
     }
 
-    #strength-bar {
-        height: 100%;
-        width: 0%;
-        border-radius: 4px;
-        transition: width 0.3s ease;
+    #password-requirements {
+        font-size: 0.875rem;
+        color: #6c757d;
+    }
+
+    #password-requirements p {
+        margin: 0.5rem 0;
+        transition: color 0.3s;
+    }
+
+    #password-requirements p.valid {
+        color: #1e5470;
+        /* text-decoration: line-through; */
+    }
+
+    #password-requirements p.invalid {
+        color: #dc3545;
+        text-decoration: line-through;
     }
     </style>
 </head>
@@ -102,9 +115,14 @@
                     <label for="signup-password">Password</label>
                     <input type="password" id="signup-password" name="password" placeholder="Create a password"
                         required>
-                    <div id="password-strength">
-                        <div id="strength-bar"></div>
-                        <p id="password-message"></p>
+                    <div class="password-strength">
+                        <div id="password-requirements">
+                            <p id="check_length">อักษรภาษาอังกฤษ 8 ตัวขึ้นไป</p>
+                            <p id="check_lowcase">อักษรภาษาอังกฤษ a-z อย่างน้อย 1 ตัว</p>
+                            <p id="check_upcase">อักษรภาษาอังกฤษ A-Z อย่างน้อย 1 ตัว</p>
+                            <p id="check_special_character">อักขระพิเศษ !@#$%^&*()_\-+{}[\]|\\</p>
+                            <p id="check_number">ตัวเลข 0-9 อย่างน้อย 1 ตัว</p>
+                        </div>
                     </div>
                 </div>
                 <div class="form-group">
@@ -112,7 +130,7 @@
                     <input type="password" id="signup-confirm-password" name="confirm-password"
                         placeholder="Confirm your password" required>
                 </div>
-                <button type="submit" class="btn btn-primary" name="save_signup">
+                <button type="submit" class="btn btn-primary" name="save_signup" id="signup">
                     <i class="fas fa-user-plus"></i>
                     Create Account
 
@@ -218,59 +236,90 @@
             document.getElementById('signup-form').classList.remove('active');
         }
 
-        const message = document.getElementById("password-message");
-        const strengthBar = document.getElementById("strength-bar");
-        const btn = document.getElementById("signup-submit");
         const signUpPassword = document.getElementById("signup-password");
-        let strong =
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+{}[\]|\\,.?])[A-Za-z\d!@#$%^&*()_\-+{}[\]|\\,.?]{10,}$/;
-        let medium = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
-        let weak = /^.{1,}$/;
+        const password = document.getElementById('password-requirements');
+        const check_number = document.getElementById('check_number');
+        const check_length = document.getElementById('check_length');
+        const check_lowcase = document.getElementById('check_lowcase');
+        const check_upcase = document.getElementById('check_upcase');
+        const check_special_character = document.getElementById('check_special_character');
+        const hasNumber = /\d/;
+        const hasLowercase = /[a-z]/;
+        const hasUppercase = /[A-Z]/;
+        const hasSpecial = /[!@#$%^&*()_\-+{}[\]|\\,.?]/;
+        const hasEightChars = /.{8,}/;
+        const signupButton = document.getElementById('signup');
+        document.getElementById('signup-phone').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            value = value.slice(0, 10);
+            if (value.length > 0 && value[0] !== '0') {
+                e.target.value = '';
+                alert('รูปแบบเบอร์โทรไม่ถูกต้อง');
+                return;
+            }
+            let formatted = '';
+            for (let i = 0; i < value.length; i++) {
+                if (i > 0 && i % 4 === 0) formatted += ' ';
+                formatted += value[i];
+            }
+            e.target.value = formatted.trim();
+        });
         signUpPassword.addEventListener("input", () => {
             const pwd = signUpPassword.value;
-            if (pwd.match(strong)) {
-                strengthBar.style.width = "100%";
-                strengthBar.style.backgroundColor = "green";
-                message.innerHTML =
-                    "รหัสผ่านแข็งแรง: มีตัวเล็ก ตัวใหญ่ ตัวเลข อักขระพิเศษ และความยาว 10+";
-                message.style.color = "green";
-            } else if (pwd.match(medium)) {
-                strengthBar.style.width = "60%";
-                strengthBar.style.backgroundColor = "orange";
-                message.innerHTML = "รหัสผ่านปานกลาง: มีตัวเล็ก ตัวใหญ่ ตัวเลข และความยาว8ตัวขึ้นไป";
-                message.style.color = "orange";
-            } else if (pwd.match(weak)) {
-                strengthBar.style.width = "30%";
-                strengthBar.style.backgroundColor = "red";
-                message.innerHTML = "รหัสผ่านอ่อนแอ: ต้องมีตัวเล็ก ตัวใหญ่ ตัวเลข และความยาว8ตัวขึ้นไป";
-                message.style.color = "red";
+            if (hasLowercase.test(pwd)) {
+                check_lowcase.classList.add('invalid');
             } else {
-                strengthBar.style.width = "0%";
-                message.innerHTML = "รหัสผ่าน: ต้องมีตัวเล็ก ตัวใหญ่ ตัวเลข และความยาว8ตัวขึ้นไป";
-
+                check_lowcase.classList.remove('invalid');
             }
-        });
-        btn.addEventListener('click', (e) => {
-            e.preventDefault(); // ป้องกัน form submit
-
-            const pwd = signUpPassword.value; // เอาค่าปัจจุบัน
-            if (!pwd.match(strong)) {
-                // ป้องกัน form submit
-                e.preventDefault();
-                message.textContent =
-                    "รหัสผ่านต้องแข็งแรง: มีตัวเล็ก ตัวใหญ่ ตัวเลข อักขระพิเศษ และความยาว 10+";
-                message.style.color = "red";
-                passwordInput.focus();
+            if (hasUppercase.test(pwd)) {
+                check_upcase.classList.add('invalid');
+            } else {
+                check_upcase.classList.remove('invalid');
             }
+            if (hasNumber.test(pwd)) {
+                check_number.classList.add('invalid');
+            } else {
+                check_number.classList.remove('invalid');
+            }
+            if (hasSpecial.test(pwd)) {
+                check_special_character.classList.add('invalid');
+            } else {
+                check_special_character.classList.remove('invalid');
+            }
+            if (hasEightChars.test(pwd)) {
+                check_length.classList.add('invalid');
+            } else {
+                check_length.classList.remove('invalid');
+            }
+            const isPasswordValid = hasLowercase.test(pwd) &&
+                hasUppercase.test(pwd) &&
+                hasNumber.test(pwd) &&
+                hasSpecial.test(pwd) &&
+                hasEightChars.test(pwd);
+            signupButton.disabled = !isPasswordValid;
         });
-
     });
+    // btn.addEventListener('click', (e) => {
+    //     e.preventDefault(); // ป้องกัน form submit
+
+    //     const pwd = signUpPassword.value; // เอาค่าปัจจุบัน
+    //     if (!pwd.match(strong)) {
+    //         // ป้องกัน form submit
+    //         e.preventDefault();
+    //         message.textContent =
+    //             "รหัสผ่านต้องแข็งแรง: มีตัวเล็ก ตัวใหญ่ ตัวเลข อักขระพิเศษ และความยาว 10+";
+    //         message.style.color = "red";
+    //         passwordInput.focus();
+    //     }
+    // });
+
+
     document.addEventListener("DOMContentLoaded", () => {
         document.getElementById('forgot-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const User_email = e.target.email.value.trim();
             const msgEl = document.getElementById('msg');
-
+            alert('กำลังดำเนินการ');
             const res = await fetch('../../controls/forgot-password.php', {
                 method: 'POST',
                 headers: {
@@ -283,7 +332,7 @@
             const data = await res.json();
             msgEl.textContent = data.message;
             alert(data.message);
-            // window.location.reload();
+            window.location.reload();
         });
 
     });

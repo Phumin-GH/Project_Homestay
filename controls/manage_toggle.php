@@ -24,8 +24,8 @@ if (isset($_SESSION['Admin_email'])) {
         } elseif (isset($_POST['rej_host'])) {
             $reject = 'active';
             $result = $HostmanageHandler->reject_host($reject, $host_id);
-        } elseif (isset($_POST['del_user'])) {
-            $result = $HostmanageHandler->delete_host($host_id);
+            // } elseif (isset($_POST['del_host'])) {
+            //     $result = $HostmanageHandler->delete_host($host_id);
         } elseif (isset($_POST['edit_host'])) {
             $result = $HostmanageHandler->edit_host($firstname, $lastname, $email, $phone, $host_id);
         } elseif (isset($_POST['ban_host'])) {
