@@ -49,7 +49,7 @@ if (isset($_POST['house_id'])) {
     // }
 
     $images = $propertyHandle->get_Image($property_id);
-    $rooms = $propertyHandle->get_rooms($property_id);
+    // $rooms = $propertyHandle->get_rooms($property_id);
 }
 //edit-property.php
 if (isset($_POST['Property_id'])) {

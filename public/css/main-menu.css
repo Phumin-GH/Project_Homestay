@@ -109,7 +109,7 @@ header {
   border: none;
   color: #666;
   font-size: 1.5rem;
-  margin: 0 1.5rem 2rem;
+  margin: 0 1.5rem 0.5rem;
   cursor: pointer;
   padding: 0.5rem;
   border-radius: 6px;
@@ -178,6 +178,13 @@ header {
   background: #f8f9ff;
   border-radius: 8px;
   border: 1px solid #5e5b5b;
+  transition: all 0.3s ease; /* ← Added smooth transition */
+}
+
+.sidebar.collapsed .sidebar-footer {
+  left: 0.5rem; /* ← Adjusted margins for collapsed state */
+  right: 0.5rem;
+  padding: 0.75rem 0.5rem; /* ← Reduced padding */
 }
 
 .sidebar-footer div {
@@ -186,10 +193,21 @@ header {
   gap: 0.75rem;
   color: #484848;
   font-size: 0.875rem;
+  transition: all 0.3s ease; /* ← Added transition */
 }
+
+.sidebar.collapsed .sidebar-footer div {
+  justify-content: center; /* ← Center content when collapsed */
+  gap: 0;
+}
+
+.sidebar.collapsed .sidebar-footer .menu-label {
+  display: none; /* ← Hide text label when collapsed */
+}
+
 .sidebar-footer i {
-  /* display: flex; */
   margin: 0;
+  flex-shrink: 0; /* ← Prevent icon from shrinking */
 }
 
 /* Main Content */

@@ -246,23 +246,27 @@ require_once __DIR__ . '/../../api/get_listFavorites.php';
                 <i class="fas fa-bars"></i>
             </button>
             <ul class="sidebar-menu">
-                <li><a href="main-menu.php"><i class="fas fa-home"></i><span class="menu-label">Home</span></a></li>
-                <li><a href="profile.php"><i class="fas fa-user"></i><span class="menu-label">Profile</span></a></li>
-                <li><a href="favorites.php" class="active"><i class="fas fa-heart"></i><span
-                            class="menu-label">Favorite</span></a>
+                <li><a href="main-menu.php" title="หน้าหลัก"><i class="fa-solid fa-house"></i><span
+                            class="menu-label">หน้าหลัก</span></a></li>
+                <li><a href="profile.php" title="ข้อมูลผู้ใช้งาน"><i class="fas fa-user"></i><span
+                            class="menu-label">ข้อมูลผู้ใช้งาน</span></a></li>
+
+                <li><a href="favorites_rl.php" title="รายการโปรด" class="active"><i class="fas fa-heart"></i><span
+                            class="menu-label">รายการโปรด</span></a>
                 </li>
                 <li><a href="bookings.php"><i class="fas fa-calendar"></i><span class="menu-label"
-                            title="รายการจอง">Bookings</span></a>
+                            title="รายการจอง">รายการจอง</span></a>
                 </li>
-                <li><a href="../../controls/logout.php"><i class="fas fa-sign-out-alt"></i><span
-                            class="menu-label">Logout</span></a>
+
+                <li><a href="../../controls/logout.php" title="ออกจากระบบ"><i class="fas fa-sign-out-alt"></i><span
+                            class="menu-label">ออกจากระบบ</span></a>
                 </li>
             </ul>
-
             <div class="sidebar-footer">
                 <div>
                     <i class="fas fa-user-circle"></i>
-                    <span class="menu-label"><?php echo htmlspecialchars($_SESSION['User_email']); ?></span>
+                    <span class="menu-label"
+                        title="อีเมล"><?php echo htmlspecialchars($_SESSION['User_email']); ?></span>
                 </div>
             </div>
         </aside>

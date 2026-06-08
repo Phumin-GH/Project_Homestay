@@ -20,12 +20,12 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- FullCalendar -->
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
 
     <link rel="website icon" type="png" href="../../public/images/logo.png">
     <title>รายละเอียดที่พัก - <?php echo htmlspecialchars($property['Property_name']); ?></title>
-
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css' rel='stylesheet' />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <style>
         body {
@@ -920,6 +920,24 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
             border: none;
             border-radius: 8px;
         }
+
+        .btn-google-maps {
+            display: block;
+            text-align: center;
+            margin-top: 1rem;
+            padding: 12px;
+            background-color: #4285F4;
+            /* สีของ Google */
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+
+        .btn-google-maps:hover {
+            background-color: #357ae8;
+        }
     </style>
 </head>
 
@@ -941,22 +959,27 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                 <i class="fas fa-bars"></i>
             </button>
             <ul class="sidebar-menu">
-                <li><a href="main-menu.php" class="active" title="หน้าแดชบอร์ด"><i class="fas fa-home"></i><span
-                            class="menu-label">Home</span></a></li>
+                <li><a href="main-menu.php" title="หน้าหลัก" class="active"><i class="fa-solid fa-house"></i><span
+                            class="menu-label">หน้าหลัก</span></a></li>
                 <li><a href="profile.php" title="ข้อมูลผู้ใช้งาน"><i class="fas fa-user"></i><span
-                            class="menu-label">Profile</span></a></li>
-                <li><a href="favorites.php" title="รายการสถานที่พักที่ถูกใจ"><i class="fas fa-heart"></i><span
-                            class="menu-label">Favorite</span></a></li>
+                            class="menu-label">ข้อมูลผู้ใช้งาน</span></a></li>
+
+                <li><a href="favorites_rl.php" title="รายการโปรด"><i class="fas fa-heart"></i><span
+                            class="menu-label">รายการโปรด</span></a>
+                </li>
                 <li><a href="bookings.php"><i class="fas fa-calendar"></i><span class="menu-label"
-                            title="รายการจอง">Bookings</span></a></li>
+                            title="รายการจอง">รายการจอง</span></a>
+                </li>
+
                 <li><a href="../../controls/logout.php" title="ออกจากระบบ"><i class="fas fa-sign-out-alt"></i><span
-                            class="menu-label">Logout</span></a></li>
+                            class="menu-label">ออกจากระบบ</span></a>
+                </li>
             </ul>
             <div class="sidebar-footer">
                 <div>
                     <i class="fas fa-user-circle"></i>
                     <span class="menu-label"
-                        title="lllll"><?php echo htmlspecialchars($_SESSION['User_email']); ?></span>
+                        title="อีเมล"><?php echo htmlspecialchars($_SESSION['User_email']); ?></span>
                 </div>
             </div>
         </aside>
@@ -1020,9 +1043,15 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                             <i class="fas fa-concierge-bell feature-icon"></i>
                             <h3 class="feature-title">Service</h3>
                         </div>
-                        <p class="feature-description">
-                            <?php echo  nl2br(htmlspecialchars($property['Services_name'] . ': ' . "\n" . $property['Services_description'])); ?>
-                        </p>
+                        <?php if ($property['Services_name'] > 0): ?>
+                            <p class="feature-description">
+                                <?php echo nl2br(htmlspecialchars($property['Services_name'] . ': ' . "\n" . $property['Services_description'])); ?>
+                            </p>
+                        <?php else: ?>
+                            <p class="feature-description">
+                                ไม่มีข้อมูล
+                            </p>
+                        <?php endif; ?>
                     </div>
 
                     <div class="feature-item">
@@ -1030,12 +1059,17 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                             <i class="fas fa-hiking feature-icon"></i>
                             <h3 class="feature-title">Activity</h3>
                         </div>
-                        <p class="feature-description">
-                            <?php
-                            echo nl2br(htmlspecialchars($property['Activity_name'] . " :" . "\n" . $property['Activity_description']));
-                            ?>
-
-                        </p>
+                        <?php if ($property['Services_name'] > 0): ?>
+                            <p class="feature-description">
+                                <?php
+                                echo nl2br(htmlspecialchars($property['Activity_name'] . " :" . "\n" . $property['Activity_description']));
+                                ?>
+                            </p>
+                        <?php else: ?>
+                            <p class="feature-description">
+                                ไม่มีข้อมูล
+                            </p>
+                        <?php endif; ?>
                     </div>
                 </div>
                 <div class="section-title">ห้องพัก</div>
@@ -1052,7 +1086,9 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                                 <?php echo ($room['Room_status'] == 'Available' ? "ว่าง" : ($room['Room_status'] == 'Reserved' ? "ไม่ว่าง" : "ปิด")); ?>
                             </div>
                             <div class="room-price">฿<?php echo htmlspecialchars($room['Room_price']); ?> / คืน</div>
+
                             <div>ประเภท: <?php echo htmlspecialchars($room['Room_capacity'] ?? 'Standard'); ?></div>
+
                             <div>สิ่งอำนวยความสะดวก: <?php echo htmlspecialchars($room['Room_utensils'] ?? 'Standard'); ?>
                             </div>
                         </div>
@@ -1063,8 +1099,16 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                 </button> -->
                 <div class="booking-map-flex">
 
-                    <div class="map-section" style="flex:1; min-width:280px;">
+                    <!-- <div class="map-section" style="flex:1; min-width:280px;">
                         <div id="map" style="width:100%; height:660px; border-radius:10px; margin-top:0.7rem;"></div>
+                    </div> -->
+                    <div class="map-section">
+                        <div id="map" style="width:600px; height:750px; border-radius:10px;"></div>
+
+                        <a id="google-maps-link" href="#" target="_blank" class="btn-google-maps"
+                            style="display: block; text-align: center; margin-top: 1rem; padding: 12px; background-color: #4285F4; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                            📍 เปิดใน Google Maps
+                        </a>
                     </div>
                     <div class="section-title">
 
@@ -1253,7 +1297,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
     <!-- FullCalendar -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             var calendarEl = document.getElementById('calendar');
             const propertyId = "<?php echo $property['Property_id']; ?>";
             var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -1272,13 +1316,13 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
 
             });
             console.error(calendar);
-            // ⚡ Render Calendar เมื่อ Modal เปิด
             var modal = document.getElementById('calendarModal');
-            modal.addEventListener('shown.bs.modal', function() {
+            modal.addEventListener('shown.bs.modal', function () {
                 calendar.render();
             });
+
         });
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const rooms = document.querySelectorAll('.room-card');
             let selectedRoomId = null;
             let selectedPropertyId = null;
@@ -1316,7 +1360,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
             });
 
             rooms.forEach(card => {
-                card.addEventListener('click', function() {
+                card.addEventListener('click', function () {
                     if (card.dataset.status !== 'Available') return;
                     rooms.forEach(c => c.classList.remove('selected'));
                     card.classList.add('selected');
@@ -1330,7 +1374,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                     calculatePrice();
                 });
             });
-            checkinInput.addEventListener('change', function() {
+            checkinInput.addEventListener('change', function () {
                 if (checkinInput.value) {
                     // แปลงค่าวันที่เช็คอินเป็น Date object
                     let checkinDate = new Date(checkinInput.value);
@@ -1379,19 +1423,19 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                 diffDayDisplay.value = diffDays;
                 nightsDisplay.innerText = diffDays;
                 fetch('../../controls/bookings_room.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded' // หรือ 'application/json' แล้วแปลง body เป็น JSON.stringify(...)
-                        },
-                        body: new URLSearchParams({
-                            property_id: selectedPropertyId,
-                            room_id: selectedRoomId,
-                            nights: diffDays,
-                            guests: guestsInput.value,
-                            check_in_date: checkinInput.value,
-                            check_out_date: checkoutInput.value
-                        })
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded' // หรือ 'application/json' แล้วแปลง body เป็น JSON.stringify(...)
+                    },
+                    body: new URLSearchParams({
+                        property_id: selectedPropertyId,
+                        room_id: selectedRoomId,
+                        nights: diffDays,
+                        guests: guestsInput.value,
+                        check_in_date: checkinInput.value,
+                        check_out_date: checkoutInput.value
                     })
+                })
                     .then(response => {
                         if (!response.ok) throw new Error('Network response was not ok');
                         return response.json();
@@ -1421,7 +1465,6 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                     .catch(error => {
 
                         console.error('Fetch error:', error);
-
                         totalPriceDisplay.innerText = '0.00';
                         total_price.value = '0.00';
                         bookingMessage.innerText = 'เกิดข้อผิดพลาด: ' + error;
@@ -1433,7 +1476,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
 
             // Add ripple effect to buttons
             document.querySelectorAll('.btn').forEach(button => {
-                button.addEventListener('click', function(e) {
+                button.addEventListener('click', function (e) {
                     addRipple(this, e);
                 });
             });
@@ -1459,7 +1502,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                 console.error('No payment buttons found!');
             } else {
                 payButtons.forEach(button => {
-                    button.addEventListener('click', function(e) {
+                    button.addEventListener('click', function (e) {
                         // เอา class selected ออกจากทุกปุ่ม
                         payButtons.forEach(btn => btn.classList.remove('selected'));
                         // ใส่ class ให้ปุ่มที่เลือก
@@ -1474,27 +1517,25 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
             }
 
             const ConfirmBtn = document.getElementById('confirmBtn');
-            ConfirmBtn.addEventListener('click', function(e) {
-
+            ConfirmBtn.addEventListener('click', function (e) {
                 if (confirm('คุณยืนยันต้องการชำระใช่ไหม?')) {
                     //ตรวจสอบ room_id และ วันที่เช็คอิน,วันที่เช็คเอ้าท์ แล้วไม่เป็นค่าว่าง 
                     fetch('../../controls/bookings_room.php', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded'
-                            },
-                            //ส่งข้อมูลใน body ไปที่โฟลเดอร์ controls/bookings_room.php
-                            body: new URLSearchParams({
-                                room_id: selectedRoomId,
-                                property_id: selectedPropertyId,
-                                check_in_date: checkinInput.value,
-                                check_out_date: checkoutInput.value,
-                                nights: diffDayDisplay.value,
-                                guests: guestsInput.value,
-                                total_price: prices_amount.value,
-                                submit_onl: true
-                            })
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: new URLSearchParams({
+                            room_id: selectedRoomId,
+                            property_id: selectedPropertyId,
+                            check_in_date: checkinInput.value,
+                            check_out_date: checkoutInput.value,
+                            nights: diffDayDisplay.value,
+                            guests: guestsInput.value,
+                            total_price: prices_amount.value,
+                            submit_onl: true
                         })
+                    })
                         //ผลลัพธ์
                         .then(response => {
                             //ตรวจสอบค่าผลลัพธ์ที่เกี่ยวNetwork ถ้ามีปัญหาให้แจ้ง network response was not ok
@@ -1511,18 +1552,18 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                                 const bookingId = data.booking_id;
                                 if (!isNaN(latestTotalPrice) && latestTotalPrice > 0) {
                                     fetch('../../controls/bookings_room.php', {
-                                            method: 'POST',
-                                            headers: {
-                                                'Content-Type': 'application/x-www-form-urlencoded'
-                                            },
-                                            body: 'total_price=' + encodeURIComponent(
-                                                    latestTotalPrice) +
-                                                '&booking_id=' + encodeURIComponent(
-                                                    bookingId) +
-                                                '&method=' + encodeURIComponent(
-                                                    selectedPayment) + '&submit_onl=' +
-                                                encodeURIComponent(true)
-                                        })
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/x-www-form-urlencoded'
+                                        },
+                                        body: 'total_price=' + encodeURIComponent(
+                                            latestTotalPrice) +
+                                            '&booking_id=' + encodeURIComponent(
+                                                bookingId) +
+                                            '&method=' + encodeURIComponent(
+                                                selectedPayment) + '&submit_onl=' +
+                                            encodeURIComponent(true)
+                                    })
                                         .then(response => response.json())
                                         .then(data => {
                                             if (data.gateway === "qrcode") {
@@ -1587,7 +1628,6 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
             //ปุ่มFavorite
             const favoriteBtn = <?php echo json_encode($fav_btn); ?>;
             const buttons = document.querySelectorAll(".favorite-btn");
-
             buttons.forEach(button => {
                 const houseId = button.dataset.propertyId;
                 if (favoriteBtn.includes(parseInt(houseId))) {
@@ -1598,19 +1638,17 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                 button.addEventListener("click", async () => {
                     const action = button.dataset.method;
                     fetch("../../controls/list_fav.php", {
-                            method: "POST",
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded'
-                            },
-                            body: new URLSearchParams({
-                                property_id: houseId,
-                                action: action
-                            })
-
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: new URLSearchParams({
+                            property_id: houseId,
+                            action: action
                         })
+                    })
                         .then(response => response.json())
                         .then(result => {
-
                             if (result.success) {
                                 // toggle icon
                                 if (result.action === 'added') {
@@ -1648,7 +1686,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
         function closeConfirm_Booking() {
             document.getElementById('Confirm_booking').style.display = 'none';
         }
-        window.onclick = function(event) {
+        window.onclick = function (event) {
             const modal = document.getElementById('Confirm_booking');
             if (event.target === modal) {
                 closeConfirm_Booking();
@@ -1690,20 +1728,119 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
             interval = setInterval(nextSlide, 8000); // ให้เวลานานขึ้นหลังกดเอง
         }
         //สคิปต์ดึงค่าละติจูดและลองจิจูดมาแสดง
-        const lat = <?php echo isset($house['Property_latitude']) ? floatval($house['Property_latitude']) : 13.7563; ?>;
-        const lng =
-            <?php echo isset($house['Property_longitude']) ? floatval($house['Property_longitude']) : 100.5018; ?>;
-        const map = L.map('map').setView([lat, lng], 20);
+        // const lat = <?php /*echo isset($house['Property_latitude']) ? floatval($house['Property_latitude']) : 13.7563;*/ ?>;
+        // const lng =
+        //     <?php /*echo isset($house['Property_longitude']) ? floatval($house['Property_longitude']) : 100.5018;*/ ?>;
+        // const map = L.map('map').setView([lat, lng], 20);
+        // const location_name = <?php /*echo json_encode($property['Property_name'], JSON_UNESCAPED_UNICODE);*/ ?>;
+        // L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        //     attribution: '&copy; OpenStreetMap contributors'
+        // }).addTo(map);
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(map);
+        // L.marker([lat, lng])
+        //     .addTo(map)
+        //     .bindPopup(location_name);
+        // 3. ⚠️ สำคัญ: เปลี่ยนเป็น Access Token ของคุณ
 
-        L.marker([lat, lng]).addTo(map);
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+            // --- 1. ดึงข้อมูลจาก PHP ---
+            const lat = <?php echo isset($house['Property_latitude']) ? floatval($house['Property_latitude']) : 13.7563; ?>;
+            const lng = <?php echo isset($house['Property_longitude']) ? floatval($house['Property_longitude']) : 100.5018; ?>;
+            const location_name = <?php echo json_encode($property['Property_name'], JSON_UNESCAPED_UNICODE); ?>;
+
+            // --- 2. ⚠️ สำคัญ: เปลี่ยนเป็น Access Token ของคุณ ---
+            mapboxgl.accessToken = 'vvvvv'; // <<-- ใส่ Token ของคุณที่นี่
+
+            // --- 3. กำหนดตำแหน่งปลายทาง [Longitude, Latitude] ---
+            const destinationCoords = [lng, lat];
+
+            // --- 4. สร้างแผนที่เริ่มต้น ---
+            const map = new mapboxgl.Map({
+                container: 'map',
+                style: 'mapbox://styles/mapbox/streets-v12', // สไตล์แผนที่
+                center: destinationCoords, // ให้จุดหมายเป็นจุดศูนย์กลางเริ่มต้น
+                zoom: 12
+            });
+
+            // เพิ่มปุ่มควบคุมการซูม
+            map.addControl(new mapboxgl.NavigationControl());
+
+            // --- 5. ฟังก์ชันหลักสำหรับขอตำแหน่งและแสดงเส้นทาง ---
+            async function showRoute() {
+                try {
+                    // 5.1 ขอตำแหน่งปัจจุบันของผู้ใช้
+                    const position = await new Promise((resolve, reject) => {
+                        navigator.geolocation.getCurrentPosition(resolve, reject, {
+                            enableHighAccuracy: true
+                        });
+                    });
+                    const startCoords = [position.coords.longitude, position.coords.latitude];
+
+                    // 5.2 เรียกใช้ Mapbox Directions API
+                    const response = await fetch(
+                        `https://api.mapbox.com/directions/v5/mapbox/driving/${startCoords[0]},${startCoords[1]};${destinationCoords[0]},${destinationCoords[1]}?steps=true&geometries=geojson&access_token=${mapboxgl.accessToken}`
+                    );
+                    const data = await response.json();
+                    const routeCoordinates = data.routes[0].geometry.coordinates;
+
+                    // 5.3 สร้าง GeoJSON object สำหรับวาดเส้นทาง
+                    const routeGeoJSON = {
+                        'type': 'Feature',
+                        'properties': {},
+                        'geometry': {
+                            'type': 'LineString',
+                            'coordinates': routeCoordinates
+                        }
+                    };
+
+                    // 5.4 วาดเส้นทางลงบนแผนที่
+                    if (map.getSource('route')) {
+                        map.getSource('route').setData(routeGeoJSON);
+                    } else {
+                        map.addLayer({
+                            'id': 'route',
+                            'type': 'line',
+                            'source': { 'type': 'geojson', 'data': routeGeoJSON },
+                            'layout': { 'line-join': 'round', 'line-cap': 'round' },
+                            'paint': { 'line-color': '#3887be', 'line-width': 5, 'line-opacity': 0.75 }
+                        });
+                    }
+
+                    // 5.5 ปักหมุดที่จุดเริ่มต้นและปลายทาง
+                    new mapboxgl.Marker({ color: 'green' }).setLngLat(startCoords).setPopup(new mapboxgl.Popup().setHTML("<h3>📍 ตำแหน่งของคุณ</h3>")).addTo(map);
+                    new mapboxgl.Marker({ color: 'red' }).setLngLat(destinationCoords).setPopup(new mapboxgl.Popup().setHTML(`<h3>🚗 ${location_name}</h3>`)).addTo(map);
+
+                    // 5.6 ปรับมุมมองให้เห็นเส้นทางทั้งหมด
+                    const bounds = new mapboxgl.LngLatBounds(startCoords, destinationCoords);
+                    map.fitBounds(bounds, { padding: 80 }); // เพิ่ม padding ให้สวยงาม
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    // ถ้าเกิด Error (เช่น ผู้ใช้ไม่ให้สิทธิ์) ให้ปักหมุดแค่ที่ปลายทาง
+                    new mapboxgl.Marker({ color: 'red' }).setLngLat(destinationCoords).setPopup(new mapboxgl.Popup().setHTML(`<h3>🚗 ${location_name}</h3>`)).addTo(map);
+                    alert('ไม่สามารถเข้าถึงตำแหน่งปัจจุบันได้ จะแสดงเฉพาะตำแหน่งของที่พัก');
+                }
+            }
+            const googleMapsButton = document.getElementById('google-maps-link');
+
+            // 2.2 สร้าง URL ของ Google Maps สำหรับ "แสดงเส้นทาง"
+            // รูปแบบ: http://googleusercontent.com/maps/api/directions/json?origin=<start>&destination=<end>
+            const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+
+            // 2.3 นำ URL ที่สร้างเสร็จแล้วไปใส่ใน href ของปุ่ม
+            googleMapsButton.href = googleMapsUrl;
+
+            // --- 6. เรียกใช้ฟังก์ชันหลักเมื่อแผนที่โหลดเสร็จ ---
+            map.on('load', () => {
+                showRoute();
+            });
+        });
 
         const propertyId = "<?php echo $property['Property_id']; ?>";
         const formReviews = document.getElementById('reviewForm');
-        formReviews.addEventListener('submit', function(e) {
+        formReviews.addEventListener('submit', function (e) {
             e.preventDefault();
             const formData = new FormData(formReviews);
             formData.append('property_id', propertyId);
@@ -1729,17 +1866,17 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
 
             });
         });
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const allDropdownToggles = document.querySelectorAll('.dropdown-toggle');
             allDropdownToggles.forEach(toggle => {
-                toggle.addEventListener('click', function(event) {
+                toggle.addEventListener('click', function (event) {
                     event.stopPropagation();
                     const dropdownMenu = this.nextElementSibling;
                     dropdownMenu.classList.toggle('show');
                 });
             });
 
-            window.addEventListener('click', function(event) {
+            window.addEventListener('click', function (event) {
                 const openDropdowns = document.querySelectorAll('.dropdown-menu.show');
                 openDropdowns.forEach(menu => {
                     if (!menu.parentElement.contains(event.target)) {
@@ -1755,7 +1892,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
             const reason_raw = document.getElementById('reason');
             const review_id_raw = document.getElementById('reviewIdInput');
             report_btn.forEach(btn => {
-                btn.onclick = function() {
+                btn.onclick = function () {
                     const reviewId = this.dataset.reviewId;
                     document.getElementById('reviewIdInput').value = reviewId;
                     modal.style.display = "block";
@@ -1783,16 +1920,16 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                 const review_id = review_id_raw.value;
 
                 fetch('../../controls/report_action.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        body: new URLSearchParams({
-                            review_id: review_id,
-                            reason: reason,
-                            submit_rv_user: true
-                        })
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams({
+                        review_id: review_id,
+                        reason: reason,
+                        submit_rv_user: true
                     })
+                })
                     .then(res => {
                         if (!res.ok) throw new Error('network response was not ok');
                         return res.json();

@@ -36,20 +36,7 @@ class Review
         $all_reviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $all_reviews;
     }
-    public function get_violation()
-    {
-        $sql = "SELECT rp.Report_id,rv.Property_id,rp.Review_id,reporter.User_email AS Reported_by,owner.User_email AS Reported_user,rp.Report_reason,rp.Create_at
-        FROM review_reports rp
-        INNER JOIN review rv ON rp.Review_id = rv.Review_id
-        INNER JOIN property p ON rv.Property_id = p.Property_id 
-        INNER JOIN user owner ON  rv.User_id = owner.User_id
-        INNER JOIN user reporter ON  rp.User_id = reporter.User_id
-        WHERE rp.Report_status = 'pending'";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([]);
-        $violation = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        return $violation;
-    }
+
     public function get_user_id($user_email)
     {
         $sql = "SELECT User_id FROM user WHERE User_email=?";

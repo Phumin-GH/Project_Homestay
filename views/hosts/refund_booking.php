@@ -15,7 +15,7 @@ require_once  __DIR__ . "/../../controls/log_hosts.php";
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Refund Management - Host Dashboard</title>
+    <title>อนุมัติคำขอเงิน - Host Dashboard</title>
     <link rel="website icon" type="png" href="../../public/images/logo.png">
     <link rel="stylesheet" href="../../public/css/style.css">
     <link rel="stylesheet" href="../../public/css/main-menu.css">
@@ -299,27 +299,26 @@ require_once  __DIR__ . "/../../controls/log_hosts.php";
                 <li><a href="add-property.php" title="ลงทะเบียนบ้านพักใหม่"><i class="fas fa-user-plus"></i>
                         <span class="menu-label">ลงทะเบียนบ้านพักใหม่</span></a></li>
                 <?php endif; ?>
-                <li><a href="host-dashboard.php" title="รายงาน"><i class="fa-solid fa-ranking-star"></i><span
-                            class="menu-label">Dashboard</span></a></li>
-                <li><a href="profile.php" title="โปรไฟล์"><i class="fas fa-user"></i><span
-                            class="menu-label">Profile</span></a>
+                <li><a href="host-dashboard.php" title="รายงานข้อมูล" class="active"><i
+                            class="fa-solid fa-ranking-star"></i><span class="menu-label">รายงานข้อมูล</span></a></li>
+                <li><a href="profile.php" title="ข้อมูลส่วนตัว"><i class="fas fa-user"></i><span
+                            class="menu-label">ข้อมูลส่วนตัว</span></a>
                 </li>
                 <?php if ($hosts['Host_Status'] == 'active'): ?>
                 <li><a href="manage-property.php" title="จัดการบ้านพัก"><i class="fas fa-plus"></i><span
-                            class="menu-label">Manage
-                            Property</span></a></li>
+                            class="menu-label">จัดการบ้านพัก</span></a></li>
                 <li><a href="list_booking.php" title="รายการที่จองเข้ามา"><i class="fa-solid fa-list-ul"></i><span
-                            class="menu-label">List Bookings</span></a></li>
+                            class="menu-label">รายการการจอง</span></a></li>
                 <li><a href="refund_booking.php" title="การขอคืนเงิน" class="active"><i
-                            class="fas fa-hand-holding-usd"></i></i><span class="menu-label">List Refund</span></a>
+                            class="fa-solid fa-money-bill-transfer"></i><span class="menu-label">การขอคืนเงิน</span></a>
                 </li>
-                <li><a href="walkin-property.php" title="การจอง"><i class="fa-solid fa-person-walking"></i><span
-                            class="menu-label">Walkin</span></a></li>
+                <li><a href="walkin-property.php" title="รายการจองบ้านพัก"><i
+                            class="fa-solid fa-person-walking"></i><span class="menu-label">รายการจองบ้านพัก</span></a>
+                </li>
                 <?php endif; ?>
                 <li><a href="../../controls/logout.php" title="ออกจากระบบ"><i class="fas fa-sign-out-alt"></i><span
-                            class="menu-label">Logout</span></a></li>
+                            class="menu-label">ออกจากระบบ</span></a></li>
             </ul>
-
             <div class="sidebar-footer">
                 <div>
                     <i class="fas fa-user-circle"></i>
@@ -354,13 +353,13 @@ require_once  __DIR__ . "/../../controls/log_hosts.php";
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>House</th>
-                                    <th>User</th>
-                                    <th>Date</th>
-                                    <th>Amount</th>
-                                    <th>Reason</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
+                                    <th>บ้านพัก</th>
+                                    <th>ผู้ใช้</th>
+                                    <th>วันที่</th>
+                                    <th>จำนวนเงิน</th>
+                                    <th>เหตุผล</th>
+                                    <th>สถานะ</th>
+                                    <th>จัดการ</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -426,9 +425,9 @@ require_once  __DIR__ . "/../../controls/log_hosts.php";
                         <?php else: ?>
                         <div class="empty-state">
                             <i class="ph ph-heart-break"></i>
-                            <h3>No Favorites Yet</h3>
-                            <p>Start exploring and save your favorite homestays to see them here.</p>
-                            <a href="host-dashboard.php" class="btn btn-primary">Browse Homestays</a>
+                            <h3>ไม่พบรายการขอคืนเงิน</h3>
+                            <p>ยังไม่มีคำขอคืนเงินในขณะนี้ กรุณาตรวจสอบอีกครั้งภายหลัง</p>
+                            <a href="host-dashboard.php" class="btn btn-primary">รายงานข้อมูล</a>
                         </div>
                         <?php endif; ?>
                     </div>
@@ -439,13 +438,13 @@ require_once  __DIR__ . "/../../controls/log_hosts.php";
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>House</th>
-                                    <th>User</th>
-                                    <th>Date</th>
-                                    <th>Amount</th>
-                                    <th>Reason</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
+                                    <th>บ้านพัก</th>
+                                    <th>ผู้ใช้</th>
+                                    <th>วันที่</th>
+                                    <th>จำนวนเงิน</th>
+                                    <th>เหตุผล</th>
+                                    <th>สถานะ</th>
+                                    <th>จัดการ</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -479,9 +478,9 @@ require_once  __DIR__ . "/../../controls/log_hosts.php";
                         <?php else: ?>
                         <div class="empty-state">
                             <i class="ph ph-heart-break"></i>
-                            <h3>No Favorites Yet</h3>
-                            <p>Start exploring and save your favorite homestays to see them here.</p>
-                            <a href="host-dashboard.php" class="btn btn-primary">Browse Homestays</a>
+                            <h3>ไม่พบรายการขอคืนเงิน</h3>
+                            <p>ยังไม่มีคำขอคืนเงินในขณะนี้ กรุณาตรวจสอบอีกครั้งภายหลัง</p>
+                            <a href="host-dashboard.php" class="btn btn-primary">รายงานข้อมูล</a>
                         </div>
                         <?php endif; ?>
                     </div>
@@ -491,13 +490,13 @@ require_once  __DIR__ . "/../../controls/log_hosts.php";
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>House</th>
-                                    <th>User</th>
-                                    <th>Date</th>
-                                    <th>Amount</th>
-                                    <th>Reason</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
+                                    <th>บ้านพัก</th>
+                                    <th>ผู้ใช้</th>
+                                    <th>วันที่</th>
+                                    <th>จำนวนเงิน</th>
+                                    <th>เหตุผล</th>
+                                    <th>สถานะ</th>
+                                    <th>จัดการ</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -531,9 +530,9 @@ require_once  __DIR__ . "/../../controls/log_hosts.php";
                         <?php else: ?>
                         <div class="empty-state">
                             <i class="ph ph-heart-break"></i>
-                            <h3>No Favorites Yet</h3>
-                            <p>Start exploring and save your favorite homestays to see them here.</p>
-                            <a href="host-dashboard.php" class="btn btn-primary">Browse Homestays</a>
+                            <h3>ไม่พบรายการขอคืนเงิน</h3>
+                            <p>ยังไม่มีคำขอคืนเงินในขณะนี้ กรุณาตรวจสอบอีกครั้งภายหลัง</p>
+                            <a href="host-dashboard.php" class="btn btn-primary">รายงานข้อมูล</a>
                         </div>
                         <?php endif; ?>
                     </div>

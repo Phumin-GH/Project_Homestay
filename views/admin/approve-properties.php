@@ -106,7 +106,12 @@ require_once __DIR__ . '/../../api/get_ListVerify.php';
             border-radius: 8px;
             margin-left: 1rem;
         }
-
+        .property-images-grid {
+            display: grid;
+            grid-template-columns: 2fr 2fr;
+            gap: 1rem;
+            height: 300px;
+        }
         .host-info {
             background: #e3f2fd;
             border-radius: 8px;
@@ -197,7 +202,11 @@ require_once __DIR__ . '/../../api/get_ListVerify.php';
             .admin-container {
                 padding: 1rem;
             }
-
+            .property-images-grid {
+                grid-template-columns: 1fr;
+                height: auto;
+                gap: 1rem;
+            }
             .form-row-4 {
                 grid-template-columns: 1fr;
             }
@@ -233,13 +242,14 @@ require_once __DIR__ . '/../../api/get_ListVerify.php';
 
         .modal-content {
             background-color: #fff;
-            margin: 10% auto;
+            margin: 5% auto;
             padding: 20px;
-            border-radius: 8px;
-            width: 900px;
+            border-radius: 12px;
+            width: 1100px;
+            max-width: 95vw;
             position: relative;
             overflow-y: auto;
-            max-height: 55vh;
+            max-height: 80vh;
         }
 
         .close {
@@ -310,6 +320,123 @@ require_once __DIR__ . '/../../api/get_ListVerify.php';
             outline: none;
             border-color: #1e5470;
         }
+
+        /* CSS สำหรับรูปใน Modal */
+        .modal-header-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid #e5e5e5;
+        }
+
+        .property-info-header {
+            text-align: center;
+        }
+
+        .property-info-header h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1e5470;
+            margin-bottom: 0.5rem;
+        }
+
+        .property-info-header p {
+            color: #666;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .property-images-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1rem;
+            height: 300px;
+        }
+
+        .main-image {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .main-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .main-image img:hover {
+            transform: scale(1.02);
+        }
+
+        .side-images {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .side-image {
+            flex: 1;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .side-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .side-image img:hover {
+            transform: scale(1.05);
+        }
+
+        /* Responsive สำหรับ Modal */
+        @media (max-width: 1200px) {
+            .modal-content {
+                width: 95vw;
+                margin: 2% auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .property-images-grid {
+                grid-template-columns: 1fr;
+                height: auto;
+                gap: 1rem;
+            }
+
+            .main-image {
+                height: 250px;
+            }
+
+            .side-images {
+                flex-direction: row;
+                height: 120px;
+            }
+
+            .side-image {
+                flex: 1;
+            }
+
+            .modal-content {
+                margin: 1% auto;
+                padding: 15px;
+                max-height: 95vh;
+            }
+
+            .property-info-header h2 {
+                font-size: 1.5rem;
+            }
+        }
     </style>
 </head>
 
@@ -331,23 +458,25 @@ require_once __DIR__ . '/../../api/get_ListVerify.php';
                 <i class="fas fa-bars"></i>
             </button>
             <ul class="sidebar-menu">
-                <li><a href="admin-dashboard.php" title="หน้าแดชบอร์ด"><i class="fa-solid fa-ranking-star"></i><span
-                            class="menu-label">Dashboard</span></a></li>
-                <li><a href="profile.php" title="ข้อมูลผู้ใช้งาน"><i class="fas fa-user"></i><span
-                            class="menu-label">Profile</span></a></li>
+                <li><a href="admin-dashboard.php" title="รายงานข้อมูล"><i class="fa-solid fa-ranking-star"></i><span
+                            class="menu-label">รายงานข้อมูล</span></a></li>
+                <li><a href="profile.php" title="ข้อมูลส่วนตัว"><i class="fas fa-user"></i><span
+                            class="menu-label">ข้อมูลส่วนตัว</span></a></li>
                 <li><a href="approve-properties.php" title="อนุมัติสถานที่พัก" class="active"><i
-                            class="fa-solid fa-house-medical-circle-check"></i><span class="menu-label">Approve
-                            Properties</span></a></li>
+                            class="fa-solid fa-house-medical-circle-check"></i><span
+                            class="menu-label">อนุมัติสถานที่พัก</span></a></li>
                 <li><a href="manage-hosts.php" title="จัดการผู้ใช้งานสถานที่พัก"><i class="fas fa-users"></i><span
-                            class="menu-label">Hosts</span></a></li>
+                            class="menu-label">ข้อมูลเจ้าของบ้านที่พัก</span></a></li>
                 <li><a href="manage-users.php" title="จัดการผู้ใช้งาน"><i class="fas fa-user-friends"></i><span
-                            class="menu-label">Users</span></a></li>
+                            class="menu-label">ข้อมูลผู้ใช้</span></a></li>
                 <li><a href="manage-refund.php" title="คำร้องขอคืนเงินผู้ใช้งาน"><i
-                            class="fas fa-hand-holding-usd"></i><span class="menu-label">Refund</span></a></li>
-                <li><a href="manage-reviews.php" title="รีวิวจากผู้ใช้งาน"><i class="fas fa-star"></i><span
-                            class="menu-label">Reviews</span></a></li>
+                            class="fas fa-hand-holding-usd"></i><span
+                            class="menu-label">จัดการคำร้องขอคืนเงิน</span></a></li>
+                <li><a href="manage-reviews.php" title="รีวิวจากผู้ใช้"><i class="fas fa-star"></i><span
+                            class="menu-label">รีวิวจากผู้ใช้งาน</span></a></li>
                 <li><a href="violations.php" title="จัดการเรื่องร้องเรียน"><i
-                            class="fas fa-exclamation-triangle"></i><span class="menu-label">Violations</span></a></li>
+                            class="fas fa-exclamation-triangle"></i><span
+                            class="menu-label">จัดการเรื่องร้องเรียน</span></a></li>
                 <li><a href="../../controls/logout.php" title="ออกจากระบบ"><i class="fas fa-sign-out-alt"></i><span
                             class="menu-label">Logout</span></a></li>
             </ul>
@@ -391,7 +520,8 @@ require_once __DIR__ . '/../../api/get_ListVerify.php';
                                         </div>
                                         <div><strong>พิกัด:</strong>
                                             <?php echo htmlspecialchars($property['Property_latitude']); ?>,
-                                            <?php echo htmlspecialchars($property['Property_longitude']); ?></div>
+                                            <?php echo htmlspecialchars($property['Property_longitude']); ?>
+                                        </div>
                                         <button class="action-btn contact-btn"
                                             data-property-id="<?php echo htmlspecialchars($property['Property_id']); ?>">รายละเอียดห้องพัก</button>
                                     </div>
@@ -432,10 +562,19 @@ require_once __DIR__ . '/../../api/get_ListVerify.php';
                             </div>
                             <div id="cancelModal_<?php echo $property['Property_id']; ?>" class="modal">
                                 <div class="modal-content">
+                                    <span class="close">&times;</span>
+                                    <div class="property-images-grid">
+                                        <div class="main-image">
+                                            <img src="../../public/<?php echo htmlspecialchars($property['Property_image']); ?>" alt="<?php echo htmlspecialchars($property['Property_name']); ?>">
+                                            <img src="https://th.bing.com/th/id/OIP.raw5N8HMiKREpaKWzemSUAHaE8?w=230&h=180&c=7&r=0&o=7&cb=12&pid=1.7&rm=3" alt="youtube">
+                                            <img src="https://th.bing.com/th/id/OIP._lsJK_frfxC6lMUBSr9TQAHaE8?w=280&h=186&c=7&r=0&o=7&cb=12&pid=1.7&rm=3" alt="youtube">
+                                            <img src="https://th.bing.com/th/id/OIP.7KFn_icf-EvwJGS2E8p5XgHaE6?w=280&h=186&c=7&r=0&o=7&cb=12&pid=1.7&rm=3" alt="youtube">
+                                        </div>
+                                        
+                                    </div>
                                     <label class="form-label">
                                         ห้องพัก <span class="required">*</span>
                                     </label>
-                                    <span class="close">&times;</span>
                                     <?php foreach ($property['rooms'] as $room): ?>
                                         <div class="form-row-4">
                                             <label class="form-label-detail">เลขห้อง:<input type="text" placeholder="1"
@@ -476,10 +615,10 @@ require_once __DIR__ . '/../../api/get_ListVerify.php';
 
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const refund_btn = document.querySelectorAll('.contact-btn');
             refund_btn.forEach(btn => {
-                btn.onclick = function() {
+                btn.onclick = function () {
                     // const propertyId = this.closest('.property-card')
                     //     .querySelector('form').action.split('=')[1];
                     const propertyId = this.dataset.propertyId;

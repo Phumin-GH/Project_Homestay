@@ -5,8 +5,10 @@ if (session_start() === PHP_SESSION_NONE) {
 header('Content-Type: application/json');
 require_once  __DIR__ . "/../model/config/db_connect.php";
 require_once  __DIR__ . "/../model/dao/Review.php";
+require_once  __DIR__ . "/../model/dao/Report.php";
 try {
     $reviewsHandler = new Review($conn);
+    $reportHandler = new Report($conn);
     if (isset($_POST['submit_del_rv'])) {
         if (empty($_POST['review_id'])) {
             echo json_encode(["message" => "ไม่พบข้อมูลรีวิว", "success" => false]);
@@ -96,6 +98,34 @@ try {
         } else {
             echo json_encode(['message' => "ไม่พบการรายงาน", "success" => false]);
             exit();
+        }
+    }
+    //จัดการ Report
+    if (isset($_POST['submit_rp']) && isset($_POST['action'])) {
+        if (empty($_POST['review_id'])) {
+            echo json_encode(["message" => "ไม่พบข้อมูลรีวิว", "success" => false]);
+            exit();
+        }
+        $review_id = $_POST['review_id'];
+        $action = $_POST['action'] ?? '';
+        if ($action === 'nothing') {
+            $result = $reportHandler->action_nothing($review_id);
+            if ($result === true) {
+                echo json_encode(["message" => "อัปเดตสถานะเรียบร้อย", "success" => true]);
+                exit();
+            } else {
+                echo json_encode(["message" => $result, "success" => false]);
+                exit();
+            }
+        } elseif ($action === 'taken') {
+            $result = $reportHandler->action_taken($review_id);
+            if ($result === true) {
+                echo json_encode(["message" => "อัปเดตสถานะเรียบร้อย", "success" => true]);
+                exit();
+            } else {
+                echo json_encode(["message" => $result, "success" => false]);
+                exit();
+            }
         }
     }
 } catch (Exception $e) {

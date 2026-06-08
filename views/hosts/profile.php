@@ -14,7 +14,7 @@ if (!isset($_SESSION['Host_email'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile - Homestay Booking</title>
+    <title>ข้อมูลส่วนตัว - Homestay Booking</title>
     <link rel="website icon" type="png" href="../../public/images/logo.png">
     <link rel="stylesheet" href="../../public/css/style.css">
     <link rel="stylesheet" href="../../public/css/profile.css">
@@ -42,34 +42,32 @@ if (!isset($_SESSION['Host_email'])) {
             </button>
             <ul class="sidebar-menu">
                 <?php if ($hosts['Host_Status'] == 'pending_verify'): ?>
-                <li><a href="add-property.php" title="ลงทะเบียนบ้านพักใหม่"><i class="fas fa-user-plus"></i>
-                        <span class="menu-label">ลงทะเบียนบ้านพักใหม่</span></a></li>
+                    <li><a href="add-property.php" title="ลงทะเบียนบ้านพักใหม่"><i class="fas fa-user-plus"></i>
+                            <span class="menu-label">ลงทะเบียนบ้านพักใหม่</span></a></li>
                 <?php endif; ?>
-                <li><a href="host-dashboard.php" title="รายงาน"><i class="fa-solid fa-ranking-star"></i><span
-                            class="menu-label">Dashboard</span></a></li>
-                <li><a href="profile.php" title="โปรไฟล์" class="active"><i class="fas fa-user"></i><span
-                            class="menu-label">Profile</span></a>
+                <li><a href="host-dashboard.php" title="รายงานข้อมูล"><i class="fa-solid fa-ranking-star"></i><span
+                            class="menu-label">รายงานข้อมูล</span></a></li>
+                <li><a href="profile.php" title="ข้อมูลส่วนตัว" class="active"><i class="fas fa-user"></i><span
+                            class="menu-label">ข้อมูลส่วนตัว</span></a>
                 </li>
                 <?php if ($hosts['Host_Status'] == 'active'): ?>
-                <li><a href="manage-property.php" title="จัดการบ้านพัก"><i class="fas fa-plus"></i><span
-                            class="menu-label">Manage
-                            Property</span></a></li>
-                <li><a href="list_booking.php" title="รายการที่จองเข้ามา"><i class="fa-solid fa-list-ul"></i><span
-                            class="menu-label">List Bookings</span></a></li>
-                <li><a href="refund_booking.php" title="การขอคืนเงิน"><i
-                            class="fa-solid fa-money-bill-transfer"></i><span class="menu-label">List Refund</span></a>
-                </li>
-                <li><a href="walkin-property.php" title="การจอง"><i class="fa-solid fa-person-walking"></i><span
-                            class="menu-label">Walkin</span></a></li>
+                    <li><a href="manage-property.php" title="จัดการบ้านพัก"><i class="fas fa-plus"></i><span
+                                class="menu-label">จัดการบ้านพัก</span></a></li>
+                    <li><a href="list_booking.php" title="รายการที่จองเข้ามา"><i class="fa-solid fa-list-ul"></i><span
+                                class="menu-label">รายการการจอง</span></a></li>
+                    <li><a href="refund_booking.php" title="การขอคืนเงิน"><i
+                                class="fa-solid fa-money-bill-transfer"></i><span class="menu-label">การขอคืนเงิน</span></a>
+                    </li>
+                    <li><a href="walkin-property.php" title="รายการจองบ้านพัก"><i
+                                class="fa-solid fa-person-walking"></i><span class="menu-label">รายการจองบ้านพัก</span></a>
+                    </li>
                 <?php endif; ?>
                 <li><a href="../../controls/logout.php" title="ออกจากระบบ"><i class="fas fa-sign-out-alt"></i><span
-                            class="menu-label">Logout</span></a></li>
+                            class="menu-label">ออกจากระบบ</span></a></li>
             </ul>
-
             <div class="sidebar-footer">
                 <div>
                     <i class="fas fa-user-circle"></i>
-
                     <span class="menu-label"><?php echo htmlspecialchars($_SESSION['Host_email']); ?></span>
                 </div>
             </div>
@@ -84,16 +82,16 @@ if (!isset($_SESSION['Host_email'])) {
                         </h2>
                     </div>
                     <?php if (!empty($hosts)): ?>
-                    <h1 class="profile-name">
-                        <?php echo htmlspecialchars($hosts['Host_firstname'] . ' ' . $hosts['Host_lastname']); ?>
-                    </h1>
-                    <p class="profile-email"><?php echo htmlspecialchars($hosts['Host_email']); ?></p>
-                    <p class="profile-email">
-                        <?php echo date("เข้าใช้ครั้งแรก    d  M Y", strtotime($hosts['Create_at']));; ?></p>
+                        <h1 class="profile-name">
+                            <?php echo htmlspecialchars($hosts['Host_firstname'] . ' ' . $hosts['Host_lastname']); ?>
+                        </h1>
+                        <p class="profile-email"><?php echo htmlspecialchars($hosts['Host_email']); ?></p>
+                        <p class="profile-email">
+                            <?php echo date("เข้าใช้ครั้งแรก    d  M Y", strtotime($hosts['Create_at']));; ?></p>
 
 
                     <?php else: ?>
-                    <h1 class="profile-name">ไม่พบข้อมูลผู้ใช้</h1>
+                        <h1 class="profile-name">ไม่พบข้อมูลผู้ใช้</h1>
                     <?php endif; ?>
 
                     <button class="edit-btn" onclick="editProfile()">
@@ -191,16 +189,16 @@ if (!isset($_SESSION['Host_email'])) {
     </footer>
 
     <script>
-    function toggleSidebar() {
-        const sidebar = document.getElementById('sidebar');
-        const mainContent = document.querySelector('.main-with-sidebar');
-        sidebar.classList.toggle("collapsed");
-        mainContent.classList.toggle("sidebar-collapsed");
-    }
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.querySelector('.main-with-sidebar');
+            sidebar.classList.toggle("collapsed");
+            mainContent.classList.toggle("sidebar-collapsed");
+        }
 
-    function editProfile() {
-        window.location.href = 'edit-profile.php';
-    }
+        function editProfile() {
+            window.location.href = 'edit-profile.php';
+        }
     </script>
 </body>
 

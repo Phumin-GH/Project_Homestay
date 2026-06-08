@@ -29,7 +29,7 @@ if (isset($_GET['logout'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="website icon" type="png" href="../../public/images/logo.png">
-    <title>Profile - Homestay Booking</title>
+    <title>ข้อมูลผู้ใช้ - Homestay Booking</title>
     <link rel="stylesheet" href="../../public/css/style.css">
     <link rel="stylesheet" href="../../public/css/main-menu.css">
     <link rel="stylesheet" href="../../public/css/profile.css">
@@ -56,23 +56,27 @@ if (isset($_GET['logout'])) {
                 <i class="fas fa-bars"></i>
             </button>
             <ul class="sidebar-menu">
-                <li><a href="main-menu.php"><i class="fas fa-home"></i><span class="menu-label">Home</span></a></li>
-                <li><a href="profile.php" class="active"><i class="fas fa-user"></i><span
-                            class="menu-label">Profile</span></a></li>
-                <li><a href="favorites.php"><i class="fas fa-heart"></i><span class="menu-label">Favorite</span></a>
+                <li><a href="main-menu.php" title="หน้าหลัก"><i class="fa-solid fa-house"></i><span
+                            class="menu-label">หน้าหลัก</span></a></li>
+                <li><a href="profile.php" title="ข้อมูลผู้ใช้งาน" class="active"><i class="fas fa-user"></i><span
+                            class="menu-label">ข้อมูลผู้ใช้งาน</span></a></li>
+
+                <li><a href="favorites_rl.php" title="รายการโปรด"><i class="fas fa-heart"></i><span
+                            class="menu-label">รายการโปรด</span></a>
                 </li>
                 <li><a href="bookings.php"><i class="fas fa-calendar"></i><span class="menu-label"
-                            title="รายการจอง">Bookings</span></a>
+                            title="รายการจอง">รายการจอง</span></a>
                 </li>
 
-                <li><a href="../../controls/logout.php"><i class="fas fa-sign-out-alt"></i><span
-                            class="menu-label">Logout</span></a>
+                <li><a href="../../controls/logout.php" title="ออกจากระบบ"><i class="fas fa-sign-out-alt"></i><span
+                            class="menu-label">ออกจากระบบ</span></a>
                 </li>
             </ul>
             <div class="sidebar-footer">
                 <div>
                     <i class="fas fa-user-circle"></i>
-                    <span class="menu-label"><?php echo htmlspecialchars($_SESSION['User_email']); ?></span>
+                    <span class="menu-label"
+                        title="อีเมล"><?php echo htmlspecialchars($_SESSION['User_email']); ?></span>
                 </div>
             </div>
         </aside>

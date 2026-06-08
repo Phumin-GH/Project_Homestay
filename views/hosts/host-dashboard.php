@@ -392,27 +392,26 @@ require_once __DIR__ . "/../../api/get_ListHomestay.php";
                 <li><a href="add-property.php" title="ลงทะเบียนบ้านพักใหม่"><i class="fas fa-user-plus"></i>
                         <span class="menu-label">ลงทะเบียนบ้านพักใหม่</span></a></li>
                 <?php endif; ?>
-                <li><a href="host-dashboard.php" title="รายงาน" class="active"><i
-                            class="fa-solid fa-ranking-star"></i><span class="menu-label">Dashboard</span></a></li>
-                <li><a href="profile.php" title="โปรไฟล์"><i class="fas fa-user"></i><span
-                            class="menu-label">Profile</span></a>
+                <li><a href="host-dashboard.php" title="รายงานข้อมูล" class="active"><i
+                            class="fa-solid fa-ranking-star"></i><span class="menu-label">รายงานข้อมูล</span></a></li>
+                <li><a href="profile.php" title="ข้อมูลส่วนตัว"><i class="fas fa-user"></i><span
+                            class="menu-label">ข้อมูลส่วนตัว</span></a>
                 </li>
                 <?php if ($hosts['Host_Status'] == 'active'): ?>
                 <li><a href="manage-property.php" title="จัดการบ้านพัก"><i class="fas fa-plus"></i><span
-                            class="menu-label">Manage
-                            Property</span></a></li>
+                            class="menu-label">จัดการบ้านพัก</span></a></li>
                 <li><a href="list_booking.php" title="รายการที่จองเข้ามา"><i class="fa-solid fa-list-ul"></i><span
-                            class="menu-label">List Bookings</span></a></li>
+                            class="menu-label">รายการการจอง</span></a></li>
                 <li><a href="refund_booking.php" title="การขอคืนเงิน"><i
-                            class="fa-solid fa-money-bill-transfer"></i><span class="menu-label">List Refund</span></a>
+                            class="fa-solid fa-money-bill-transfer"></i><span class="menu-label">การขอคืนเงิน</span></a>
                 </li>
-                <li><a href="walkin-property.php" title="การจอง"><i class="fa-solid fa-person-walking"></i><span
-                            class="menu-label">Walkin</span></a></li>
+                <li><a href="walkin-property.php" title="รายการจองบ้านพัก"><i
+                            class="fa-solid fa-person-walking"></i><span class="menu-label">รายการจองบ้านพัก</span></a>
+                </li>
                 <?php endif; ?>
                 <li><a href="../../controls/logout.php" title="ออกจากระบบ"><i class="fas fa-sign-out-alt"></i><span
-                            class="menu-label">Logout</span></a></li>
+                            class="menu-label">ออกจากระบบ</span></a></li>
             </ul>
-
             <div class="sidebar-footer">
                 <div>
                     <i class="fas fa-user-circle"></i>
@@ -425,8 +424,8 @@ require_once __DIR__ . "/../../api/get_ListHomestay.php";
             <div class="admin-container">
 
                 <div class="page-header">
-                    <h1><i class="fas fa-tachometer-alt"></i> Host Dashboard</h1>
-                    <p>Welcome back,
+                    <h1><i class="fas fa-tachometer-alt"></i>รายงานข้อมูล</h1>
+                    <p>ยินดีต้อนรับกลับ ,คุณ
                         <?php echo htmlspecialchars($hosts['Host_firstname'] . ' ' . $hosts['Host_lastname']); ?>!
                     </p>
                 </div>
@@ -437,38 +436,38 @@ require_once __DIR__ . "/../../api/get_ListHomestay.php";
                             <i class="fas fa-home"></i>
                         </div>
                         <div class="stat-number"><?php echo $total_properties; ?></div>
-                        <div class="stat-label">Approved Properties</div>
+                        <div class="stat-label">บ้านพักที่ได้รับอนุมัติ</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon bookings">
                             <i class="fas fa-calendar-check"></i>
                         </div>
                         <div class="stat-number"><?php echo $total_bookings; ?></div>
-                        <div class="stat-label">Total Bookings</div>
+                        <div class="stat-label">การจองทั้งหมด</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon income">
                             <i class="fas fa-money-bill-wave"></i>
                         </div>
                         <div class="stat-number">฿<?php echo number_format($total_income); ?></div>
-                        <div class="stat-label">Total Income</div>
+                        <div class="stat-label">รายได้รวม</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon reviews">
                             <i class="fas fa-star"></i>
                         </div>
                         <div class="stat-number"><?php echo $total_reviews; ?></div>
-                        <div class="stat-label">Reviews</div>
+                        <div class="stat-label">รีวิว</div>
                     </div>
                 </div>
                 <div class="system-info">
                     <div style="display:flex; justify-content: space-between;">
                         <h3>
                             <i class="fas fa-info-circle"></i>
-                            System Information
+                            ข้อมูลระบบ
                         </h3>
                         <a href="add-property.php" class="add-property-btn">
-                            <i class="fas fa-plus"></i> Add New Property
+                            <i class="fas fa-plus"></i> เพิ่มบ้านพักใหม่
                         </a>
                     </div>
                     <div class="dashboard-grid">

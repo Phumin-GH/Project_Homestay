@@ -473,27 +473,26 @@ require_once __DIR__ . "/../../controls/log_hosts.php";
                                 class="fas fa-user-plus"></i>
                             <span class="menu-label">ลงทะเบียนบ้านพักใหม่</span></a></li>
                 <?php endif; ?>
-                <li><a href="host-dashboard.php" title="รายงาน"><i class="fa-solid fa-ranking-star"></i><span
-                            class="menu-label">Dashboard</span></a></li>
-                <li><a href="profile.php" title="โปรไฟล์"><i class="fas fa-user"></i><span
-                            class="menu-label">Profile</span></a>
+                <li><a href="host-dashboard.php" title="รายงานข้อมูล"><i class="fa-solid fa-ranking-star"></i><span
+                            class="menu-label">รายงานข้อมูล</span></a></li>
+                <li><a href="profile.php" title="ข้อมูลส่วนตัว"><i class="fas fa-user"></i><span
+                            class="menu-label">ข้อมูลส่วนตัว</span></a>
                 </li>
                 <?php if ($hosts['Host_Status'] == 'active'): ?>
                     <li><a href="manage-property.php" title="จัดการบ้านพัก" class="active"><i class="fas fa-plus"></i><span
-                                class="menu-label">Manage
-                                Property</span></a></li>
+                                class="menu-label">จัดการบ้านพัก</span></a></li>
                     <li><a href="list_booking.php" title="รายการที่จองเข้ามา"><i class="fa-solid fa-list-ul"></i><span
-                                class="menu-label">List Bookings</span></a></li>
+                                class="menu-label">รายการการจอง</span></a></li>
                     <li><a href="refund_booking.php" title="การขอคืนเงิน"><i
-                                class="fa-solid fa-money-bill-transfer"></i><span class="menu-label">List Refund</span></a>
+                                class="fa-solid fa-money-bill-transfer"></i><span class="menu-label">การขอคืนเงิน</span></a>
                     </li>
-                    <li><a href="walkin-property.php" title="การจอง"><i class="fa-solid fa-person-walking"></i><span
-                                class="menu-label">Walkin</span></a></li>
+                    <li><a href="walkin-property.php" title="รายการจองบ้านพัก"><i
+                                class="fa-solid fa-person-walking"></i><span class="menu-label">รายการจองบ้านพัก</span></a>
+                    </li>
                 <?php endif; ?>
                 <li><a href="../../controls/logout.php" title="ออกจากระบบ"><i class="fas fa-sign-out-alt"></i><span
-                            class="menu-label">Logout</span></a></li>
+                            class="menu-label">ออกจากระบบ</span></a></li>
             </ul>
-
             <div class="sidebar-footer">
                 <div>
                     <i class="fas fa-user-circle"></i>

@@ -160,25 +160,25 @@ require_once __DIR__ . "/../../api/get_ListHomestay.php";
                     <li><a href="add-property.php" title="ลงทะเบียนบ้านพักใหม่"><i class="fas fa-user-plus"></i>
                             <span class="menu-label">ลงทะเบียนบ้านพักใหม่</span></a></li>
                 <?php endif; ?>
-                <li><a href="host-dashboard.php" title="รายงาน"><i class="fa-solid fa-ranking-star"></i><span
-                            class="menu-label">Dashboard</span></a></li>
-                <li><a href="profile.php" title="โปรไฟล์"><i class="fas fa-user"></i><span
-                            class="menu-label">Profile</span></a>
+                <li><a href="host-dashboard.php" title="รายงานข้อมูล"><i class="fa-solid fa-ranking-star"></i><span
+                            class="menu-label">รายงานข้อมูล</span></a></li>
+                <li><a href="profile.php" title="ข้อมูลส่วนตัว"><i class="fas fa-user"></i><span
+                            class="menu-label">ข้อมูลส่วนตัว</span></a>
                 </li>
                 <?php if ($hosts['Host_Status'] == 'active'): ?>
                     <li><a href="manage-property.php" title="จัดการบ้านพัก"><i class="fas fa-plus"></i><span
-                                class="menu-label">Manage
-                                Property</span></a></li>
+                                class="menu-label">จัดการบ้านพัก</span></a></li>
                     <li><a href="list_booking.php" title="รายการที่จองเข้ามา"><i class="fa-solid fa-list-ul"></i><span
-                                class="menu-label">List Bookings</span></a></li>
+                                class="menu-label">รายการการจอง</span></a></li>
                     <li><a href="refund_booking.php" title="การขอคืนเงิน"><i
-                                class="fa-solid fa-money-bill-transfer"></i><span class="menu-label">List Refund</span></a>
+                                class="fa-solid fa-money-bill-transfer"></i><span class="menu-label">การขอคืนเงิน</span></a>
                     </li>
-                    <li><a href="walkin-property.php" title="การจอง" class="active"><i
-                                class="fa-solid fa-person-walking"></i><span class="menu-label">Walkin</span></a></li>
+                    <li><a href="walkin-property.php" title="รายการจองบ้านพัก" class="active"><i
+                                class="fa-solid fa-person-walking"></i><span class="menu-label">รายการจองบ้านพัก</span></a>
+                    </li>
                 <?php endif; ?>
                 <li><a href="../../controls/logout.php" title="ออกจากระบบ"><i class="fas fa-sign-out-alt"></i><span
-                            class="menu-label">Logout</span></a></li>
+                            class="menu-label">ออกจากระบบ</span></a></li>
             </ul>
             <div class="sidebar-footer">
                 <div>
@@ -189,9 +189,18 @@ require_once __DIR__ . "/../../api/get_ListHomestay.php";
         </aside>
         <div class="main-with-sidebar">
             <div class="form-container">
-                <div class="form-title"><i class="fas fa-user-plus"></i> เพิ่มการจอง Walk-in</div>
+                <div class="form-title"><i class="fas fa-user-plus"></i> เพิ่มการจองบ้านพัก</div>
                 <form id="Form-Walkin">
                     <h3 id="bookingMessage"></h3>
+                    <div class="form-group">
+                        <label class="form-label">วันที่เช็คอิน&เช็คเอาท์ <span style="color:red">*</span></label>
+                        <div class="input-group">
+                            <input type="date" name="checkin" id="checkin" class="form-input"
+                                min="<?php echo date('Y-m-d'); ?>" required>
+                            <input type="date" id="checkout" name="checkout" class="form-input"
+                                min="<?php echo date('Y-m-d', strtotime('+1 day')); ?>" required>
+                        </div>
+                    </div>
                     <div class="form-group">
                         <label class="form-label">เลือกบ้านพัก <span style="color:red">*</span></label>
                         <select name="property_id" class="form-select" id="propertySelect" required>
@@ -222,15 +231,6 @@ require_once __DIR__ . "/../../api/get_ListHomestay.php";
                     <div class="form-group">
                         <label class="form-label">เบอร์โทรศัพท์ <span style="color:red">*</span></label>
                         <input type="text" name="guest_phone" id="guests_phone" class="form-input" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">วันที่เช็คอิน&เช็คเอาท์ <span style="color:red">*</span></label>
-                        <div class="input-group">
-                            <input type="date" name="checkin" id="checkin" class="form-input"
-                                min="<?php echo date('Y-m-d'); ?>" required>
-                            <input type="date" id="checkout" name="checkout" class="form-input"
-                                min="<?php echo date('Y-m-d', strtotime('+1 day')); ?>" required>
-                        </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">จำนวนคืน <span style="color:red">*</span></label>
@@ -282,18 +282,18 @@ require_once __DIR__ . "/../../api/get_ListHomestay.php";
         const propertySelect = document.getElementById('propertySelect');
         const propertyId = document.getElementById('propertyId');
 
-        propertySelect.addEventListener('change', function() {
+        propertySelect.addEventListener('change', function () {
             const selectedOption = propertySelect.options[propertySelect.selectedIndex];
             propertyId.value = selectedOption.dataset.propertyId || '';
 
         })
-        roomSelect.addEventListener('change', function() {
+        roomSelect.addEventListener('change', function () {
             const selectOption = roomSelect.options[roomSelect.selectedIndex];
             price.value = selectOption.dataset.price;
             roomId.value = selectOption.dataset.roomId;
 
         });
-        checkinInput.addEventListener('change', function() {
+        checkinInput.addEventListener('change', function () {
             if (checkinInput.value) {
                 let checkinDate = new Date(checkinInput.value);
                 checkinDate.setDate(checkinDate.getDate() + 1);
@@ -332,20 +332,20 @@ require_once __DIR__ . "/../../api/get_ListHomestay.php";
             total_days.value = dayDiff;
 
             fetch('../../controls/bookings_room.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: new URLSearchParams({
-                        property_id: propertyId.value,
-                        room_id: roomId.value,
-                        nights: total_days.value,
-                        guests: guests.value,
-                        check_in_date: checkinInput.value,
-                        check_out_date: checkoutInput.value
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                    property_id: propertyId.value,
+                    room_id: roomId.value,
+                    nights: total_days.value,
+                    guests: guests.value,
+                    check_in_date: checkinInput.value,
+                    check_out_date: checkoutInput.value
 
-                    })
                 })
+            })
                 .then(response => {
                     if (!response.ok) throw new Error('Network response was not ok');
                     return response.json();
@@ -375,28 +375,28 @@ require_once __DIR__ . "/../../api/get_ListHomestay.php";
 
         }
         const bookBtn = document.getElementById('bookBtn');
-        bookBtn.addEventListener('click', function(e) {
+        bookBtn.addEventListener('click', function (e) {
             e.preventDefault();
             if (confirm('คุณยืนยันต้องการจองใช่ไหม?')) {
                 fetch('../../controls/bookings_room.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        body: new URLSearchParams({
-                            room_id: roomId.value,
-                            property_id: propertyId.value,
-                            check_in_date: checkinInput.value,
-                            check_out_date: checkoutInput.value,
-                            firstName: f_name.value,
-                            lastName: l_name.value,
-                            guestsPhone: g_phone.value,
-                            nights: total_days.value,
-                            total_price: total_price.value,
-                            guests: guests.value,
-                            submit_wki: true
-                        })
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams({
+                        room_id: roomId.value,
+                        property_id: propertyId.value,
+                        check_in_date: checkinInput.value,
+                        check_out_date: checkoutInput.value,
+                        firstName: f_name.value,
+                        lastName: l_name.value,
+                        guestsPhone: g_phone.value,
+                        nights: total_days.value,
+                        total_price: total_price.value,
+                        guests: guests.value,
+                        submit_wki: true
                     })
+                })
                     .then(response => {
                         if (!response.ok) throw new Error('Network response was not ok');
                         return response.json();
@@ -440,15 +440,17 @@ require_once __DIR__ . "/../../api/get_ListHomestay.php";
 
         checkinInput.addEventListener('change', calculatePrice);
         checkoutInput.addEventListener('change', calculatePrice);
-        propertySelect.addEventListener('change', function() {
+        propertySelect.addEventListener('change', function () {
             const propertyId = propertySelect.value; // ดึงค่า value
+            const checkin = checkinInput.value;
+            const checkout = checkoutInput.value;
             // ถ้าเลือกบ้านพักว่าง ให้เคลียร์ห้องพัก
             if (!propertyId) {
                 roomSelect.innerHTML = '<option value="">-- เลือกห้องพัก --</option>';
                 return;
             }
             console.log(propertyId);
-            fetch(`../../controls/get_room.php?Property_id=${propertyId}`)
+            fetch(`../../controls/get_room.php?id=${propertyId}&check_in=${checkin}&check_out=${checkout}`)
                 .then(response => {
                     //ตรวจสอบค่าผลลัพธ์ที่เกี่ยวNetwork ถ้ามีปัญหาให้แสดง network response was not ok
                     if (!response.ok) throw new Error('network response was not ok');

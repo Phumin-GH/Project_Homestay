@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Homestay Booking</title>
+    <title>เข้าสู่ระบบ - Homestay Booking</title>
     <link rel="stylesheet" href="../../public/css/Loginstyle.css" />
     <link rel="website icon" type="png" href="/images/logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -49,21 +49,21 @@
             <div>
                 <img src="../../public/images/logo.png" style="width: 5rem; height: 5rem;">
             </div>
-            <h1>Welcome Back</h1>
-            <p>Sign in to your account or create a new one</p>
+            <h1>ยินดีต้อนรับกลับ</h1>
+            <p>เข้าสู่ระบบบัญชีของคุณหรือสร้างบัญชีใหม่</p>
         </div>
         <div class="auth-tabs">
             <div class="tab active" id="login-tab">
-                <i class="fas fa-sign-in-alt"></i> Sign In
+                <i class="fas fa-sign-in-alt"></i> เข้าสู่ระบบ
             </div>
             <div class="tab" id="signup-tab">
-                <i class="fas fa-user-plus"></i> Sign Up
+                <i class="fas fa-user-plus"></i> สมัครสมาชิก
             </div>
         </div>
         <div class="auth-content">
             <form id="login-form" class="form-content active" action="../../controls/log_users.php" method="post">
-                <h2 class="form-title">Sign In to Your Account</h2>
-                <p class="form-subtitle">Enter your credentials to access your account</p>
+                <h2 class="form-title">เข้าสู่ระบบบัญชีของคุณ</h2>
+                <p class="form-subtitle">กรอกข้อมูลรับรองของคุณเพื่อเข้าถึงบัญชีของคุณ</p>
                 <?php
                 if (isset($_SESSION['error'])) {
                     echo "<script> alert(" . json_encode($_SESSION['error']) . "); </script>";
@@ -74,47 +74,43 @@
                     unset($_SESSION['message']);
                 } ?>
                 <div class="form-group">
-                    <label for="login-email">Email Address</label>
-                    <input type="email" id="login-email" name="email" placeholder="Enter your email" required>
+                    <label for="login-email">อีเมล</label>
+                    <input type="email" id="login-email" name="email" placeholder="example@gmail.com" required>
                 </div>
                 <div class="form-group">
-                    <label for="login-password">Password</label>
-                    <input type="password" id="login-password" name="password" placeholder="Enter your password"
-                        required>
+                    <label for="login-password">รหัสผ่าน</label>
+                    <input type="password" id="login-password" name="password" placeholder="*****" required>
                 </div>
-                <a href="#" id="forgot-password-link" class="forgot-link">Forgot
-                    your password?</a>
+                <a href="#" id="forgot-password-link" class="forgot-link">ลืมรหัสผ่านของคุณ?</a>
                 <button type="submit" class="btn btn-primary" name="save_login">
                     <i class="fas fa-sign-in-alt"></i>
-                    Sign In
+                    เข้าสู่ระบบ
 
                 </button>
             </form>
             <form id="signup-form" class="form-content" action="../../controls/log_users.php" method="post">
-                <h2 class="form-title">Create New Account</h2>
-                <p class="form-subtitle">Join us and start booking your perfect homestay</p>
+                <h2 class="form-title">สร้างบัญชีใหม่</h2>
+                <p class="form-subtitle">เข้าร่วมกับเราและเริ่มจองโฮมสเตย์ที่สมบูรณ์แบบของคุณ</p>
 
                 <div class="form-group">
-                    <label for="signup-email">Email Address</label>
-                    <input type="email" id="signup-email" name="email" placeholder="Enter your email" required>
+                    <label for="signup-email">อีเมล</label>
+                    <input type="email" id="signup-email" name="email" placeholder="example@gmail.com" required>
                 </div>
                 <div class="form-group">
-                    <label for="signup-firstname">First Name</label>
-                    <input type="text" id="signup-firstname" name="firstname" placeholder="Enter your first name"
-                        required>
+                    <label for="signup-firstname">ชื่อ</label>
+                    <input type="text" id="signup-firstname" name="firstname" placeholder="ชื่อ" required>
                 </div>
                 <div class="form-group">
-                    <label for="signup-lastname">Last Name</label>
-                    <input type="text" id="signup-lastname" name="lastname" placeholder="Enter your last name" required>
+                    <label for="signup-lastname">นามสกุล</label>
+                    <input type="text" id="signup-lastname" name="lastname" placeholder="นามสกุล" required>
                 </div>
                 <div class="form-group">
-                    <label for="signup-phone">Phone Number</label>
-                    <input type="tel" id="signup-phone" name="phone" placeholder="Enter your phone number" required>
+                    <label for="signup-phone">เบอร์</label>
+                    <input type="tel" id="signup-phone" name="phone" placeholder="เบอร์" required>
                 </div>
                 <div class="form-group">
-                    <label for="signup-password">Password</label>
-                    <input type="password" id="signup-password" name="password" placeholder="Create a password"
-                        required>
+                    <label for="signup-password">รหัสผ่าน</label>
+                    <input type="password" id="signup-password" name="password" placeholder="สร้างรหัสผ่าน" required>
                     <div class="password-strength">
                         <div id="password-requirements">
                             <p id="check_length">อักษรภาษาอังกฤษ 8 ตัวขึ้นไป</p>
@@ -126,13 +122,13 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="signup-confirm-password">Confirm Password</label>
+                    <label for="signup-confirm-password">ยืนยันรหัสผ่าน</label>
                     <input type="password" id="signup-confirm-password" name="confirm-password"
-                        placeholder="Confirm your password" required>
+                        placeholder="ยืนยันรหัสผ่าน" required>
                 </div>
                 <button type="submit" class="btn btn-primary" name="save_signup" id="signup">
                     <i class="fas fa-user-plus"></i>
-                    Create Account
+                    สมัครสมาชิก
 
                 </button>
             </form>
@@ -144,16 +140,16 @@
             <button class="modal-close" id="close-forgot">
                 <i class="fas fa-times"></i>
             </button>
-            <h2 class="form-title">Reset Password</h2>
-            <p class="form-subtitle">Enter your email address and we'll send you a link to reset your password.</p>
+            <h2 class="form-title">รีเซ็ตรหัสผ่าน</h2>
+            <p class="form-subtitle">กรอกที่อยู่อีเมลของคุณและเราจะส่งลิงก์ให้คุณเพื่อตั้งรหัสผ่านใหม่</p>
             <form id="forgot-form">
                 <div class="form-group">
-                    <label for="forgot-email">Email Address</label>
-                    <input type="email" id="forgot-email" placeholder="Enter your email" name="email" required>
+                    <label for="forgot-email">อีเมล</label>
+                    <input type="email" id="forgot-email" placeholder="eexample@gmail.com" name="email" required>
                 </div>
                 <button type="submit" class="btn btn-primary">
                     <i class="fas fa-paper-plane"></i>
-                    Send Reset Link
+                    ส่งลิงก์รีเซ็ต
                 </button>
                 <p id="msg"></p>
             </form>

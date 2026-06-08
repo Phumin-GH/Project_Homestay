@@ -233,41 +233,38 @@ if (!isset($_SESSION["Host_email"])) {
 
     <div class="layout">
         <aside class="sidebar" id="sidebar">
-            <div class="btn-toggle">
-                <button class="toggle-sidebar" onclick="toggleSidebar()">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </div>
-
+            <button class="toggle-sidebar" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
             <ul class="sidebar-menu">
                 <?php if ($hosts['Host_Status'] == 'pending_verify'): ?>
                     <li><a href="add-property.php" title="ลงทะเบียนบ้านพักใหม่"><i class="fas fa-user-plus"></i>
                             <span class="menu-label">ลงทะเบียนบ้านพักใหม่</span></a></li>
                 <?php endif; ?>
-                <li><a href="host-dashboard.php" title="รายงาน"><i class="fa-solid fa-ranking-star"></i><span
-                            class="menu-label">Dashboard</span></a></li>
-                <li><a href="profile.php" title="โปรไฟล์"><i class="fas fa-user"></i><span
-                            class="menu-label">Profile</span></a>
+                <li><a href="host-dashboard.php" title="รายงานข้อมูล"><i class="fa-solid fa-ranking-star"></i><span
+                            class="menu-label">รายงานข้อมูล</span></a></li>
+                <li><a href="profile.php" title="ข้อมูลส่วนตัว"><i class="fas fa-user"></i><span
+                            class="menu-label">ข้อมูลส่วนตัว</span></a>
                 </li>
                 <?php if ($hosts['Host_Status'] == 'active'): ?>
                     <li><a href="manage-property.php" title="จัดการบ้านพัก"><i class="fas fa-plus"></i><span
-                                class="menu-label">Manage
-                                Property</span></a></li>
+                                class="menu-label">จัดการบ้านพัก</span></a></li>
                     <li><a href="list_booking.php" title="รายการที่จองเข้ามา" class="active"><i
-                                class="fa-solid fa-list-ul"></i><span class="menu-label">List Bookings</span></a></li>
+                                class="fa-solid fa-list-ul"></i><span class="menu-label">รายการการจอง</span></a></li>
                     <li><a href="refund_booking.php" title="การขอคืนเงิน"><i
-                                class="fa-solid fa-money-bill-transfer"></i><span class="menu-label">List Refund</span></a>
+                                class="fa-solid fa-money-bill-transfer"></i><span class="menu-label">การขอคืนเงิน</span></a>
                     </li>
-                    <li><a href="walkin-property.php" title="การจอง"><i class="fa-solid fa-person-walking"></i><span
-                                class="menu-label">Walkin</span></a></li>
+                    <li><a href="walkin-property.php" title="รายการจองบ้านพัก"><i
+                                class="fa-solid fa-person-walking"></i><span class="menu-label">รายการจองบ้านพัก</span></a>
+                    </li>
                 <?php endif; ?>
                 <li><a href="../../controls/logout.php" title="ออกจากระบบ"><i class="fas fa-sign-out-alt"></i><span
-                            class="menu-label">Logout</span></a></li>
+                            class="menu-label">ออกจากระบบ</span></a></li>
             </ul>
             <div class="sidebar-footer">
                 <div>
                     <i class="fas fa-user-circle"></i>
-                    <span class="menu-label"><?php echo  htmlspecialchars($_SESSION['Host_email']); ?></span>
+                    <span class="menu-label"><?php echo htmlspecialchars($_SESSION['Host_email']); ?></span>
                 </div>
             </div>
         </aside>
@@ -287,15 +284,15 @@ if (!isset($_SESSION["Host_email"])) {
                     </div>
                     <?php unset($_SESSION['message']); ?>
                 <?php endif; ?>
-                <h2>บ้านพักทั้งหมด (<?php echo count($homestay) ?>)</h2>
+                <h2>บ้านพักทั้งหมด (<?php echo count($list_house) ?>)</h2>
                 <section class="homestay-list">
 
-                    <?php if (empty($homestay)): ?>
+                    <?php if (empty($list_house)): ?>
                         <div class="alert alert-warning">
                             <i class="fas fa-info-circle"></i> ยังไม่มีบ้านพักที่พร้อมให้จอง
                         </div>
                     <?php else: ?>
-                        <?php foreach ($homestay as $house): ?>
+                        <?php foreach ($list_house as $house): ?>
                             <div class="homestay-card" data-id="<?= htmlspecialchars($house['Property_id']) ?>">
                                 <!-- onclick="window.location.href='detail-house.php?id=<?php /*echo htmlspecialchars($house['Property_id']); */ ?>'" -->
                                 <img src="../../public/<?php echo htmlspecialchars($house['Property_image']); ?>"

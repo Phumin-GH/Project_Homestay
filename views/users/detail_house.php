@@ -4,7 +4,9 @@ if (!isset($_SESSION["User_email"])) {
     header("Location: user-login.php");
     exit();
 }
-
+require_once __DIR__ . '/../vendor/autoload.php';
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
+$dotenv->load();
 require_once __DIR__ . "/../../api/get_ListHomestay.php";
 require_once __DIR__ . "/../../api/get_listFavorites.php";
 ?>
@@ -16,11 +18,13 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="../../public/css/style.css" />
     <link rel="stylesheet" href="../../public/css/main-menu.css" />
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FullCalendar -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet" />
+
     <link rel="website icon" type="png" href="../../public/images/logo.png">
     <title>รายละเอียดที่พัก - <?php echo htmlspecialchars($property['Property_name']); ?></title>
 
@@ -34,12 +38,14 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
         }
 
         .container {
-            max-width: 1400px;
-            margin: 0 auto;
+            max-width: 70rem;
+            margin: 2rem auto;
             background: #fff;
             border-radius: 12px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
             padding: 2rem;
+
+            position: relative;
         }
 
         .header {
@@ -118,6 +124,8 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
             display: grid;
             grid-template-columns: repeat(5, 1fr);
             gap: 1.2rem;
+            /* overflow-x: auto; */
+
         }
 
         @media (max-width: 600px) {
@@ -270,6 +278,13 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
             border: 2px solid #1e5470;
         }
 
+        .book-btn:disabled {
+            cursor: not-allowed;
+            background: #f5f5f5;
+            color: #666464;
+            border: 1px solid #ddd;
+        }
+
         @media (max-width: 900px) {
             .header {
                 flex-direction: column;
@@ -286,10 +301,10 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
             visibility: visible !important;
         }
 
-        .modal {
+        .modal-container {
             display: none;
             position: fixed;
-            z-index: 9999;
+            z-index: 999;
             left: 0;
             top: 0;
             width: 100vw;
@@ -442,17 +457,6 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
             box-shadow: 0 4px 12px rgba(26, 127, 55, 0.3);
         }
 
-        .btn-calendar {
-            background: #1e5470;
-            color: white;
-        }
-
-        .btn-calendar:hover {
-            background: #277297ff;
-            /* transform: translateY(-1px); */
-            box-shadow: 0 4px 12px rgba(26, 127, 55, 0.3);
-        }
-
         .btn:active {
             transform: translateY(0);
         }
@@ -535,8 +539,8 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
         }
 
         .Imgslider {
-            /* width: 900px;
-            max-width: 90vw; */
+            width: 900px;
+            max-width: 90vw;
             height: 500px;
             margin: 0rem 2.5rem;
             position: relative;
@@ -594,33 +598,28 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
             right: 15px;
         }
 
-        .modal {
+        .modal-payment {
             display: none;
-            /* ซ่อนไว้เป็นค่าเริ่มต้น */
             position: fixed;
-            /* ทำให้ลอยทับเนื้อหาอื่น */
             z-index: 1000;
-            /* ให้แสดงอยู่ชั้นบนสุด */
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
             overflow: auto;
-            /* ทำให้เลื่อนได้ถ้าเนื้อหาล้น */
             background-color: rgba(0, 0, 0, 0.6);
-            /* สีพื้นหลังโปร่งแสง */
         }
 
-        /* 2. กล่องเนื้อหาของ Modal */
+
         .modal-content {
             background-color: #ffffff;
             margin: 8% auto;
-            /* จัดให้อยู่กึ่งกลางแนวตั้งและแนวนอน */
+
             padding: 2rem;
             border-radius: 16px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             max-width: 650px;
-            /* กำหนดความกว้างสูงสุด */
+
             position: relative;
             animation: fadeIn 0.3s;
         }
@@ -855,7 +854,6 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
             transform: translateY(-1px);
         }
 
-        /* Container หลักที่ใช้ Grid Layout */
         .feature-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -906,7 +904,24 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
             color: #555;
             line-height: 1.6;
         }
-    </style>
+
+        #calendar-wrapper {
+            display: none;
+            margin-top: 2rem;
+            max-width: 1100px;
+            z-index: 900;
+        }
+
+        /* สไตล์ปุ่มกด */
+        .show-calendar-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #1e5470;
+            color: white;
+            border: none;
+            border-radius: 8px;
+        }
     </style>
 </head>
 
@@ -928,22 +943,27 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                 <i class="fas fa-bars"></i>
             </button>
             <ul class="sidebar-menu">
-                <li><a href="main-menu.php" class="active" title="หน้าแดชบอร์ด"><i class="fas fa-home"></i><span
-                            class="menu-label">Home</span></a></li>
+                <li><a href="main-menu.php" title="หน้าหลัก" class="active"><i class="fa-solid fa-house"></i><span
+                            class="menu-label">หน้าหลัก</span></a></li>
                 <li><a href="profile.php" title="ข้อมูลผู้ใช้งาน"><i class="fas fa-user"></i><span
-                            class="menu-label">Profile</span></a></li>
-                <li><a href="favorites.php" title="รายการสถานที่พักที่ถูกใจ"><i class="fas fa-heart"></i><span
-                            class="menu-label">Favorite</span></a></li>
+                            class="menu-label">ข้อมูลผู้ใช้งาน</span></a></li>
+
+                <li><a href="favorites_rl.php" title="รายการโปรด"><i class="fas fa-heart"></i><span
+                            class="menu-label">รายการโปรด</span></a>
+                </li>
                 <li><a href="bookings.php"><i class="fas fa-calendar"></i><span class="menu-label"
-                            title="รายการจอง">Bookings</span></a></li>
+                            title="รายการจอง">รายการจอง</span></a>
+                </li>
+
                 <li><a href="../../controls/logout.php" title="ออกจากระบบ"><i class="fas fa-sign-out-alt"></i><span
-                            class="menu-label">Logout</span></a></li>
+                            class="menu-label">ออกจากระบบ</span></a>
+                </li>
             </ul>
             <div class="sidebar-footer">
                 <div>
                     <i class="fas fa-user-circle"></i>
                     <span class="menu-label"
-                        title="lllll"><?php echo htmlspecialchars($_SESSION['User_email']); ?></span>
+                        title="อีเมล"><?php echo htmlspecialchars($_SESSION['User_email']); ?></span>
                 </div>
             </div>
         </aside>
@@ -957,7 +977,7 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
 
                             <h2><?php echo htmlspecialchars($property['Property_name']); ?></h2>
                             <button
-                                class="favorite-btn <?php echo in_array($property['Property_id'], $fav_btn) ? 'active' : ''; ?>"
+                                class="favorite-btn <?php echo in_array($property['Property_id'], $fav_btn) ? 'active' : 'active'; ?>"
                                 title="
                                 เพิ่มในรายการโปรด" data-property-id="<?php echo $property['Property_id']; ?>"
                                 data-method="toggle"><i class="fa-solid fa-heart">
@@ -981,14 +1001,18 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                             รองรับ: <?php /*echo htmlspecialchars($house['Property_capacity'] ?? 'N/A');*/ ?> คน</div> -->
                     </div>
                 </div>
-
+                <!-- รูปภาพหลักของที่พัก -->
                 <div class="Imgslider">
                     <?php
+                    // ใช้ตัวแปร $index เพื่อนับรอบ และกำหนด class="active" ให้รูปแรก
                     $index = 0;
                     foreach ($images as $imageUrl) {
+                        // ตรวจสอบว่าเป็นรูปแรกหรือไม่ (index = 0)
                         if ($index == 0) {
+                            // ถ้าใช่ ให้เพิ่ม class="active" เพื่อให้แสดงเป็นรูปแรก
                             echo '<img src="../../public/' . htmlspecialchars($imageUrl['Pro_image']) . '" class="active">';
                         } else {
+                            // ถ้ารูปถัดๆ ไป ก็แสดง <img> แบบปกติ
                             echo '<img src="../../public/' . htmlspecialchars($imageUrl['Pro_image']) . '">';
                         }
                         $index++;
@@ -1003,9 +1027,15 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                             <i class="fas fa-concierge-bell feature-icon"></i>
                             <h3 class="feature-title">Service</h3>
                         </div>
-                        <p class="feature-description">
-                            <?php echo  nl2br(htmlspecialchars($property['Services_name'] . ': ' . "\n" . $property['Services_description'])); ?>
-                        </p>
+                        <?php if ($property['Services_name'] > 0): ?>
+                            <p class="feature-description">
+                                <?php echo nl2br(htmlspecialchars($property['Services_name'] . ': ' . "\n" . $property['Services_description'])); ?>
+                            </p>
+                        <?php else: ?>
+                            <p class="feature-description">
+                                ไม่มีข้อมูล
+                            </p>
+                        <?php endif; ?>
                     </div>
 
                     <div class="feature-item">
@@ -1013,50 +1043,71 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                             <i class="fas fa-hiking feature-icon"></i>
                             <h3 class="feature-title">Activity</h3>
                         </div>
-                        <p class="feature-description">
-                            <?php
-                            echo nl2br(htmlspecialchars($property['Activity_name'] . " :" . "\n" . $property['Activity_description']));
-                            ?>
-
-                        </p>
+                        <?php if ($property['Activity_name'] > 0): ?>
+                            <p class="feature-description">
+                                <?php
+                                echo nl2br(htmlspecialchars($property['Activity_name'] . " :" . "\n" . $property['Activity_description'] . "\n" . "ค่ากิจกรรม" . $property['Activity_price']));
+                                ?>
+                            </p>
+                        <?php else: ?>
+                            <p class="feature-description">
+                                ไม่มีข้อมูล
+                            </p>
+                        <?php endif; ?>
                     </div>
                 </div>
-                <h2 class="section-title">ห้องพัก</h2>
+                <div class="section-title">ห้องพัก</div>
                 <div class="rooms-list" id="roomsList">
-                    <?php foreach ($rooms as $room): ?>
-                        <div class="room-card <?php echo htmlspecialchars($room['Room_status'] != 'Available' ? ' disable' : ''); ?>"
-                            data-room-id="<?php echo $room['Room_id']; ?>" data-status="<?php echo $room['Room_status']; ?>"
-                            data-room-number="<?php echo $room['Room_number']; ?>"
-                            data-room-price="<?php echo $room['Room_price']; ?>"
-                            data-room-property="<?php echo $room['Property_id']; ?>">
-                            <div class="room-title">ห้อง <?php echo htmlspecialchars($room['Room_number']); ?></div>
+                    <!-- <?php /*foreach ($rooms as $room):*/ ?>
+                        <div class="room-card <?php /*echo htmlspecialchars($room['Room_status'] != 'Available' ? ' disable' : '');*/ ?>"
+                            data-room-id="<?php /* echo $room['Room_id'];*/ ?>" data-status="<?php /*echo $room['Room_status'];*/ ?>"
+                            data-room-number="<?php /*echo $room['Room_number'];*/ ?>"
+                            data-room-price="<?php /*echo $room['Room_price'];*/ ?>"
+                            data-room-property="<?php /*echo $room['Property_id'];*/ ?>"
+                            data-room-capacity="<?php /*echo $room['Room_capacity'];*/ ?>">
+
+                            <div class="room-title">ห้อง <?php /*echo htmlspecialchars($room['Room_number']);*/ ?></div>
                             <div
-                                class="room-status <?php echo ($room['Room_status'] == 'Available' ? 'Available' : ($room['Room_status'] == 'Reserved' ? 'Booked' : 'Closed')); ?>">
-                                <?php echo ($room['Room_status'] == 'Available' ? "ว่าง" : ($room['Room_status'] == 'Reserved' ? "ไม่ว่าง" : "ปิด")); ?>
+                                class="room-status <?php /*echo ($room['Room_status'] == 'Available' ? 'Available' : ($room['Room_status'] == 'Reserved' ? 'Booked' : 'Closed'));*/ ?>">
+                                <?php /*echo ($room['Room_status'] == 'Available' ? "ว่าง" : ($room['Room_status'] == 'Reserved' ? "ไม่ว่าง" : "ปิด"));*/ ?>
                             </div>
-                            <div class="room-price">฿<?php echo htmlspecialchars($room['Room_price']); ?> / คืน</div>
-                            <div>ประเภท: <?php echo htmlspecialchars($room['Room_capacity'] ?? 'Standard'); ?></div>
-                            <div>สิ่งอำนวยความสะดวก: <?php echo htmlspecialchars($room['Room_utensils'] ?? 'Standard'); ?>
+                            <div class="room-price">฿<?php /*echo htmlspecialchars($room['Room_price']);*/ ?> / คืน
+                                <p style="font-size: 14px;">รองรับ <?php /*echo htmlspecialchars($room['Room_capacity']);*/ ?>
+                                    คน</p>
+                            </div>
+
+                            <div>ประเภท: <?php /*echo htmlspecialchars($room['Room_type'] ?? 'ไม่พบข้อมูล'); ?></div>
+
+<div>สิ่งอำนวยความสะดวก:
+<?php /*echo htmlspecialchars($room['Room_utensils'] ?? 'ไม่พบข้อมูล')*/; ?>
                             </div>
                         </div>
-                    <?php endforeach; ?>
+                    <?php /*endforeach;*/ ?> -->
                 </div>
+                <!-- <button id="openModalBtn" class="show-calendar-btn">
+                    <i class="fas fa-calendar-alt"></i> แสดงปฏิทินการจอง
+                </button> -->
                 <div class="booking-map-flex">
+
                     <div class="map-section" style="flex:1; min-width:280px;">
                         <div id="map" style="width:100%; height:660px; border-radius:10px; margin-top:0.7rem;"></div>
                     </div>
+                    <div class="section-title">
+
+                    </div>
                     <div class="booking-section" style="flex:1; min-width:280px;">
-                        <div
-                            style="justify-content: space-around; margin-top:1.5rem; background:#fafdff; border-radius:8px; padding:1.2rem; border:1px solid #e0e7ef;">
-                            <div class="section-title">ปฏิทินการจอง
-                                <button class="btn btn-calendar">ดูปฏิทิน</button>
-                            </div>
-                        </div>
+
                         <!--<div class="calendar" id="calendar"></div> -->
-                        <div id="booking-form"
+                        <div class="booking-form" id="booking-form"
                             style="margin-top:1.5rem; background:#fafdff; border-radius:8px; padding:1.2rem; border:1px solid #e0e7ef;">
                             <p id="bookingSection"></p>
                             <p id="bookingMessage"></p>
+
+                            <button
+                                style="flex: 1;padding: 16px 24px;border-radius: 12px;font-size: 16px;font-weight: 600;cursor: pointer;transition: all 0.2s ease;border: none;position: relative;overflow: hidden;margin-bottom: 0.5rem;background: #1e5470;color: white;"
+                                data-bs-toggle="modal" data-bs-target="#calendarModal">
+                                ดูปฏิทินการจอง
+                            </button>
                             <div style="margin-bottom:1rem;">
                                 <label for="checkin">วันที่เช็คอิน</label><br>
                                 <input type="date" id="checkin" name="checkin" min="<?php echo date('Y-m-d'); ?>"
@@ -1073,20 +1124,33 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                                 <input type="number" id="room_number" name="room_number" min="1" max="20" value=""
                                     style="width:100%; padding:0.5rem; border-radius:6px; border:1px solid #ccc;"
                                     placeholder="Number" readonly>
-                                <input type="hidden" id="prices" name="prices" min="1" max="1000" value="">
-                                <input type="hidden" id="roomid" name="roomid" min="1" max="1000" value="">
-                                <input type="hidden" id="diffDay" name="diffDay" min="1" max="1000" value="">
-                                <input type="hidden" id="propertyid" name="propertyid" min="1" max="1000" value="">
-                                <input type="hidden" id="total_price" name="total_price" min="1" value="">
+                                <input type="number" id="prices" name="prices" min="1" max="1000" value="">
+                                <input type="number" id="roomid" name="roomid" min="1" max="1000" value="">
+                                <input type="number" id="diffDay" name="diffDay" min="1" max="1000" value="">
+                                <input type="number" id="propertyid" name="propertyid" min="1" max="1000" value="">
+                                <input type="number" id="total_price" name="total_price" min="1" value="">
+
                             </div>
                             <div style="margin-bottom:1rem;">
                                 <label for="guests">จำนวนผู้เข้าพัก</label><br>
-                                <input type="number" id="guests" name="guests" min="1" max="20" value="1"
+                                <input type="number" id="guests" name="guests" min="1" max="5" value="1"
                                     style="width:100%; padding:0.5rem; border-radius:6px; border:1px solid #ccc;">
                             </div>
+                            <div style="margin-bottom:1rem;">
+                                <select name="activity" id="SelectActivity"
+                                    style="width:100%; padding:0.5rem; border-radius:6px; border:1px solid #ccc; align-items: center;">
+                                    <option value="0">-- เลือกการเข้าร่วมกิจกรรม --</option>
+                                    <option value="0">ไม่สนใจ</option>
+                                    <option value="<?php echo htmlspecialchars($property['Activity_id']) ?>">สนใจ
+                                    </option>
+                                </select>
+                            </div>
+
+                            <input type="number" id="ActivityId" name="ActivityId">
                             <h3 style="margin-top:1rem; font-weight:bold;">รวมราคา</h3>
                             <div style="margin-top:1rem; ">
                                 <p>จำนวนคืนที่เข้าพัก : <span class="para" id="nights">1</span> คืน</p>
+
                                 <p>ราคารวม : <span class="para" name="display_price" id="display_price">0.00</span> บาท
                                 </p>
                             </div>
@@ -1100,10 +1164,10 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                     </div>
                 </div>
             </div>
-            <div id="Confirm_booking" class="modal" style="display: none;">
+            <div id="Confirm_booking" class="modal-payment" style="display: none;">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h2 class="modal-title">ขั้นตอนการชำระเงิน</h2>
+                        <h2 class="modal-title">ขั้นตอนการชำระเงิน</h2><br>
                         <p class="modal-subtitle">กรุณาเลือกวิธีการชำระเงิน</p>
                     </div>
                     <div class="payment-methods">
@@ -1189,558 +1253,1539 @@ require_once __DIR__ . "/../../api/get_listFavorites.php";
                 </div>
             </div>
         </div>
-        <div id="reportModal" class="modal-report">
-            <div class="modal-report-content">
-                <span class="close-report">&times;</span>
-                <h2>เหตุผลการเรื่องร้องเรียน</h2>
-                <form id="reportForm">
-                    <input type="hidden" id="reviewIdInput">
-                    <label for="reason">กรุณากรอกเหตุผล:</label>
-                    <textarea id="reason" name="reason" rows="4" placeholder="ระบุเหตุผล..." required></textarea>
-                    <br>
-                    <button type="submit" class="action-btn contact-btn">ส่งข้อมูล</button>
-                    <button type="button" id="closeBtn" class="action-btn cancel-btn">ยกเลิก</button>
-                </form>
+    </div>
+    <div class="modal fade" id="calendarModal" tabindex="-1" aria-labelledby="calendarModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md-12">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="calendarModalLabel">ปฏิทินการจอง</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="calendar"></div>
+                </div>
             </div>
         </div>
+    </div>
+    <div id="reportModal" class="modal-report">
+        <div class="modal-report-content">
+            <span class="close-report">&times;</span>
+            <h2>เหตุผลการเรื่องร้องเรียน</h2>
+            <form id="reportForm">
+                <input type="hidden" id="reviewIdInput">
+                <label for="reason">กรุณากรอกเหตุผล:</label>
+                <textarea id="reason" name="reason" rows="4" placeholder="ระบุเหตุผล..." required></textarea>
+                <br>
+                <button type="submit" class="action-btn contact-btn">ส่งข้อมูล</button>
+                <button type="button" id="closeBtn" class="action-btn cancel-btn">ยกเลิก</button>
+            </form>
+        </div>
+    </div>
 
-        <!-- <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/main.min.js"></script> -->
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-        <script>
-            // Initialize payment button listeners after DOM is loaded
-            document.addEventListener('DOMContentLoaded', function() {
-                const rooms = document.querySelectorAll('.room-card');
-                let selectedRoomId = null;
-                let selectedPropertyId = null;
-                let selectedRoomPrice = 0;
+    <!-- FullCalendar -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            const propertyId = "<?php echo $property['Property_id']; ?>";
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'th',
+                // aspectRatio: 1.8,
+                height: 450,
+                width: 500,
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth'
+                    // right: 'dayGridMonth,timeGridWeek,listWeek'
+                },
+                events: `../../api/test_data_cal.php?id=${propertyId}`,
 
+            });
+            console.log(calendar);
+            var modal = document.getElementById('calendarModal');
+            modal.addEventListener('shown.bs.modal', function() {
+                calendar.render();
+            });
+        });
+        document.getElementById('guests').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            value = value.slice(0, 1);
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const rooms = document.querySelectorAll('.room-card');
+            let selectedRoomId = null;
+            let selectedPropertyId = null;
+            let selectedRoomPrice = 0;
+            let room_number = document.getElementById('room_number');
+            let roomid = document.getElementById('roomid');
+            let property = document.getElementById('propertyid');
+            let roomPriceInput = document.getElementById('prices');
+            const total_price = document.getElementById('total_price');
+            let checkinInput = document.getElementById('checkin');
+            let checkoutInput = document.getElementById('checkout');
+            const guestsInput = document.getElementById('guests');
+            const guestsValuehidden = document.getElementById('guests_hidden');
+            const nightsDisplay = document.getElementById('nights');
+            const diffDayDisplay = document.getElementById('diffDay');
+            const bookingMessage = document.getElementById('bookingMessage');
+            const bookBtn = document.getElementById('bookBtn');
+            const totalPriceDisplay = document.getElementById('display_price');
+            const ActivityId = document.getElementById('ActivityId');
+            if (!bookingMessage || !totalPriceDisplay) {
+                console.error('Missing DOM elements:', {
+                    bookingMessage,
+                    total_price
+                });
+                return;
+            }
+            const roomList = document.getElementById('roomsList');
 
-                const room_number = document.getElementById('room_number');
-                const roomid = document.getElementById('roomid');
-                const property = document.getElementById('propertyid');
-                const checkinInput = document.getElementById('checkin');
-                const checkoutInput = document.getElementById('checkout');
-                const guestsInput = document.getElementById('guests');
-                const nightsDisplay = document.getElementById('nights');
-                const diffDayDisplay = document.getElementById('diffDay');
-                const total_price = document.getElementById('total_price');
-                const prices_amount = document.getElementById('prices');
-                const bookingMessage = document.getElementById('bookingMessage');
-                const bookBtn = document.getElementById('bookBtn');
-                const totalPriceDisplay = document.getElementById('display_price');
+            checkinInput.addEventListener('change', handleDateChange);
+            checkoutInput.addEventListener('change',
+                handleDateChange);
 
-                // ตรวจสอบ DOM elements
-                if (!bookingMessage || !totalPriceDisplay) {
-                    console.error('Missing DOM elements:', {
-                        bookingMessage,
-                        total_price
+            function fetchRooms(checkInValue = '', checkOutValue = '') {
+                fetch('../../controls/get_room.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: new URLSearchParams({
+                            'property_id': propertyId,
+                            'check_in': checkInValue,
+                            'check_out': checkOutValue
+                        })
 
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        roomList.innerHTML = '';
+                        if (data.length > 0) {
+                            data.forEach(room => {
+                                const room_list = document.createElement('div');
+                                room_list.className = 'room-card';
+                                room_list.dataset.roomId = room.Room_id;
+                                room_list.dataset.roomNumber = room.Room_number;
+                                room_list.dataset.roomPrice = room.Room_price;
+                                room_list.dataset.roomProperty = room.Property_id;
+                                room_list.dataset.roomCapacity = room.Room_capacity;
+                                room_list.dataset.status = room.Room_status;
+                                room_list.innerHTML = `
+                                <div class='room-title'>ห้อง ${room.Room_number}</div>
+                                <div>
+                                    <div class='room-status ${room.Room_status} '>${room.Room_status}</div>
+                                </div>
+                                <div class='room-price'> ฿ ${room.Room_price} /คืน
+                                    <p style='font-size:14px;'> รองรับ ${room.Room_capacity} คน</p>
+                                </div>
+                                <div> ประเภท : ${room.Room_type}</div>
+                                <div> สิ่งอำนวยความสะดวก : ${room.Room_utensils}</div>
+                                `;
+                                if (room_list.dataset.status !== 'Available') {
+                                    room_list.classList.add('disabled');
+                                }
+                                room_list.addEventListener('click', function() {
+                                    if (this.dataset.status !== 'Available') return;
+                                    document.querySelectorAll('.room-card').forEach(c => c
+                                        .classList.remove('selected'));
+                                    this.classList.add('selected');
+                                    roomid.value = this.dataset.roomId;
+                                    property.value = this.dataset
+                                        .roomProperty;
+                                    roomPriceInput.value = this.dataset
+                                        .roomPrice;
+                                    room_number.value = this.dataset.roomNumber;
+                                    let Max_capacity = this.dataset
+                                        .roomCapacity;
+
+                                    guestsInput.max = Max_capacity;
+
+                                    if (parseInt(guestsInput.value) > Max_capacity) {
+                                        alert("กรุณาระบุจำนวนผู้เข้าพักตามที่กำหนด");
+                                    }
+
+                                    calculatePrice();
+                                });
+                                roomList.appendChild(room_list);
+                            });
+                        } else {
+                            roomList.innerHTML = '<p >ไม่พบห้องที่ตรงกับวันที่check in&out</p>';
+                        }
                     });
-                    return;
+            }
+            const propertyId = "<?php echo $property['Property_id']; ?>";
+            fetchRooms('', '', propertyId);
+
+            function handleDateChange() {
+                const checkInValue = checkinInput.value;
+                const checkOutValue = checkoutInput.value;
+                if (checkInValue && checkOutValue) {
+                    if (new Date(checkOutValue) > new Date(checkInValue)) {
+                        resetBookingSelection();
+                        fetchRooms(checkInValue, checkOutValue, propertyId);
+                    } else {
+                        roomList.innerHTML = '<p>กรุณาเลือกวันที่เช็คเอาท์ให้ถูกต้อง</p>';
+                    }
                 }
 
-                rooms.forEach(card => {
-                    if (card.dataset.status !== 'Available') {
-                        card.classList.add('disabled');
+            }
+            guestsInput.addEventListener('input', function() {
+                const currentValue = parseInt(this.value);
+                const maxValue = parseInt(this.max);
+                if (currentValue > maxValue) {
+                    alert(`ห้องนี้สามารถเข้าพักได้สูงสุด ${maxValue} คนเท่านั้น`);
+                    this.value = maxValue;
+                }
+            });
+            checkinInput.addEventListener('change', function() {
+                if (checkinInput.value) {
+                    // แปลงค่าวันที่เช็คอินเป็น Date object
+                    let checkinDate = new Date(checkinInput.value);
+                    checkinDate.setDate(checkinDate.getDate() + 1);
+                    let year = checkinDate.getFullYear();
+                    let month = String(checkinDate.getMonth() + 1).padStart(2, '0');
+                    let day = String(checkinDate.getDate()).padStart(2, '0');
+                    let minCheckoutDate = `${year}-${month}-${day}`;
+                    // กำหนด min ของวันที่เช็คเอาท์
+                    checkoutInput.min = minCheckoutDate;
+                    // ถ้าวันที่เช็คเอาท์ปัจจุบันน้อยกว่าค่านี้ ให้ล้างค่าวันที่เช็คเอาท์
+                    if (checkoutInput.value < minCheckoutDate) {
+                        checkoutInput.value = '';
                     }
-                });
+                }
+            });
+            const SelectActivity = document.getElementById('SelectActivity');
+            SelectActivity.addEventListener('change', function() {
+                const selectedId = this.value;
+                ActivityId.value = selectedId;
+            });
+            // สร้างฟังก์ชันครอบการเรียก calculatePrice
+            function handlePriceCalculation() {
+                if (roomid.value) {
+                    calculatePrice();
+                }
+            }
 
-                rooms.forEach(card => {
-                    card.addEventListener('click', function() {
-                        if (card.dataset.status !== 'Available') return;
-                        rooms.forEach(c => c.classList.remove('selected'));
-                        card.classList.add('selected');
-                        selectedRoomId = card.dataset.roomId;
-                        selectedPropertyId = card.dataset.roomProperty;
-                        selectedRoomPrice = parseFloat(card.dataset.roomPrice);
-                        roomid.value = selectedRoomId;
-                        property.value = selectedPropertyId;
-                        prices.value = selectedRoomPrice;
-                        room_number.value = card.dataset.roomNumber;
-                        calculatePrice();
-                    });
-                });
-                checkinInput.addEventListener('change', function() {
-                    if (checkinInput.value) {
-                        // แปลงค่าวันที่เช็คอินเป็น Date object
-                        let checkinDate = new Date(checkinInput.value);
-                        checkinDate.setDate(checkinDate.getDate() + 1);
-                        let year = checkinDate.getFullYear();
-                        let month = String(checkinDate.getMonth() + 1).padStart(2, '0');
-                        let day = String(checkinDate.getDate()).padStart(2, '0');
-                        let minCheckoutDate = `${year}-${month}-${day}`;
-                        // กำหนด min ของวันที่เช็คเอาท์
-                        checkoutInput.min = minCheckoutDate;
-                        // ถ้าวันที่เช็คเอาท์ปัจจุบันน้อยกว่าค่านี้ ให้ล้างค่าวันที่เช็คเอาท์
-                        if (checkoutInput.value < minCheckoutDate) {
-                            checkoutInput.value = '';
-                        }
-                    }
-                });
-                [checkinInput, checkoutInput, guestsInput].forEach(el => {
-                    el.addEventListener('change', calculatePrice);
-                    el.addEventListener('input', calculatePrice);
-                });
+            // ใช้ฟังก์ชันใหม่นี้ใน Event Listener
+            [guestsInput, SelectActivity].forEach(el => {
+                el.addEventListener('change', handlePriceCalculation);
+                el.addEventListener('input', handlePriceCalculation);
+            });
 
-                function calculatePrice() {
-                    console.log('calculatePrice:', {
-                        selectedRoomId,
-                        checkin: checkinInput.value,
-                        checkout: checkoutInput.value,
-                        guests: guestsInput.value
-                    });
-                    const checkinDate = new Date(checkinInput.value);
-                    const checkoutDate = new Date(checkoutInput.value);
-                    const diffTime = checkoutDate - checkinDate;
-                    const diffDays = diffTime / (1000 * 60 * 60 * 24);
-                    if (!selectedRoomId || isNaN(checkinDate) || isNaN(checkoutDate) || checkoutDate <=
-                        checkinDate ||
-                        diffDays < 0) {
-                        totalPriceDisplay.innerText = '0.00';
-                        total_price.value = '0.00';
-                        bookingMessage.innerText = 'กรุณาเลือกห้องพักและวันที่เช็คอิน/เช็คเอาท์';
-                        bookingMessage.style.color = '#c0392b';
-                        bookingMessage.style.fontWeight = 'bold';
-                        bookingMessage.style.textAlign = 'center';
-                        bookingMessage.style.padding = '1rem';
-                        bookBtn.disabled = true;
-                        return;
-                    }
-                    diffDayDisplay.value = diffDays;
-                    nightsDisplay.innerText = diffDays;
-                    fetch('../../controls/bookings_room.php', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded' // หรือ 'application/json' แล้วแปลง body เป็น JSON.stringify(...)
-                            },
-                            body: new URLSearchParams({
-                                property_id: selectedPropertyId,
-                                room_id: selectedRoomId,
-                                nights: diffDays,
-                                guests: guestsInput.value,
-                                check_in_date: checkinInput.value,
-                                check_out_date: checkoutInput.value
-                            })
+            function resetBookingSelection() {
+
+                roomid.value = '';
+                property.value = '';
+                roomPriceInput.value = '';
+                const selectedCards = document.querySelectorAll('.room-card.selected');
+                selectedCards.forEach(card => {
+                    card.classList.remove('selected');
+                });
+                totalPriceDisplay.innerText = '0.00';
+                total_price.value = '0.00';
+                nightsDisplay.innerText = '0';
+                diffDayDisplay.value = '0';
+                bookBtn.disabled = true;
+                bookingMessage.innerText = '';
+                bookingMessage.style.padding = '0';
+            }
+
+            function calculatePrice() {
+                console.log('calculatePrice:', {
+                    room_id: roomid.value,
+                    checkin: checkinInput.value,
+                    checkout: checkoutInput.value,
+                    guests: guestsInput.value,
+                    activity_id: ActivityId.value
+                });
+                const checkinDate = new Date(checkinInput.value);
+                const checkoutDate = new Date(checkoutInput.value);
+                const diffTime = checkoutDate - checkinDate;
+                const diffDays = diffTime / (1000 * 60 * 60 * 24);
+
+                diffDayDisplay.value = diffDays;
+                nightsDisplay.innerText = diffDays;
+                fetch('../../controls/bookings_room.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded' // หรือ 'application/json' แล้วแปลง body เป็น JSON.stringify(...)
+                        },
+                        body: new URLSearchParams({
+                            // property_id: selectedPropertyId,
+                            property_id: property.value,
+                            room_id: roomid.value,
+                            nights: diffDays,
+                            guests: guestsInput.value,
+                            check_in_date: checkinInput.value,
+                            check_out_date: checkoutInput.value,
+                            activity_id: ActivityId.value
                         })
-                        .then(response => {
-                            if (!response.ok) throw new Error('Network response was not ok');
-                            return response.json();
-                        })
-                        .then(data => {
-                            console.log('Fetch response:', data);
-                            if (data.check_success === false) {
-                                alert(data.message);
-                                resetForm()
-                            } else if (data.success === true) {
-                                // จัดการผลลัพธ์สำเร็จ
+                    })
+                    .then(response => {
+                        if (!response.ok) throw new Error('Network response was not ok');
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Fetch response:', data);
+                        if (data.check_success === false) {
+                            alert(data.message);
+                            resetForm()
+                        } else if (data.success === true) {
+                            // จัดการผลลัพธ์สำเร็จ
 
-                                totalPriceDisplay.innerText = data.total_price;
-                                total_price.value = data.total_price;
-                                // prices_amount.value = data.price;
-                                bookBtn.disabled = false;
-                            } else {
-                                // จัดการ error
-                                console.log(data.message);
-                                totalPriceDisplay.innerText = '0.00';
-                                total_price.value = '0.00';
-                                bookingMessage.innerText = data.message;
-                                bookingMessage.style.color = '#c0392b';
-                                bookBtn.disabled = true;
-                            }
-                        })
-                        .catch(error => {
-
-                            console.error('Fetch error:', error);
-
+                            totalPriceDisplay.innerText = data.total_price;
+                            total_price.value = data.total_price;
+                            bookBtn.disabled = false;
+                        } else {
+                            // จัดการ error
+                            console.log(data.message);
                             totalPriceDisplay.innerText = '0.00';
                             total_price.value = '0.00';
-                            bookingMessage.innerText = 'เกิดข้อผิดพลาด: ' + error;
+                            bookingMessage.innerText = data.message;
                             bookingMessage.style.color = '#c0392b';
                             bookBtn.disabled = true;
-                            console.log(error);
-                        });
-                }
+                        }
+                    })
+                    .catch(error => {
 
-                // Add ripple effect to buttons
-                document.querySelectorAll('.btn').forEach(button => {
+                        console.error('Fetch error:', error);
+                        totalPriceDisplay.innerText = '0.00';
+                        total_price.value = '0.00';
+                        bookingMessage.innerText = 'เกิดข้อผิดพลาด: ' + error;
+                        bookingMessage.style.color = '#c0392b';
+                        bookBtn.disabled = true;
+                        console.log(error);
+                    });
+            }
+            // Add ripple effect to buttons
+            document.querySelectorAll('.btn').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    addRipple(this, e);
+                });
+            });
+
+            function addRipple(button, event) {
+                const ripple = document.createElement('span');
+                const rect = button.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = event.clientX - rect.left - size / 2;
+                const y = event.clientY - rect.top - size / 2;
+                ripple.classList.add('ripple');
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                button.appendChild(ripple);
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            }
+            let selectedPayment = null;
+            const payButtons = document.querySelectorAll('.payment-button');
+            if (payButtons.length === 0) {
+                console.error('No payment buttons found!');
+            } else {
+                payButtons.forEach(button => {
                     button.addEventListener('click', function(e) {
+                        payButtons.forEach(btn => btn.classList.remove('selected'));
+                        this.classList.add('selected');
+                        selectedPayment = this.dataset.method;
                         addRipple(this, e);
                     });
                 });
-
-                function addRipple(button, event) {
-                    const ripple = document.createElement('span');
-                    const rect = button.getBoundingClientRect();
-                    const size = Math.max(rect.width, rect.height);
-                    const x = event.clientX - rect.left - size / 2;
-                    const y = event.clientY - rect.top - size / 2;
-                    ripple.classList.add('ripple');
-                    ripple.style.width = ripple.style.height = size + 'px';
-                    ripple.style.left = x + 'px';
-                    ripple.style.top = y + 'px';
-                    button.appendChild(ripple);
-                    setTimeout(() => {
-                        ripple.remove();
-                    }, 600);
-                }
-                let selectedPayment = null;
-                const payButtons = document.querySelectorAll('.payment-button');
-                if (payButtons.length === 0) {
-                    console.error('No payment buttons found!');
-                } else {
-                    payButtons.forEach(button => {
-                        button.addEventListener('click', function(e) {
-                            // เอา class selected ออกจากทุกปุ่ม
-                            payButtons.forEach(btn => btn.classList.remove('selected'));
-                            // ใส่ class ให้ปุ่มที่เลือก
-                            this.classList.add('selected');
-                            // เก็บค่าที่เลือก
-                            selectedPayment = this.dataset.method;
-
-                            // Ripple effect
-                            addRipple(this, e);
-                        });
-                    });
-                }
-
-                const ConfirmBtn = document.getElementById('confirmBtn');
-                ConfirmBtn.addEventListener('click', function(e) {
-
-                    if (confirm('คุณยืนยันต้องการชำระใช่ไหม?')) {
-                        //ตรวจสอบ room_id และ วันที่เช็คอิน,วันที่เช็คเอ้าท์ แล้วไม่เป็นค่าว่าง 
-                        fetch('../../controls/bookings_room.php', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/x-www-form-urlencoded'
-                                },
-                                //ส่งข้อมูลใน body ไปที่โฟลเดอร์ controls/bookings_room.php
-                                body: new URLSearchParams({
-                                    room_id: selectedRoomId,
-                                    property_id: selectedPropertyId,
-                                    check_in_date: checkinInput.value,
-                                    check_out_date: checkoutInput.value,
-                                    nights: diffDayDisplay.value,
-                                    guests: guestsInput.value,
-                                    total_price: prices_amount.value,
-                                    submit_onl: true
-                                })
-                            })
-                            //ผลลัพธ์
-                            .then(response => {
-                                //ตรวจสอบค่าผลลัพธ์ที่เกี่ยวNetwork ถ้ามีปัญหาให้แจ้ง network response was not ok
-                                if (!response.ok) throw new Error('network response was not ok');
-                                //คืนค่าเป็น json
-                                return response.json();
-                            })
-                            //รับข้อมูลได้ ไม่มี error
-                            .then(data => {
-                                console.log('Fetch response :', data);
-                                if (data.success === true) {
-                                    e.preventDefault();
-                                    const latestTotalPrice = parseFloat(total_price.value);
-                                    const bookingId = data.booking_id;
-                                    if (!isNaN(latestTotalPrice) && latestTotalPrice > 0) {
-                                        fetch('../../controls/bookings_room.php', {
-                                                method: 'POST',
-                                                headers: {
-                                                    'Content-Type': 'application/x-www-form-urlencoded'
-                                                },
-                                                body: 'total_price=' + encodeURIComponent(
-                                                        latestTotalPrice) +
-                                                    '&booking_id=' + encodeURIComponent(
-                                                        bookingId) +
-                                                    '&method=' + encodeURIComponent(
-                                                        selectedPayment) + '&submit_onl=' +
-                                                    encodeURIComponent(true)
-                                            })
-                                            .then(response => response.json())
-                                            .then(data => {
-                                                if (data.gateway === "qrcode") {
-
-                                                    window.location.href = 'qr-payment.php';
-                                                } else if (data.gateway === "credit-card") {
-
-                                                    window.location.href = 'credit-card.php';
-                                                } else {
-                                                    alert(data.err);
-                                                }
-                                            })
-                                            .catch(err => console.error(err));
-                                    }
-                                }
-                            })
-                            //รับข้อมูลไม่ได้ มี error
-                            .catch(error => {
-                                console.error('Failed to parse JSON:', error);
-                                bookingMessage.innerText = 'เกิดข้อผิดพลาด: Response ไม่ถูกต้อง';
-                                bookingMessage.style.color = '#c0392b';
-                                ConfirmBtn.disabled = false;
-                                bookBtn.disabled = false;
-                                document.getElementById('Confirm_booking').style.display = 'none';
-                            })
-                    }
-                });
-                //reset from การจอง
-                function resetForm() {
-                    checkinInput.value = '';
-                    checkoutInput.value = '';
-                    guestsInput.value = '1';
-                    nightsDisplay.innerText = '';
-                    totalPriceDisplay.innerText = '0.00';
-                    total_price.value = '';
-                    roomid.value = '';
-                    property.value = '';
-                    room_number.value = '';
-                    prices_amount.value = '';
-                    rooms.forEach(c => c.classList.remove('selected'));
-                    selectedRoomId = null;
-                    selectedPropertyId = null;
-                    selectedRoomPrice = 0;
-                    bookingMessage.innerText = 'กรุณาเลือกห้องพักและวันที่เช็คอิน/เช็คเอาท์';
-                    bookingMessage.style.color = '#c0392b';
-                    bookingMessage.style.fontWeight = 'bold';
-                    bookingMessage.style.textAlign = 'center';
-                    bookingMessage.style.padding = '1rem';
-                    bookBtn.disabled = true;
-                }
-                //ปุ่มreset form
-                const resetBtn = document.getElementById('resetBtn');
-                resetBtn.type = 'button';
-                resetBtn.innerText = 'Reset';
-                resetBtn.onclick = resetForm;
-                const bookingForm = document.getElementById('booking-form');
-                if (bookingForm) {
-                    bookingForm.appendChild(resetBtn);
-                } else {
-                    console.error('Element with id "booking-form" not found');
-                }
-                //ปุ่มFavorite
-                const favoriteBtn = <?php echo json_encode($fav_btn); ?>;
-                const buttons = document.querySelectorAll(".favorite-btn");
-
-                buttons.forEach(button => {
-                    const houseId = button.dataset.propertyId;
-                    if (favoriteBtn.includes(parseInt(houseId))) {
-                        button.classList.add('active');
-                    } else {
-                        button.classList.remove('active');
-                    }
-                    button.addEventListener("click", async () => {
-                        const action = button.dataset.method;
-                        fetch("../../controls/list_fav.php", {
-                                method: "POST",
-                                headers: {
-                                    'Content-Type': 'application/x-www-form-urlencoded'
-                                },
-                                body: new URLSearchParams({
-                                    property_id: houseId,
-                                    action: action
-                                })
-
-                            })
-                            .then(response => response.json())
-                            .then(result => {
-
-                                if (result.success) {
-                                    // toggle icon
-                                    if (result.action === 'added') {
-                                        button.classList.add("active");
-                                        window.location.reload();
-                                    } else if (result.action === 'removed') {
-                                        button.classList.remove("active");
-                                        window.location.reload();
-                                    }
-                                } else {
-                                    alert("เกิดข้อผิดพลาด: " + result.message);
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Error:', error);
-                                alert("เกิดข้อผิดพลาด: " + error.message);
-                            });
-                    });
-                });
-            });
-        </script>
-        <script>
-            //เปิด-ปิด Sidebar
-            function toggleSidebar() {
-                const sidebar = document.getElementById('sidebar');
-                const mainContent = document.querySelector('.main-with-sidebar');
-                sidebar.classList.toggle("collapsed");
-                mainContent.classList.toggle("sidebar-collapsed");
             }
 
-            function openConfirm_Booking() {
-                document.getElementById('Confirm_booking').style.display = 'flex';
-            }
+            const ConfirmBtn = document.getElementById('confirmBtn');
+            ConfirmBtn.addEventListener('click', function(e) {
+                if (confirm('คุณยืนยันต้องการชำระใช่ไหม?')) {
 
-            function closeConfirm_Booking() {
-                document.getElementById('Confirm_booking').style.display = 'none';
-            }
-            window.onclick = function(event) {
-                const modal = document.getElementById('Confirm_booking');
-                if (event.target === modal) {
-                    closeConfirm_Booking();
-                }
-            }
-            const slides = document.querySelectorAll(".Imgslider img");
-            const prevBtn = document.querySelector(".prev");
-            const nextBtn = document.querySelector(".next");
-            let index = 0;
-            let interval = setInterval(nextSlide, 5000); // ปรับเวลาเป็น 5 วินาที
-
-            function showSlide(i) {
-                slides.forEach(slide => slide.classList.remove("active"));
-                slides[i].classList.add("active");
-            }
-
-            function nextSlide() {
-                index = (index + 1) % slides.length;
-                showSlide(index);
-            }
-
-            function prevSlide() {
-                index = (index - 1 + slides.length) % slides.length;
-                showSlide(index);
-            }
-
-            nextBtn.addEventListener("click", () => {
-                nextSlide();
-                resetInterval();
-            });
-
-            prevBtn.addEventListener("click", () => {
-                prevSlide();
-                resetInterval();
-            });
-
-            function resetInterval() {
-                clearInterval(interval);
-                interval = setInterval(nextSlide, 8000); // ให้เวลานานขึ้นหลังกดเอง
-            }
-            //สคิปต์ดึงค่าละติจูดและลองจิจูดมาแสดง
-            const lat = <?php echo isset($house['Property_latitude']) ? floatval($house['Property_latitude']) : 13.7563; ?>;
-            const lng =
-                <?php echo isset($house['Property_longitude']) ? floatval($house['Property_longitude']) : 100.5018; ?>;
-            const map = L.map('map').setView([lat, lng], 20);
-
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; OpenStreetMap contributors'
-            }).addTo(map);
-
-            L.marker([lat, lng]).addTo(map);
-
-            const propertyId = "<?php echo $property['Property_id']; ?>";
-            const formReviews = document.getElementById('reviewForm');
-            formReviews.addEventListener('submit', function(e) {
-                e.preventDefault();
-                const formData = new FormData(formReviews);
-                formData.append('property_id', propertyId);
-                formData.append('submit_review', true);
-                fetch('../../controls/reviews_house.php', {
-                    method: 'POST',
-                    body: formData
-                }).then(response => {
-                    if (!response.ok) throw new Error('Network response was not ok');
-                    return response.json();
-                }).then(data => {
-                    console.log('Fetch response:', data);
-                    if (data.success === true) {
-                        window.location.reload();
-                        alert('ขอบคุณสำหรับรีวิวของคุณ!');
-                    } else {
-                        console.log(data.message);
-                        alert(data.message);
-                    }
-                }).catch(error => {
-                    console.error('Fetch error:', error);
-                    alert('เกิดข้อผิดพลาด: ' + error);
-
-                });
-            });
-            document.addEventListener('DOMContentLoaded', function() {
-                const allDropdownToggles = document.querySelectorAll('.dropdown-toggle');
-                allDropdownToggles.forEach(toggle => {
-                    toggle.addEventListener('click', function(event) {
-                        event.stopPropagation();
-                        const dropdownMenu = this.nextElementSibling;
-                        dropdownMenu.classList.toggle('show');
-                    });
-                });
-
-                window.addEventListener('click', function(event) {
-                    const openDropdowns = document.querySelectorAll('.dropdown-menu.show');
-                    openDropdowns.forEach(menu => {
-                        if (!menu.parentElement.contains(event.target)) {
-                            menu.classList.remove('show');
-                        }
-                    });
-                });
-                const modal = document.getElementById("reportModal");
-                const report_btn = document.querySelectorAll('.report-review-btn');
-                const span = document.querySelector(".close-report");
-                const closeBtn = document.getElementById("closeBtn");
-                const formReport = document.getElementById("reportForm");
-                const reason_raw = document.getElementById('reason');
-                const review_id_raw = document.getElementById('reviewIdInput');
-                report_btn.forEach(btn => {
-                    btn.onclick = function() {
-                        const reviewId = this.dataset.reviewId;
-                        document.getElementById('reviewIdInput').value = reviewId;
-                        modal.style.display = "block";
-                        this.closest('.dropdown-menu').classList.remove('show');
-                    }
-                })
-                span.onclick = () => {
-                    modal.style.display = "none";
-                    reason.value = '';
-
-                }
-                closeBtn.onclick = () => {
-                    modal.style.display = "none";
-                    reason.value = '';
-                }
-                window.onclick = (e) => {
-                    if (e.target == modal) {
-                        modal.style.display = "none";
-                        reason.value = '';
-                    }
-                }
-                formReport.onsubmit = (e) => {
-                    e.preventDefault();
-                    const reason = reason_raw.value.trim();
-                    const review_id = review_id_raw.value;
-
-                    fetch('../../controls/report_action.php', {
+                    console.log(property.value, roomid.value, checkinInput.value, checkoutInput.value,
+                        diffDayDisplay.value, guestsInput.value, roomPriceInput.value);
+                    fetch('../../controls/bookings_room.php', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/x-www-form-urlencoded'
                             },
                             body: new URLSearchParams({
-                                review_id: review_id,
-                                reason: reason,
-                                submit_rv_user: true
+                                property_id: property.value,
+                                room_id: roomid.value,
+                                check_in_date: checkinInput.value,
+                                check_out_date: checkoutInput.value,
+                                nights: diffDayDisplay.value,
+                                guests: guestsInput.value,
+                                total_price: roomPriceInput.value,
+                                submit_onl: true
                             })
                         })
-                        .then(res => {
-                            if (!res.ok) throw new Error('network response was not ok');
-                            return res.json();
+                        //ผลลัพธ์
+                        .then(response => {
+                            if (!response.ok) throw new Error('network response was not ok');
+                            return response.json();
                         })
                         .then(data => {
+                            console.log('Fetch response :', data);
                             if (data.success === true) {
-                                alert(data.message);
-                                window.location.reload();
+                                e.preventDefault();
+                                const latestTotalPrice = parseFloat(total_price.value);
+                                const bookingId = data.booking_id;
+                                if (!isNaN(latestTotalPrice) && latestTotalPrice > 0) {
+                                    fetch('../../controls/bookings_room.php', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/x-www-form-urlencoded'
+                                            },
+                                            body: 'total_price=' + encodeURIComponent(
+                                                    latestTotalPrice) +
+                                                '&booking_id=' + encodeURIComponent(
+                                                    bookingId) +
+                                                '&method=' + encodeURIComponent(
+                                                    selectedPayment) + '&submit_onl=' +
+                                                encodeURIComponent(true)
+                                        })
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            if (data.gateway === "qrcode") {
+
+                                                window.location.href = 'qr-payment.php';
+                                            } else if (data.gateway === "credit-card") {
+
+                                                window.location.href = 'credit-card.php';
+                                            } else {
+                                                alert(data.err);
+                                            }
+                                        })
+                                        .catch(err => console.error(err));
+                                }
                             } else {
                                 alert(data.message);
                             }
                         })
+                        //รับข้อมูลไม่ได้ มี error
                         .catch(error => {
-                            console.error('Error:', error.message);
-                        });
-                };
+                            console.error('Failed to parse JSON:', error);
+                            bookingMessage.innerText = 'เกิดข้อผิดพลาด: Response ไม่ถูกต้อง';
+                            bookingMessage.style.color = '#c0392b';
+                            ConfirmBtn.disabled = false;
+                            bookBtn.disabled = false;
+                            document.getElementById('Confirm_booking').style.display = 'none';
+                        })
+                }
             });
-        </script>
+            //reset from การจอง
+            function resetForm() {
+                checkinInput.value = '';
+                checkoutInput.value = '';
+                // checkinInput.value = '';
+                // checkoutInput.value = '';
+                guestsInput.value = '1';
+                nightsDisplay.innerText = '';
+                totalPriceDisplay.innerText = '0.00';
+                total_price.value = '';
+                roomid.value = '';
+                property.value = '';
+                room_number.value = '';
+                roomPriceInput.value = '';
+                rooms.forEach(c => c.classList.remove('selected'));
+                selectedRoomId = null;
+                // selectedPropertyId = null;
+                propertyId = null;
+                selectedRoomPrice = 0;
+                bookingMessage.innerText = 'กรุณาเลือกห้องพักและวันที่เช็คอิน/เช็คเอาท์';
+                bookingMessage.style.color = '#c0392b';
+                bookingMessage.style.fontWeight = 'bold';
+                bookingMessage.style.textAlign = 'center';
+                bookingMessage.style.padding = '1rem';
+                bookBtn.disabled = true;
+            }
+            //ปุ่มreset form
+            const resetBtn = document.getElementById('resetBtn');
+            resetBtn.type = 'button';
+            resetBtn.innerText = 'Reset';
+            resetBtn.onclick = resetForm;
+            const bookingForm = document.getElementById('booking-form');
+            if (bookingForm) {
+                bookingForm.appendChild(resetBtn);
+            } else {
+                console.error('Element with id "booking-form" not found');
+            }
+            //ปุ่มFavorite
+            const favoriteBtn = <?php echo json_encode($fav_btn); ?>;
+            const buttons = document.querySelectorAll(".favorite-btn");
+            buttons.forEach(button => {
+                const houseId = button.dataset.propertyId;
+                if (favoriteBtn.includes(parseInt(houseId))) {
+                    button.classList.add('active');
+                } else {
+                    button.classList.remove('active');
+                }
+                button.addEventListener("click", async () => {
+                    const action = button.dataset.method;
+                    fetch("../../controls/list_fav.php", {
+                            method: "POST",
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: new URLSearchParams({
+                                property_id: houseId,
+                                action: action
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                // toggle icon
+                                if (result.action === 'added') {
+                                    button.classList.add("active");
+                                    window.location.reload();
+                                } else if (result.action === 'removed') {
+                                    button.classList.remove("active");
+                                    window.location.reload();
+                                }
+                            } else {
+                                alert("เกิดข้อผิดพลาด: " + result.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert("เกิดข้อผิดพลาด: " + error.message);
+                        });
+                });
+            });
+        });
+    </script>
+    <script>
+        //เปิด-ปิด Sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.querySelector('.main-with-sidebar');
+            sidebar.classList.toggle("collapsed");
+            mainContent.classList.toggle("sidebar-collapsed");
+        }
+
+        function openConfirm_Booking() {
+            document.getElementById('Confirm_booking').style.display = 'flex';
+        }
+
+        function closeConfirm_Booking() {
+            document.getElementById('Confirm_booking').style.display = 'none';
+        }
+        window.onclick = function(event) {
+            const modal = document.getElementById('Confirm_booking');
+            if (event.target === modal) {
+                closeConfirm_Booking();
+            }
+        }
+        const slides = document.querySelectorAll(".Imgslider img");
+        const prevBtn = document.querySelector(".prev");
+        const nextBtn = document.querySelector(".next");
+        let index = 0;
+        let interval = setInterval(nextSlide, 5000); // ปรับเวลาเป็น 5 วินาที
+
+        function showSlide(i) {
+            slides.forEach(slide => slide.classList.remove("active"));
+            slides[i].classList.add("active");
+        }
+
+        function resetInterval() {
+            clearInterval(interval);
+            interval = setInterval(nextSlide, 8000); // ให้เวลานานขึ้นหลังกดเอง
+        }
+
+        function nextSlide() {
+            index = (index + 1) % slides.length;
+            showSlide(index);
+        }
+
+        function prevSlide() {
+            index = (index - 1 + slides.length) % slides.length;
+            showSlide(index);
+        }
+
+        nextBtn.addEventListener("click", () => {
+            nextSlide();
+            resetInterval();
+        });
+
+        prevBtn.addEventListener("click", () => {
+            prevSlide();
+            resetInterval();
+        });
+
+        //สคิปต์ดึงค่าละติจูดและลองจิจูดมาแสดง
+        const lat = <?php echo isset($house['Property_latitude']) ? floatval($house['Property_latitude']) : 13.7563; ?>;
+        const lng =
+            <?php echo isset($house['Property_longitude']) ? floatval($house['Property_longitude']) : 100.5018; ?>;
+        const map = L.map('map').setView([lat, lng], 20);
+        const location_name = <?php echo json_encode($property['Property_name'], JSON_UNESCAPED_UNICODE); ?>;
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        L.marker([lat, lng])
+            .addTo(map)
+            .bindPopup(location_name);
+
+        const propertyId = "<?php echo $property['Property_id']; ?>";
+        const formReviews = document.getElementById('reviewForm');
+        formReviews.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(formReviews);
+            formData.append('property_id', propertyId);
+            formData.append('submit_review', true);
+            fetch('../../controls/reviews_house.php', {
+                method: 'POST',
+                body: formData
+            }).then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            }).then(data => {
+                console.log('Fetch response:', data);
+                if (data.success === true) {
+                    window.location.reload();
+                    alert('ขอบคุณสำหรับรีวิวของคุณ!');
+                } else {
+                    console.log(data.message);
+                    alert(data.message);
+                }
+            }).catch(error => {
+                console.error('Fetch error:', error);
+                alert('เกิดข้อผิดพลาด: ' + error);
+
+            });
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const allDropdownToggles = document.querySelectorAll('.dropdown-toggle');
+            allDropdownToggles.forEach(toggle => {
+                toggle.addEventListener('click', function(event) {
+                    event.stopPropagation();
+                    const dropdownMenu = this.nextElementSibling;
+                    dropdownMenu.classList.toggle('show');
+                });
+            });
+
+            window.addEventListener('click', function(event) {
+                const openDropdowns = document.querySelectorAll('.dropdown-menu.show');
+                openDropdowns.forEach(menu => {
+                    if (!menu.parentElement.contains(event.target)) {
+                        menu.classList.remove('show');
+                    }
+                });
+            });
+            const modal = document.getElementById("reportModal");
+            const report_btn = document.querySelectorAll('.report-review-btn');
+            const span = document.querySelector(".close-report");
+            const closeBtn = document.getElementById("closeBtn");
+            const formReport = document.getElementById("reportForm");
+            const reason_raw = document.getElementById('reason');
+            const review_id_raw = document.getElementById('reviewIdInput');
+            report_btn.forEach(btn => {
+                btn.onclick = function() {
+                    const reviewId = this.dataset.reviewId;
+                    document.getElementById('reviewIdInput').value = reviewId;
+                    modal.style.display = "block";
+                    this.closest('.dropdown-menu').classList.remove('show');
+                }
+            })
+            span.onclick = () => {
+                modal.style.display = "none";
+                reason.value = '';
+
+            }
+            closeBtn.onclick = () => {
+                modal.style.display = "none";
+                reason.value = '';
+            }
+            window.onclick = (e) => {
+                if (e.target == modal) {
+                    modal.style.display = "none";
+                    reason.value = '';
+                }
+            }
+            formReport.onsubmit = (e) => {
+                e.preventDefault();
+                const reason = reason_raw.value.trim();
+                const review_id = review_id_raw.value;
+
+                fetch('../../controls/report_action.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: new URLSearchParams({
+                            review_id: review_id,
+                            reason: reason,
+                            submit_rv_user: true
+                        })
+                    })
+                    .then(res => {
+                        if (!res.ok) throw new Error('network response was not ok');
+                        return res.json();
+                    })
+                    .then(data => {
+                        if (data.success === true) {
+                            alert(data.message);
+                            window.location.reload();
+                        } else {
+                            alert(data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error.message);
+                    });
+            };
+        });
+    </script>
+</body>
+
+</html> data-bs-toggle="modal" data-bs-target="#calendarModal">
+ดูปฏิทินการจอง
+</button>
+<div style="margin-bottom:1rem;">
+    <label for="checkin">วันที่เช็คอิน</label><br>
+    <input type="date" id="checkin" name="checkin" min="<?php echo date('Y-m-d'); ?>"
+        style="width:100%; padding:0.5rem; border-radius:6px; border:1px solid #ccc;">
+</div>
+<div style="margin-bottom:1rem;">
+    <label for="checkout">วันที่เช็คเอาท์</label><br>
+    <input type="date" id="checkout" name="checkout"
+        style="width:100%; padding:0.5rem; border-radius:6px; border:1px solid #ccc;"
+        min="<?php echo date('Y-m-d', strtotime('+1 day')); ?>">
+</div>
+<div style="margin-bottom:1rem;">
+    <label for="guests">เลขห้องพัก</label><br>
+    <input type="number" id="room_number" name="room_number" min="1" max="20" value=""
+        style="width:100%; padding:0.5rem; border-radius:6px; border:1px solid #ccc;" placeholder="Number" readonly>
+    <input type="hidden" id="prices" name="prices" min="1" max="1000" value="">
+    <input type="hidden" id="roomid" name="roomid" min="1" max="1000" value="">
+    <input type="hidden" id="diffDay" name="diffDay" min="1" max="1000" value="">
+    <input type="hidden" id="propertyid" name="propertyid" min="1" max="1000" value="">
+    <input type="hidden" id="total_price" name="total_price" min="1" value="">
+
+</div>
+<div style="margin-bottom:1rem;">
+    <label for="guests">จำนวนผู้เข้าพัก</label><br>
+    <input type="number" id="guests" name="guests" min="1" max="20" value="1"
+        style="width:100%; padding:0.5rem; border-radius:6px; border:1px solid #ccc;">
+</div>
+<h3 style="margin-top:1rem; font-weight:bold;">รวมราคา</h3>
+<div style="margin-top:1rem; ">
+    <p>จำนวนคืนที่เข้าพัก : <span class="para" id="nights">1</span> คืน</p>
+
+    <p>ราคารวม : <span class="para" name="display_price" id="display_price">0.00</span> บาท
+    </p>
+</div>
+<div class="action-btn">
+    <button class="btn btn-cancel" name="resetBtn" id="resetBtn" type="button">Reset</button>
+    <button class="btn btn-confirm" name="bookBtn" id="bookBtn" onclick="openConfirm_Booking()">จอง</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="Confirm_booking" class="modal-payment" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title">ขั้นตอนการชำระเงิน</h2>
+            <p class="modal-subtitle">กรุณาเลือกวิธีการชำระเงิน</p>
+        </div>
+        <div class="payment-methods">
+            <button class="payment-button" data-method="credit-card" id="creditCardBtn">
+                <i class="fa-regular fa-credit-card"></i>
+                Credit Card
+            </button>
+            <button class="payment-button" data-method="qrcode" id="qrcodeBtn">
+                <i class=" fa-solid fa-qrcode"></i>
+                QR Code
+            </button>
+        </div>
+        <div class="action-buttons">
+            <button class="btn btn-cancel" onclick="closeConfirm_Booking()">ยกเลิก</button>
+            <button class="btn btn-confirm" id="confirmBtn">ยืนยัน</button>
+        </div>
+    </div>
+</div>
+<div class="container" style="margin-top:2rem;">
+    <div style="margin-top:2rem;">
+        <div class="section-title">รีวิวบ้านพัก</div>
+        <form id="reviewForm">
+            <div style="font-weight:500; margin-bottom:0.5rem;">เพิ่มรีวิวของคุณ</div>
+            <textarea name="review_text" rows="3"
+                style="width:100%; border-radius:6px; border:1px solid #ccc; padding:0.7rem; margin-bottom:0.7rem;"
+                required placeholder="เขียนรีวิว..."></textarea>
+            <div class="rating-container">
+                <label>ให้คะแนน:</label>
+                <div class="star-rating">
+                    <input type="radio" id="5-stars" name="review_rating" value="5" /><label for="5-stars"><i
+                            class="fa-solid fa-star"></i></label>
+                    <input type="radio" id="4-stars" name="review_rating" value="4" /><label for="4-stars"><i
+                            class="fa-solid fa-star"></i></label>
+                    <input type="radio" id="3-stars" name="review_rating" value="3" /><label for="3-stars"><i
+                            class="fa-solid fa-star"></i></label>
+                    <input type="radio" id="2-stars" name="review_rating" value="2" /><label for="2-stars"><i
+                            class="fa-solid fa-star"></i></label>
+                    <input type="radio" id="1-star" name="review_rating" value="1" /><label for="1-star"><i
+                            class="fa-solid fa-star"></i></label>
+                </div>
+            </div>
+            <button type="submit" name="submit_review" class="btn btn-confirm"
+                style="padding:0.5rem 1.5rem;">ส่งรีวิว</button>
+        </form>
+    </div>
+    <div class="section-title">รีวิวจากผู้เข้าพัก
+        <?php if (count($reviews) > 0): ?>
+            <?php foreach ($reviews as $review): ?>
+                <div style="border-bottom:1px solid #eee; padding:1rem 0;">
+                    <div style="font-weight:600; color:#1e5470;">
+                        <?php echo htmlspecialchars($review['User_email']); ?>
+                        <span style="color:#f5b301; font-size:1.1rem; margin-left:0.5rem;">
+                            <?php for ($i = 0; $i < (int) $review['Rating']; $i++)
+                                echo '<i class="fa-solid fa-star"></i>'; ?>
+                        </span>
+                        <span style="color:#888; font-size:0.95rem; margin-left:1rem;">
+                            <?php echo date('d/m/Y', strtotime($review['Create_at'])); ?>
+                        </span>
+                        <!-- <button
+                            style="border: none; background: #fff; padding: 10px; border-radius: 15px; cursor: pointer;   "><i
+                                class="fa-solid fa-ellipsis-vertical"></i></button> -->
+                        <div class="dropdown">
+                            <button class="dropdown-toggle" aria-label="ตัวเลือกเพิ่มเติม">
+                                <i class="fa-solid fa-ellipsis-vertical"></i>
+                            </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item report-review-btn" data-review-id="<?php echo $review['Review_id'] ?>">
+                                    <i class="fa-solid fa-flag"></i> รายงานรีวิวที่ไม่เหมาะสม
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div style="margin-top:0.3rem; color:#333;">
+                        <?php echo nl2br(htmlspecialchars($review['Comment'])); ?>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <div style="color:#888;">ยังไม่มีรีวิวสำหรับที่พักนี้</div>
+        <?php endif; ?>
+    </div>
+</div>
+</div>
+</div>
+<div class="modal fade" id="calendarModal" tabindex="-1" aria-labelledby="calendarModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md-12">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="calendarModalLabel">ปฏิทินการจอง</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- <div style="width: 550px;height: 450px;"> -->
+
+                <div id="calendar"></div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div id="reportModal" class="modal-report">
+    <div class="modal-report-content">
+        <span class="close-report">&times;</span>
+        <h2>เหตุผลการเรื่องร้องเรียน</h2>
+        <form id="reportForm">
+            <input type="hidden" id="reviewIdInput">
+            <label for="reason">กรุณากรอกเหตุผล:</label>
+            <textarea id="reason" name="reason" rows="4" placeholder="ระบุเหตุผล..." required></textarea>
+            <br>
+            <button type="submit" class="action-btn contact-btn">ส่งข้อมูล</button>
+            <button type="button" id="closeBtn" class="action-btn cancel-btn">ยกเลิก</button>
+        </form>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- FullCalendar -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        const propertyId = "<?php echo $property['Property_id']; ?>";
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'th',
+            // aspectRatio: 1.8,
+            height: 450,
+            width: 500,
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth'
+                // right: 'dayGridMonth,timeGridWeek,listWeek'
+            },
+            events: `../../api/test_data_cal.php?id=${propertyId}`,
+
+        });
+        console.error(calendar);
+        var modal = document.getElementById('calendarModal');
+        modal.addEventListener('shown.bs.modal', function() {
+            calendar.render();
+        });
+
+    });
+    document.addEventListener('DOMContentLoaded', function() {
+        const rooms = document.querySelectorAll('.room-card');
+        let selectedRoomId = null;
+        let selectedPropertyId = null;
+        let selectedRoomPrice = 0;
+
+
+        const room_number = document.getElementById('room_number');
+        const roomid = document.getElementById('roomid');
+        const property = document.getElementById('propertyid');
+        const checkinInput = document.getElementById('checkin');
+        const checkoutInput = document.getElementById('checkout');
+        const guestsInput = document.getElementById('guests');
+        const nightsDisplay = document.getElementById('nights');
+        const diffDayDisplay = document.getElementById('diffDay');
+        const total_price = document.getElementById('total_price');
+        const roomPriceInput = document.getElementById('prices');
+        const bookingMessage = document.getElementById('bookingMessage');
+        const bookBtn = document.getElementById('bookBtn');
+        const totalPriceDisplay = document.getElementById('display_price');
+
+        // ตรวจสอบ DOM elements
+        if (!bookingMessage || !totalPriceDisplay) {
+            console.error('Missing DOM elements:', {
+                bookingMessage,
+                total_price
+
+            });
+            return;
+        }
+
+        rooms.forEach(card => {
+            if (card.dataset.status !== 'Available') {
+                card.classList.add('disabled');
+            }
+        });
+
+        rooms.forEach(card => {
+            card.addEventListener('click', function() {
+                if (card.dataset.status !== 'Available') return;
+                rooms.forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                selectedRoomId = card.dataset.roomId;
+                selectedPropertyId = card.dataset.roomProperty;
+                selectedRoomPrice = parseFloat(card.dataset.roomPrice);
+                roomid.value = selectedRoomId;
+                property.value = selectedPropertyId;
+                prices.value = selectedRoomPrice;
+                room_number.value = card.dataset.roomNumber;
+                calculatePrice();
+            });
+        });
+        checkinInput.addEventListener('change', function() {
+            if (checkinInput.value) {
+                // แปลงค่าวันที่เช็คอินเป็น Date object
+                let checkinDate = new Date(checkinInput.value);
+                checkinDate.setDate(checkinDate.getDate() + 1);
+                let year = checkinDate.getFullYear();
+                let month = String(checkinDate.getMonth() + 1).padStart(2, '0');
+                let day = String(checkinDate.getDate()).padStart(2, '0');
+                let minCheckoutDate = `${year}-${month}-${day}`;
+                // กำหนด min ของวันที่เช็คเอาท์
+                checkoutInput.min = minCheckoutDate;
+                // ถ้าวันที่เช็คเอาท์ปัจจุบันน้อยกว่าค่านี้ ให้ล้างค่าวันที่เช็คเอาท์
+                if (checkoutInput.value < minCheckoutDate) {
+                    checkoutInput.value = '';
+                }
+            }
+        });
+        [checkinInput, checkoutInput, guestsInput].forEach(el => {
+            el.addEventListener('change', calculatePrice);
+            el.addEventListener('input', calculatePrice);
+        });
+
+        function calculatePrice() {
+            console.log('calculatePrice:', {
+                selectedRoomId,
+                checkin: checkinInput.value,
+                checkout: checkoutInput.value,
+                guests: guestsInput.value
+            });
+            const checkinDate = new Date(checkinInput.value);
+            const checkoutDate = new Date(checkoutInput.value);
+            const diffTime = checkoutDate - checkinDate;
+            const diffDays = diffTime / (1000 * 60 * 60 * 24);
+            if (!selectedRoomId || isNaN(checkinDate) || isNaN(checkoutDate) || checkoutDate <=
+                checkinDate ||
+                diffDays < 0) {
+                totalPriceDisplay.innerText = '0.00';
+                total_price.value = '0.00';
+                bookingMessage.innerText = 'กรุณาเลือกห้องพักและวันที่เช็คอิน/เช็คเอาท์';
+                bookingMessage.style.color = '#c0392b';
+                bookingMessage.style.fontWeight = 'bold';
+                bookingMessage.style.textAlign = 'center';
+                bookingMessage.style.padding = '1rem';
+                bookBtn.disabled = true;
+                return;
+            }
+            diffDayDisplay.value = diffDays;
+            nightsDisplay.innerText = diffDays;
+            fetch('../../controls/bookings_room.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded' // หรือ 'application/json' แล้วแปลง body เป็น JSON.stringify(...)
+                    },
+                    body: new URLSearchParams({
+                        property_id: selectedPropertyId,
+                        room_id: selectedRoomId,
+                        nights: diffDays,
+                        guests: guestsInput.value,
+                        check_in_date: checkinInput.value,
+                        check_out_date: checkoutInput.value
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Fetch response:', data);
+                    if (data.check_success === false) {
+                        alert(data.message);
+                        resetForm()
+                    } else if (data.success === true) {
+                        // จัดการผลลัพธ์สำเร็จ
+
+                        totalPriceDisplay.innerText = data.total_price;
+                        total_price.value = data.total_price;
+                        // prices_amount.value = data.price;
+                        bookBtn.disabled = false;
+                    } else {
+                        // จัดการ error
+                        console.log(data.message);
+                        totalPriceDisplay.innerText = '0.00';
+                        total_price.value = '0.00';
+                        bookingMessage.innerText = data.message;
+                        bookingMessage.style.color = '#c0392b';
+                        bookBtn.disabled = true;
+                    }
+                })
+                .catch(error => {
+
+                    console.error('Fetch error:', error);
+                    totalPriceDisplay.innerText = '0.00';
+                    total_price.value = '0.00';
+                    bookingMessage.innerText = 'เกิดข้อผิดพลาด: ' + error;
+                    bookingMessage.style.color = '#c0392b';
+                    bookBtn.disabled = true;
+                    console.log(error);
+                });
+        }
+
+        // Add ripple effect to buttons
+        document.querySelectorAll('.btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                addRipple(this, e);
+            });
+        });
+
+        function addRipple(button, event) {
+            const ripple = document.createElement('span');
+            const rect = button.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = event.clientX - rect.left - size / 2;
+            const y = event.clientY - rect.top - size / 2;
+            ripple.classList.add('ripple');
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = x + 'px';
+            ripple.style.top = y + 'px';
+            button.appendChild(ripple);
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        }
+        let selectedPayment = null;
+        const payButtons = document.querySelectorAll('.payment-button');
+        if (payButtons.length === 0) {
+            console.error('No payment buttons found!');
+        } else {
+            payButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    // เอา class selected ออกจากทุกปุ่ม
+                    payButtons.forEach(btn => btn.classList.remove('selected'));
+                    // ใส่ class ให้ปุ่มที่เลือก
+                    this.classList.add('selected');
+                    // เก็บค่าที่เลือก
+                    selectedPayment = this.dataset.method;
+
+                    // Ripple effect
+                    addRipple(this, e);
+                });
+            });
+        }
+
+        const ConfirmBtn = document.getElementById('confirmBtn');
+        ConfirmBtn.addEventListener('click', function(e) {
+            if (confirm('คุณยืนยันต้องการชำระใช่ไหม?')) {
+                //ตรวจสอบ room_id และ วันที่เช็คอิน,วันที่เช็คเอ้าท์ แล้วไม่เป็นค่าว่าง 
+                fetch('../../controls/bookings_room.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: new URLSearchParams({
+                            room_id: selectedRoomId,
+                            property_id: selectedPropertyId,
+                            check_in_date: checkinInput.value,
+                            check_out_date: checkoutInput.value,
+                            nights: diffDayDisplay.value,
+                            guests: guestsInput.value,
+                            total_price: total_price.value,
+                            submit_onl: true
+                        })
+                    })
+                    //ผลลัพธ์
+                    .then(response => {
+                        //ตรวจสอบค่าผลลัพธ์ที่เกี่ยวNetwork ถ้ามีปัญหาให้แจ้ง network response was not ok
+                        if (!response.ok) throw new Error('network response was not ok');
+                        //คืนค่าเป็น json
+                        return response.json();
+                    })
+                    //รับข้อมูลได้ ไม่มี error
+                    .then(data => {
+                        console.log('Fetch response :', data);
+                        if (data.success === true) {
+                            e.preventDefault();
+                            const latestTotalPrice = parseFloat(total_price.value);
+                            const bookingId = data.booking_id;
+                            if (!isNaN(latestTotalPrice) && latestTotalPrice > 0) {
+                                fetch('../../controls/bookings_room.php', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/x-www-form-urlencoded'
+                                        },
+                                        body: 'total_price=' + encodeURIComponent(
+                                                latestTotalPrice) +
+                                            '&booking_id=' + encodeURIComponent(
+                                                bookingId) +
+                                            '&method=' + encodeURIComponent(
+                                                selectedPayment) + '&submit_onl=' +
+                                            encodeURIComponent(true)
+                                    })
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        if (data.gateway === "qrcode") {
+
+                                            window.location.href = 'qr-payment.php';
+                                        } else if (data.gateway === "credit-card") {
+
+                                            window.location.href = 'credit-card.php';
+                                        } else {
+                                            alert(data.err);
+                                        }
+                                    })
+                                    .catch(err => console.error(err));
+                            }
+                        }
+                    })
+                    //รับข้อมูลไม่ได้ มี error
+                    .catch(error => {
+                        console.error('Failed to parse JSON:', error);
+                        bookingMessage.innerText = 'เกิดข้อผิดพลาด: Response ไม่ถูกต้อง';
+                        bookingMessage.style.color = '#c0392b';
+                        ConfirmBtn.disabled = false;
+                        bookBtn.disabled = false;
+                        document.getElementById('Confirm_booking').style.display = 'none';
+                    })
+            }
+        });
+        //reset from การจอง
+        function resetForm() {
+            checkinInput.value = '';
+            checkoutInput.value = '';
+            guestsInput.value = '1';
+            nightsDisplay.innerText = '';
+            totalPriceDisplay.innerText = '0.00';
+            total_price.value = '';
+            roomid.value = '';
+            property.value = '';
+            room_number.value = '';
+            roomPriceInput.value = '';
+            rooms.forEach(c => c.classList.remove('selected'));
+            selectedRoomId = null;
+            selectedPropertyId = null;
+            selectedRoomPrice = 0;
+            bookingMessage.innerText = 'กรุณาเลือกห้องพักและวันที่เช็คอิน/เช็คเอาท์';
+            bookingMessage.style.color = '#c0392b';
+            bookingMessage.style.fontWeight = 'bold';
+            bookingMessage.style.textAlign = 'center';
+            bookingMessage.style.padding = '1rem';
+            bookBtn.disabled = true;
+        }
+        //ปุ่มreset form
+        const resetBtn = document.getElementById('resetBtn');
+        resetBtn.type = 'button';
+        resetBtn.innerText = 'Reset';
+        resetBtn.onclick = resetForm;
+        const bookingForm = document.getElementById('booking-form');
+        if (bookingForm) {
+            bookingForm.appendChild(resetBtn);
+        } else {
+            console.error('Element with id "booking-form" not found');
+        }
+        //ปุ่มFavorite
+        const favoriteBtn = <?php echo json_encode($fav_btn); ?>;
+        const buttons = document.querySelectorAll(".favorite-btn");
+        buttons.forEach(button => {
+            const houseId = button.dataset.propertyId;
+            if (favoriteBtn.includes(parseInt(houseId))) {
+                button.classList.add('active');
+            } else {
+                button.classList.remove('active');
+            }
+            button.addEventListener("click", async () => {
+                const action = button.dataset.method;
+                fetch("../../controls/list_fav.php", {
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: new URLSearchParams({
+                            property_id: houseId,
+                            action: action
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.success) {
+                            // toggle icon
+                            if (result.action === 'added') {
+                                button.classList.add("active");
+                                window.location.reload();
+                            } else if (result.action === 'removed') {
+                                button.classList.remove("active");
+                                window.location.reload();
+                            }
+                        } else {
+                            alert("เกิดข้อผิดพลาด: " + result.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert("เกิดข้อผิดพลาด: " + error.message);
+                    });
+            });
+        });
+    });
+</script>
+<script>
+    //เปิด-ปิด Sidebar
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.querySelector('.main-with-sidebar');
+        sidebar.classList.toggle("collapsed");
+        mainContent.classList.toggle("sidebar-collapsed");
+    }
+
+    function openConfirm_Booking() {
+        document.getElementById('Confirm_booking').style.display = 'flex';
+    }
+
+    function closeConfirm_Booking() {
+        document.getElementById('Confirm_booking').style.display = 'none';
+    }
+    window.onclick = function(event) {
+        const modal = document.getElementById('Confirm_booking');
+        if (event.target === modal) {
+            closeConfirm_Booking();
+        }
+    }
+    const slides = document.querySelectorAll(".Imgslider img");
+    const prevBtn = document.querySelector(".prev");
+    const nextBtn = document.querySelector(".next");
+    let index = 0;
+    let interval = setInterval(nextSlide, 5000); // ปรับเวลาเป็น 5 วินาที
+
+    function showSlide(i) {
+        slides.forEach(slide => slide.classList.remove("active"));
+        slides[i].classList.add("active");
+    }
+
+    function nextSlide() {
+        index = (index + 1) % slides.length;
+        showSlide(index);
+    }
+
+    function prevSlide() {
+        index = (index - 1 + slides.length) % slides.length;
+        showSlide(index);
+    }
+
+    nextBtn.addEventListener("click", () => {
+        nextSlide();
+        resetInterval();
+    });
+
+    prevBtn.addEventListener("click", () => {
+        prevSlide();
+        resetInterval();
+    });
+
+    function resetInterval() {
+        clearInterval(interval);
+        interval = setInterval(nextSlide, 8000); // ให้เวลานานขึ้นหลังกดเอง
+    }
+    //สคิปต์ดึงค่าละติจูดและลองจิจูดมาแสดง
+    // const lat = <?php /*echo isset($house['Property_latitude']) ? floatval($house['Property_latitude']) : 13.7563;*/ ?>;
+    // const lng =
+    //     <?php /*echo isset($house['Property_longitude']) ? floatval($house['Property_longitude']) : 100.5018;*/ ?>;
+    // const map = L.map('map').setView([lat, lng], 20);
+    // const location_name = <?php /*echo json_encode($property['Property_name'], JSON_UNESCAPED_UNICODE);*/ ?>;
+    // L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    //     attribution: '&copy; OpenStreetMap contributors'
+    // }).addTo(map);
+
+    // L.marker([lat, lng])
+    //     .addTo(map)
+    //     .bindPopup(location_name);
+    // 3. ⚠️ สำคัญ: เปลี่ยนเป็น Access Token ของคุณ
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+
+        // --- 1. ดึงข้อมูลจาก PHP ---
+        const lat =
+            <?php echo isset($house['Property_latitude']) ? floatval($house['Property_latitude']) : 13.7563; ?>;
+        const lng =
+            <?php echo isset($house['Property_longitude']) ? floatval($house['Property_longitude']) : 100.5018; ?>;
+        const location_name = <?php echo json_encode($property['Property_name'], JSON_UNESCAPED_UNICODE); ?>;
+
+        // --- 2. ⚠️ สำคัญ: เปลี่ยนเป็น Access Token ของคุณ ---
+        mapboxgl.accessToken = '<?php echo htmlspecialchars(getenv('MAPBOX_ACCESS_TOKEN')); ?>';
+
+        // --- 3. กำหนดตำแหน่งปลายทาง [Longitude, Latitude] ---
+        const destinationCoords = [lng, lat];
+
+        // --- 4. สร้างแผนที่เริ่มต้น ---
+        const map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v12', // สไตล์แผนที่
+            center: destinationCoords, // ให้จุดหมายเป็นจุดศูนย์กลางเริ่มต้น
+            zoom: 12
+        });
+
+        // เพิ่มปุ่มควบคุมการซูม
+        map.addControl(new mapboxgl.NavigationControl());
+
+        // --- 5. ฟังก์ชันหลักสำหรับขอตำแหน่งและแสดงเส้นทาง ---
+        async function showRoute() {
+            try {
+                // 5.1 ขอตำแหน่งปัจจุบันของผู้ใช้
+                const position = await new Promise((resolve, reject) => {
+                    navigator.geolocation.getCurrentPosition(resolve, reject, {
+                        enableHighAccuracy: true
+                    });
+                });
+                const startCoords = [position.coords.longitude, position.coords.latitude];
+
+                // 5.2 เรียกใช้ Mapbox Directions API
+                const response = await fetch(
+                    `https://api.mapbox.com/directions/v5/mapbox/driving/${startCoords[0]},${startCoords[1]};${destinationCoords[0]},${destinationCoords[1]}?steps=true&geometries=geojson&access_token=${mapboxgl.accessToken}`
+                );
+                const data = await response.json();
+                const routeCoordinates = data.routes[0].geometry.coordinates;
+
+                // 5.3 สร้าง GeoJSON object สำหรับวาดเส้นทาง
+                const routeGeoJSON = {
+                    'type': 'Feature',
+                    'properties': {},
+                    'geometry': {
+                        'type': 'LineString',
+                        'coordinates': routeCoordinates
+                    }
+                };
+
+                // 5.4 วาดเส้นทางลงบนแผนที่
+                if (map.getSource('route')) {
+                    map.getSource('route').setData(routeGeoJSON);
+                } else {
+                    map.addLayer({
+                        'id': 'route',
+                        'type': 'line',
+                        'source': {
+                            'type': 'geojson',
+                            'data': routeGeoJSON
+                        },
+                        'layout': {
+                            'line-join': 'round',
+                            'line-cap': 'round'
+                        },
+                        'paint': {
+                            'line-color': '#3887be',
+                            'line-width': 5,
+                            'line-opacity': 0.75
+                        }
+                    });
+                }
+
+                // 5.5 ปักหมุดที่จุดเริ่มต้นและปลายทาง
+                new mapboxgl.Marker({
+                    color: 'green'
+                }).setLngLat(startCoords).setPopup(new mapboxgl.Popup().setHTML(
+                    "<h3>📍 ตำแหน่งของคุณ</h3>")).addTo(map);
+                new mapboxgl.Marker({
+                    color: 'red'
+                }).setLngLat(destinationCoords).setPopup(new mapboxgl.Popup().setHTML(
+                    `<h3>🚗 ${location_name}</h3>`)).addTo(map);
+
+                // 5.6 ปรับมุมมองให้เห็นเส้นทางทั้งหมด
+                const bounds = new mapboxgl.LngLatBounds(startCoords, destinationCoords);
+                map.fitBounds(bounds, {
+                    padding: 80
+                }); // เพิ่ม padding ให้สวยงาม
+
+            } catch (error) {
+                console.error('Error:', error);
+                // ถ้าเกิด Error (เช่น ผู้ใช้ไม่ให้สิทธิ์) ให้ปักหมุดแค่ที่ปลายทาง
+                new mapboxgl.Marker({
+                    color: 'red'
+                }).setLngLat(destinationCoords).setPopup(new mapboxgl.Popup().setHTML(
+                    `<h3>🚗 ${location_name}</h3>`)).addTo(map);
+                alert('ไม่สามารถเข้าถึงตำแหน่งปัจจุบันได้ จะแสดงเฉพาะตำแหน่งของที่พัก');
+            }
+        }
+        const googleMapsButton = document.getElementById('google-maps-link');
+
+        // 2.2 สร้าง URL ของ Google Maps สำหรับ "แสดงเส้นทาง"
+        // รูปแบบ: http://googleusercontent.com/maps/api/directions/json?origin=<start>&destination=<end>
+        const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+
+        // 2.3 นำ URL ที่สร้างเสร็จแล้วไปใส่ใน href ของปุ่ม
+        googleMapsButton.href = googleMapsUrl;
+
+        // --- 6. เรียกใช้ฟังก์ชันหลักเมื่อแผนที่โหลดเสร็จ ---
+        map.on('load', () => {
+            showRoute();
+        });
+    });
+
+    const propertyId = "<?php echo $property['Property_id']; ?>";
+    const formReviews = document.getElementById('reviewForm');
+    formReviews.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(formReviews);
+        formData.append('property_id', propertyId);
+        formData.append('submit_review', true);
+        fetch('../../controls/reviews_house.php', {
+            method: 'POST',
+            body: formData
+        }).then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.json();
+        }).then(data => {
+            console.log('Fetch response:', data);
+            if (data.success === true) {
+                window.location.reload();
+                alert('ขอบคุณสำหรับรีวิวของคุณ!');
+            } else {
+                console.log(data.message);
+                alert(data.message);
+            }
+        }).catch(error => {
+            console.error('Fetch error:', error);
+            alert('เกิดข้อผิดพลาด: ' + error);
+
+        });
+    });
+    document.addEventListener('DOMContentLoaded', function() {
+        const allDropdownToggles = document.querySelectorAll('.dropdown-toggle');
+        allDropdownToggles.forEach(toggle => {
+            toggle.addEventListener('click', function(event) {
+                event.stopPropagation();
+                const dropdownMenu = this.nextElementSibling;
+                dropdownMenu.classList.toggle('show');
+            });
+        });
+
+        window.addEventListener('click', function(event) {
+            const openDropdowns = document.querySelectorAll('.dropdown-menu.show');
+            openDropdowns.forEach(menu => {
+                if (!menu.parentElement.contains(event.target)) {
+                    menu.classList.remove('show');
+                }
+            });
+        });
+        const modal = document.getElementById("reportModal");
+        const report_btn = document.querySelectorAll('.report-review-btn');
+        const span = document.querySelector(".close-report");
+        const closeBtn = document.getElementById("closeBtn");
+        const formReport = document.getElementById("reportForm");
+        const reason_raw = document.getElementById('reason');
+        const review_id_raw = document.getElementById('reviewIdInput');
+        report_btn.forEach(btn => {
+            btn.onclick = function() {
+                const reviewId = this.dataset.reviewId;
+                document.getElementById('reviewIdInput').value = reviewId;
+                modal.style.display = "block";
+                this.closest('.dropdown-menu').classList.remove('show');
+            }
+        })
+        span.onclick = () => {
+            modal.style.display = "none";
+            reason.value = '';
+
+        }
+        closeBtn.onclick = () => {
+            modal.style.display = "none";
+            reason.value = '';
+        }
+        window.onclick = (e) => {
+            if (e.target == modal) {
+                modal.style.display = "none";
+                reason.value = '';
+            }
+        }
+        formReport.onsubmit = (e) => {
+            e.preventDefault();
+            const reason = reason_raw.value.trim();
+            const review_id = review_id_raw.value;
+
+            fetch('../../controls/report_action.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams({
+                        review_id: review_id,
+                        reason: reason,
+                        submit_rv_user: true
+                    })
+                })
+                .then(res => {
+                    if (!res.ok) throw new Error('network response was not ok');
+                    return res.json();
+                })
+                .then(data => {
+                    if (data.success === true) {
+                        alert(data.message);
+                        window.location.reload();
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error.message);
+                });
+        };
+    });
+</script>
 </body>
 
 </html>

@@ -90,6 +90,7 @@ require_once __DIR__ . '/../../api/get_violation_reports.php';
         border: none;
         cursor: pointer;
         transition: all 0.2s ease-in-out;
+        gap: 5px;
     }
 
     .btn-view {
@@ -174,23 +175,25 @@ require_once __DIR__ . '/../../api/get_violation_reports.php';
                 <i class="fas fa-bars"></i>
             </button>
             <ul class="sidebar-menu">
-                <li><a href="admin-dashboard.php" title="หน้าแดชบอร์ด"><i class="fa-solid fa-ranking-star"></i><span
-                            class="menu-label">Dashboard</span></a></li>
-                <li><a href="profile.php" title="ข้อมูลผู้ใช้งาน"><i class="fas fa-user"></i><span
-                            class="menu-label">Profile</span></a></li>
+                <li><a href="admin-dashboard.php" title="รายงานข้อมูล"><i class="fa-solid fa-ranking-star"></i><span
+                            class="menu-label">รายงานข้อมูล</span></a></li>
+                <li><a href="profile.php" title="ข้อมูลส่วนตัว"><i class="fas fa-user"></i><span
+                            class="menu-label">ข้อมูลส่วนตัว</span></a></li>
                 <li><a href="approve-properties.php" title="อนุมัติสถานที่พัก"><i
-                            class="fa-solid fa-house-medical-circle-check"></i><span class="menu-label">Approve
-                            Properties</span></a></li>
+                            class="fa-solid fa-house-medical-circle-check"></i><span
+                            class="menu-label">อนุมัติสถานที่พัก</span></a></li>
                 <li><a href="manage-hosts.php" title="จัดการผู้ใช้งานสถานที่พัก"><i class="fas fa-users"></i><span
-                            class="menu-label">Hosts</span></a></li>
+                            class="menu-label">ข้อมูลเจ้าของบ้านที่พัก</span></a></li>
                 <li><a href="manage-users.php" title="จัดการผู้ใช้งาน"><i class="fas fa-user-friends"></i><span
-                            class="menu-label">Users</span></a></li>
+                            class="menu-label">ข้อมูลผู้ใช้</span></a></li>
                 <li><a href="manage-refund.php" title="คำร้องขอคืนเงินผู้ใช้งาน"><i
-                            class="fas fa-hand-holding-usd"></i><span class="menu-label">Refund</span></a></li>
-                <li><a href="manage-reviews.php" title="รีวิวจากผู้ใช้งาน"><i class="fas fa-star"></i><span
-                            class="menu-label">Reviews</span></a></li>
+                            class="fas fa-hand-holding-usd"></i><span
+                            class="menu-label">จัดการคำร้องขอคืนเงิน</span></a></li>
+                <li><a href="manage-reviews.php" title="รีวิวจากผู้ใช้"><i class="fas fa-star"></i><span
+                            class="menu-label">รีวิวจากผู้ใช้งาน</span></a></li>
                 <li><a href="violations.php" title="จัดการเรื่องร้องเรียน" class="active"><i
-                            class="fas fa-exclamation-triangle"></i><span class="menu-label">Violations</span></a></li>
+                            class="fas fa-exclamation-triangle"></i><span
+                            class="menu-label">จัดการเรื่องร้องเรียน</span></a></li>
                 <li><a href="../../controls/logout.php" title="ออกจากระบบ"><i class="fas fa-sign-out-alt"></i><span
                             class="menu-label">Logout</span></a></li>
             </ul>
@@ -215,12 +218,13 @@ require_once __DIR__ . '/../../api/get_violation_reports.php';
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Review ID</th>
+                                    <th>รหัสรีวิว</th>
                                     <th>ผู้รายงาน</th>
                                     <th>ผู้ถูกรายงาน</th>
                                     <th>เหตุผล</th>
                                     <th>วันที่</th>
-                                    <th>Actions</th>
+                                    <th>ดูรีวิว</th>
+                                    <th>จัดการรายงานรีวิว</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -243,30 +247,36 @@ require_once __DIR__ . '/../../api/get_violation_reports.php';
                                                 <i class="fas fa-eye"></i>
                                             </button>
                                         </form>
-                                        <!-- <a href="view_review.php?review_id=<?php echo $report['Review_id']; ?>"
-                                            class="btn btn-view" title="ดูรีวิว">
-                                            <i class="fas fa-eye"></i>
-                                        </a> -->
-                                        <form action="../../controls/report_action.php" method="POST"
-                                            style="display:inline;"
-                                            onsubmit="return confirm('คุณแน่ใจหรือไม่ว่าต้องการลบรีวิวนี้?');">
-                                            <input type="hidden" name="review_id"
-                                                value="<?= htmlspecialchars($report['Review_id']); ?>">
-                                            <button type="submit" name="delete_review" class="btn btn-delete"
-                                                title="ลบรีวิว">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                        <form action="../../controls/report_action.php" method="POST"
-                                            style="display:inline;"
-                                            onsubmit="return confirm('คุณแน่ใจหรือไม่ว่าต้องการซ่อนรีวิวนี้?');">
-                                            <input type="hidden" name="review_id"
-                                                value="<?php echo $report['Review_id']; ?>">
-                                            <button type="submit" name="delete_review" class="btn btn-delete"
-                                                title="ซ่อนรีวิว">
-                                                <i class="fa-solid fa-eye-low-vision"></i>
-                                            </button>
-                                        </form>
+                                        <!-- <form action="../../controls/report_action.php" method="POST"
+                                                    style="display:inline;"
+                                                    onsubmit="return confirm('คุณแน่ใจหรือไม่ว่าต้องการลบรีวิวนี้?');">
+                                                    <input type="hidden" name="review_id"
+                                                        value="<?php /*htmlspecialchars($report['Review_id']);*/ ?>">
+                                                    <button type="submit" name="delete_review" class="btn btn-delete"
+                                                        title="ลบรีวิว">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                                <form action="../../controls/report_action.php" method="POST"
+                                                    style="display:inline;"
+                                                    onsubmit="return confirm('คุณแน่ใจหรือไม่ว่าต้องการซ่อนรีวิวนี้?');">
+                                                    <input type="hidden" name="review_id"
+                                                        value="<?php /*echo $report['Review_id'];*/ ?>">
+                                                    <button type="submit" name="delete_review" class="btn btn-delete"
+                                                        title="ซ่อนรีวิว">
+                                                        <i class="fa-solid fa-eye-low-vision"></i>
+                                                    </button>
+                                                </form> -->
+                                    </td>
+                                    <td>
+                                        <a name="nothing" class="btn btn-delete" title="ไม่พบรีวิวเชิงลบ"
+                                            data-review-id="<?php echo $report['Review_id'] ?>">
+                                            <i class="fa-solid fa-question"></i>
+                                        </a>
+                                        <a name="taken" class="btn btn-delete" title="จัดการเรียบร้อย"
+                                            data-review-id="<?php echo $report['Review_id'] ?>">
+                                            <i class="fa-solid fa-circle-check"></i>
+                                        </a>
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>
@@ -295,6 +305,101 @@ require_once __DIR__ . '/../../api/get_violation_reports.php';
         sidebar.classList.toggle("collapsed");
         mainContent.classList.toggle("sidebar-collapsed");
     }
+    const show_btns = document.getElementsByName('taken');
+    show_btns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const reviewId = this.dataset.reviewId;
+            if (!reviewId) {
+                alert('ไม่พบ review ID');
+                return;
+            }
+            if (confirm("คุณยืนยันที่จะอัปเดตสถานะการรายงานรีวิว")) {
+                btn.disabled = true;
+
+
+                fetch('../../controls/report_action.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: new URLSearchParams({
+                            review_id: reviewId,
+                            submit_rp: true,
+                            action: 'taken'
+                        })
+                    })
+                    .then(res => {
+                        if (!res.ok) throw new Error('Network response was not ok');
+                        return res.json();
+                    })
+                    .then(data => {
+                        if (data.success === true) {
+                            alert(data.message);
+                            window.location.reload();
+                        } else {
+                            alert(data.message);
+                            // เปิดปุ่มกลับ
+                            btn.disabled = false;
+
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('เกิดข้อผิดพลาด: ' + error.message);
+                        // เปิดปุ่มกลับ
+                        btn.disabled = false;
+
+                    });
+            }
+        });
+    });
+    const hidden_btn = document.getElementsByName('nothing');
+    hidden_btn.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const reviewId = this.dataset.reviewId;
+            if (!reviewId) {
+                alert('ไม่พบ report ID');
+                return;
+            }
+            if (confirm("คุณยืนยันที่จะอัปเดตสถานะการรายงานรีวิว")) {
+                btn.disabled = true;
+                fetch('../../controls/report_action.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: new URLSearchParams({
+                            review_id: reportId,
+                            submit_rp: true,
+                            action: 'nothing'
+                        })
+                    })
+                    .then(res => {
+                        if (!res.ok) throw new Error('Network response was not ok');
+                        return res.json();
+                    })
+                    .then(data => {
+                        if (data.success === true) {
+                            alert(data.message);
+                            window.location.reload();
+                        } else {
+                            alert(data.message);
+                            // เปิดปุ่มกลับ
+                            btn.disabled = false;
+
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('เกิดข้อผิดพลาด: ' + error.message);
+                        // เปิดปุ่มกลับ
+                        btn.disabled = false;
+
+                    });
+            }
+        });
+
+    });
     </script>
 </body>
 

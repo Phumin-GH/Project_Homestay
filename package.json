@@ -1,5 +1,11 @@
 {
+  "name": "gemini-cli",
+  "version": "1.0.0",
+  "type": "module",
+  "bin": {
+    "gemini": "./gemini-cli.js"
+  },
   "dependencies": {
-    "qrcode": "^1.5.4"
+    "@google/generative-ai": "^0.24.1"
   }
 }

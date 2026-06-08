@@ -13,7 +13,7 @@ if (!isset($_SESSION["Admin_email"])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Homestay Booking</title>
+    <title>รายงานข้อมูล - Homestay Booking</title>
     <link rel="website icon" type="png" href="../../public/images/logo.png">
     <link rel="stylesheet" href="../../public/css/style.css">
     <link rel="stylesheet" href="../../public/css/main-menu.css">
@@ -307,23 +307,25 @@ if (!isset($_SESSION["Admin_email"])) {
                 <i class="fas fa-bars"></i>
             </button>
             <ul class="sidebar-menu">
-                <li><a href="admin-dashboard.php" title="หน้าแดชบอร์ด" class="active"><i
-                            class="fa-solid fa-ranking-star"></i><span class="menu-label">Dashboard</span></a></li>
-                <li><a href="profile.php" title="ข้อมูลผู้ใช้งาน"><i class="fas fa-user"></i><span
-                            class="menu-label">Profile</span></a></li>
+                <li><a href="admin-dashboard.php" title="รายงานข้อมูล" class="active"><i
+                            class="fa-solid fa-ranking-star"></i><span class="menu-label">รายงานข้อมูล</span></a></li>
+                <li><a href="profile.php" title="ข้อมูลส่วนตัว"><i class="fas fa-user"></i><span
+                            class="menu-label">ข้อมูลส่วนตัว</span></a></li>
                 <li><a href="approve-properties.php" title="อนุมัติสถานที่พัก"><i
-                            class="fa-solid fa-house-medical-circle-check"></i><span class="menu-label">Approve
-                            Properties</span></a></li>
+                            class="fa-solid fa-house-medical-circle-check"></i><span
+                            class="menu-label">อนุมัติสถานที่พัก</span></a></li>
                 <li><a href="manage-hosts.php" title="จัดการผู้ใช้งานสถานที่พัก"><i class="fas fa-users"></i><span
-                            class="menu-label">Hosts</span></a></li>
+                            class="menu-label">ข้อมูลเจ้าของบ้านที่พัก</span></a></li>
                 <li><a href="manage-users.php" title="จัดการผู้ใช้งาน"><i class="fas fa-user-friends"></i><span
-                            class="menu-label">Users</span></a></li>
+                            class="menu-label">ข้อมูลผู้ใช้</span></a></li>
                 <li><a href="manage-refund.php" title="คำร้องขอคืนเงินผู้ใช้งาน"><i
-                            class="fas fa-hand-holding-usd"></i><span class="menu-label">Refund</span></a></li>
-                <li><a href="manage-reviews.php" title="รีวิวจากผู้ใช้งาน"><i class="fas fa-star"></i><span
-                            class="menu-label">Reviews</span></a></li>
+                            class="fas fa-hand-holding-usd"></i><span
+                            class="menu-label">จัดการคำร้องขอคืนเงิน</span></a></li>
+                <li><a href="manage-reviews.php" title="รีวิวจากผู้ใช้"><i class="fas fa-star"></i><span
+                            class="menu-label">รีวิวจากผู้ใช้งาน</span></a></li>
                 <li><a href="violations.php" title="จัดการเรื่องร้องเรียน"><i
-                            class="fas fa-exclamation-triangle"></i><span class="menu-label">Violations</span></a></li>
+                            class="fas fa-exclamation-triangle"></i><span
+                            class="menu-label">จัดการเรื่องร้องเรียน</span></a></li>
                 <li><a href="../../controls/logout.php" title="ออกจากระบบ"><i class="fas fa-sign-out-alt"></i><span
                             class="menu-label">Logout</span></a></li>
             </ul>
@@ -337,8 +339,8 @@ if (!isset($_SESSION["Admin_email"])) {
         <div class="main-with-sidebar">
             <div class="admin-container">
                 <div class="page-header">
-                    <h1><i class="fas fa-tachometer-alt"></i> Admin Dashboard</h1>
-                    <p>Welcome back,
+                    <h1><i class="fas fa-tachometer-alt"></i>รายงานข้อมูล</h1>
+                    <p> ยินดีต้อนรับกลับ,
                         <?php echo htmlspecialchars($admin['Admin_username']); ?> !
                     </p>
                 </div>
@@ -348,41 +350,41 @@ if (!isset($_SESSION["Admin_email"])) {
                             <i class="fas fa-home"></i>
                         </div>
                         <div class="stat-number"><?php echo number_format($total_properties); ?></div>
-                        <div class="stat-label">Properties</div>
+                        <div class="stat-label">บ้านพักทั้งหมด</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon hosts">
                             <i class="fas fa-users"></i>
                         </div>
                         <div class="stat-number"><?php echo number_format($total_hosts); ?></div>
-                        <div class="stat-label">Hosts</div>
+                        <div class="stat-label">จำนวนเจ้าของบ้าน</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon users">
                             <i class="fas fa-user-friends"></i>
                         </div>
                         <div class="stat-number"><?php echo number_format($total_users); ?></div>
-                        <div class="stat-label">Users</div>
+                        <div class="stat-label">จำนวนผู้ใช้</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon bookings">
                             <i class="fas fa-calendar-check"></i>
                         </div>
                         <div class="stat-number"><?php echo number_format($total_bookings); ?></div>
-                        <div class="stat-label">Bookings</div>
+                        <div class="stat-label">จำนวนการจองทั้งหมด</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon income">
                             <i class="fas fa-money-bill-wave"></i>
                         </div>
                         <div class="stat-number">฿<?php echo number_format($total_income); ?></div>
-                        <div class="stat-label">Total Income</div>
+                        <div class="stat-label">รายได้รวม</div>
                     </div>
                 </div>
                 <div class="system-info">
                     <h3>
                         <i class="fas fa-info-circle"></i>
-                        System Information
+                        ข้อมูลระบบ
                     </h3>
                     <div class="dashboard-grid">
                         <div class="chart-container">
@@ -421,36 +423,36 @@ if (!isset($_SESSION["Admin_email"])) {
                         <div class="action-icon approve-properties">
                             <i class="fas fa-check-circle"></i>
                         </div>
-                        <div class="action-title">Approve Properties</div>
-                        <div class="action-description">Review and approve pending property registrations</div>
+                        <div class="action-title">อนุมัติบ้านพัก</div>
+                        <div class="action-description">ตรวจสอบและอนุมัติการลงทะเบียนบ้านพักที่รอดำเนินการ</div>
                     </a>
                     <a href="manage-hosts.php" class="action-card">
                         <div class="action-icon manage-hosts">
                             <i class="fas fa-users"></i>
                         </div>
-                        <div class="action-title">Manage Hosts</div>
-                        <div class="action-description">Manage host accounts and property registrations</div>
+                        <div class="action-title">จัดการข้อมูลเจ้าของบ้าน</div>
+                        <div class="action-description">จัดการข้อมูลเจ้าของบ้านและอนุมัติบัญชี</div>
                     </a>
                     <a href="manage-users.php" class="action-card">
                         <div class="action-icon manage-users">
                             <i class="fas fa-user-friends"></i>
                         </div>
-                        <div class="action-title">Manage Users</div>
-                        <div class="action-description">View and manage user accounts and activities</div>
+                        <div class="action-title">จัดการข้อมูลผู้ใช้</div>
+                        <div class="action-description">ดูและจัดการบัญชีผู้ใช้และกิจกรรม</div>
                     </a>
                     <a href="manage-reviews.php" class="action-card">
                         <div class="action-icon manage-reviews">
                             <i class="fas fa-star"></i>
                         </div>
-                        <div class="action-title">Manage Reviews</div>
-                        <div class="action-description">Monitor and moderate guest reviews</div>
+                        <div class="action-title">จัดการข้อมูลรีวิว</div>
+                        <div class="action-description">ตรวจสอบและควบคุมรีวิวของผู้เข้าพัก</div>
                     </a>
                     <a href="violations.php" class="action-card">
                         <div class="action-icon violations">
                             <i class="fas fa-exclamation-triangle"></i>
                         </div>
-                        <div class="action-title">Violation Reports</div>
-                        <div class="action-description">Handle user violations and complaints</div>
+                        <div class="action-title">รายงานการละเมิด</div>
+                        <div class="action-description">จัดการการละเมิดและข้อร้องเรียนของผู้ใช้</div>
                     </a>
 
                 </div>

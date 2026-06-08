@@ -295,10 +295,20 @@ COUNT(rv.Review_id) AS review_count
         $house = $stmt->fetch(PDO::FETCH_ASSOC);
         return $house;
     }
-    public function get_RoomsWalkin($property_id)
+    public function get_RoomsWalkin($property_id, $check_in, $check_out)
     {
-        $stmt = $this->conn->prepare("SELECT Room_id, Room_number,Room_price FROM room WHERE Property_id = ? AND Room_status = 'Available'");
-        $stmt->execute([$property_id]);
+        $stmt = $this->conn->prepare("SELECT r.*  FROM room r WHERE r.Property_id = ?  AND r.Room_id NOT IN (
+        SELECT Room_id FROM booking WHERE Property_id = ? 
+            AND (Booking_status = 'successful' OR Check_status = 'Pending' OR Check_status = 'Checked_in')
+            AND Check_in < ?  AND Check_out > ? 
+        UNION 
+        SELECT Room_id FROM walkin WHERE Property_id = ? 
+            AND (Walkin_status = 'successful' OR Check_status = 'Checked_in' OR Check_status = 'Pending')
+            AND Check_in < ?  
+            AND Check_out > ? 
+    );
+        AND r.Room_status='Available'");
+        $stmt->execute([$property_id, $property_id, $check_out, $check_in, $property_id, $check_out, $check_in]);
         $room = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $room;
     }

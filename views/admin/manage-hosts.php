@@ -452,23 +452,25 @@ require_once __DIR__ . '/../../api/get_ListVerify.php';
                 <i class="fas fa-bars"></i>
             </button>
             <ul class="sidebar-menu">
-                <li><a href="admin-dashboard.php" title="หน้าแดชบอร์ด"><i class="fa-solid fa-ranking-star"></i><span
-                            class="menu-label">Dashboard</span></a></li>
-                <li><a href="profile.php" title="ข้อมูลผู้ใช้งาน"><i class="fas fa-user"></i><span
-                            class="menu-label">Profile</span></a></li>
+                <li><a href="admin-dashboard.php" title="รายงานข้อมูล"><i class="fa-solid fa-ranking-star"></i><span
+                            class="menu-label">รายงานข้อมูล</span></a></li>
+                <li><a href="profile.php" title="ข้อมูลส่วนตัว"><i class="fas fa-user"></i><span
+                            class="menu-label">ข้อมูลส่วนตัว</span></a></li>
                 <li><a href="approve-properties.php" title="อนุมัติสถานที่พัก"><i
-                            class="fa-solid fa-house-medical-circle-check"></i><span class="menu-label">Approve
-                            Properties</span></a></li>
-                <li><a href="manage-hosts.php" title="จัดการผู้ใช้งานสถานที่พัก" class="active"><i
-                            class="fas fa-users"></i><span class="menu-label">Hosts</span></a></li>
-                <li><a href="manage-users.php" title="จัดการผู้ใช้งาน"><i class="fas fa-user-friends"></i><span
-                            class="menu-label">Users</span></a></li>
+                            class="fa-solid fa-house-medical-circle-check"></i><span
+                            class="menu-label">อนุมัติสถานที่พัก</span></a></li>
+                <li><a href="manage-hosts.php" title="จัดการผู้ใช้งานสถานที่พัก"><i class="fas fa-users"></i><span
+                            class="menu-label">ข้อมูลเจ้าของบ้านที่พัก</span></a></li>
+                <li><a href="manage-users.php" title="จัดการผู้ใช้งาน" class="active"><i
+                            class="fas fa-user-friends"></i><span class="menu-label">ข้อมูลผู้ใช้</span></a></li>
                 <li><a href="manage-refund.php" title="คำร้องขอคืนเงินผู้ใช้งาน"><i
-                            class="fas fa-hand-holding-usd"></i><span class="menu-label">Refund</span></a></li>
-                <li><a href="manage-reviews.php" title="รีวิวจากผู้ใช้งาน"><i class="fas fa-star"></i><span
-                            class="menu-label">Reviews</span></a></li>
+                            class="fas fa-hand-holding-usd"></i><span
+                            class="menu-label">จัดการคำร้องขอคืนเงิน</span></a></li>
+                <li><a href="manage-reviews.php" title="รีวิวจากผู้ใช้"><i class="fas fa-star"></i><span
+                            class="menu-label">รีวิวจากผู้ใช้งาน</span></a></li>
                 <li><a href="violations.php" title="จัดการเรื่องร้องเรียน"><i
-                            class="fas fa-exclamation-triangle"></i><span class="menu-label">Violations</span></a></li>
+                            class="fas fa-exclamation-triangle"></i><span
+                            class="menu-label">จัดการเรื่องร้องเรียน</span></a></li>
                 <li><a href="../../controls/logout.php" title="ออกจากระบบ"><i class="fas fa-sign-out-alt"></i><span
                             class="menu-label">Logout</span></a></li>
             </ul>
@@ -642,7 +644,7 @@ require_once __DIR__ . '/../../api/get_ListVerify.php';
                                 <td>
                                     <?php
                                             $status = ($host['Host_Status'] == 'banned') ? "แบน" : "ไม่ผ่านการอนุมัติ";
-                                            
+
                                             ?>
                                     <span class="status-inactive"><?php echo htmlspecialchars($status); ?></span>
                                 </td>

@@ -51,7 +51,7 @@ if (isset($_SESSION['email_data'])) {
                 ]
             ],
             'default_font' => 'thsarabun',
-            'format' => 'A5',   // ขนาดกระดาษเหมาะสำหรับใบเสร็จ
+            'format' => 'A5',
             'margin_left' => 10,
             'margin_right' => 10,
             'margin_top' => 10,

@@ -137,8 +137,8 @@ require_once __DIR__ . "/api/get_ListHomestay.php";
             </div>
             <div class="menu">
                 <ul>
-                    <li><a id="scollHome" class="active">Home</a></li>
-                    <li><a id="scrollToReviewsBtn">About</a></li>
+                    <li><a id="scollHome" class="active">หน้าหลัก</a></li>
+                    <li><a id="scrollToReviewsBtn">เกี่ยวกับ</a></li>
                     <!-- <li><a href="#">Contact</a></li> -->
 
                     <li class="dropdown">
@@ -146,12 +146,13 @@ require_once __DIR__ . "/api/get_ListHomestay.php";
                             <i class="fas fa-bars"></i>
                         </button>
                         <ul class="dropdown-menu" id="dropdown-menu">
-                            <li><a href="views/hosts/host-dashboard.php"><i class="fas fa-home"></i>Become a host</a>
+                            <li><a href="views/hosts/host-dashboard.php"><i
+                                        class="fas fa-home"></i>เข้าสู่ระบบเจ้าของบ้าน</a>
                             </li>
-                            <li><a href="views/admin/admin-dashboard.php"><i class="fas fa-user-shield"></i>Log
-                                    Admin</a></li>
+                            <li><a href="views/admin/admin-dashboard.php"><i class="fas fa-user-shield"></i>แอดมิน</a>
+                            </li>
                             <li><a href="views/users/user-login.php"><i
-                                        class="fa-solid fa-right-to-bracket"></i>Login&Signup</a></li>
+                                        class="fa-solid fa-right-to-bracket"></i>เข้าสู่ระบบผู้ใช้</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -168,8 +169,8 @@ require_once __DIR__ . "/api/get_ListHomestay.php";
             <img src="public/images/logo/banner6.jpeg" alt="Banner">
 
             <div class="banner-text">
-                <h2 class="btn-shine">Welcome to Homestay Booking</h2>
-                <p class="btn-shine">Find your perfect getaway</p>
+                <h2 class="btn-shine">ยินดีต้อนรับ</h2>
+                <p class="btn-shine">ค้นหาการพักผ่อนที่สมบูรณ์แบบของคุณ</p>
             </div>
 
             <button class="slider-btn prev">&#10094;</button>
@@ -178,11 +179,11 @@ require_once __DIR__ . "/api/get_ListHomestay.php";
         <section class="search-section">
             <div class="search-container">
                 <div class="search-box">
-                    <input type="text" id="searchInput" placeholder="Search homestays..." />
+                    <input type="text" id="searchInput" placeholder="ค้นหาบ้านพัก จังหวัด อำเภอ..." />
                     <!-- <input type="date" id="checkInDate" />
                     <input type="date" id="checkOutDate" /> -->
                     <select name="filter" id="filter">
-                        <option value=""> </option>
+                        <option value="">คัดกรอง</option>
                         <option value="best_reviews">คะแนนรีวิวดีสุด</option>
                         <option value="rate_poor">ราคาถูกที่สุด</option>
                         <option value="popular">ยอดนิยม</option>
@@ -193,7 +194,7 @@ require_once __DIR__ . "/api/get_ListHomestay.php";
         </section>
 
         <section class="homestay-list">
-            <h2>Available Homestays</h2>
+            <h2>รายการบ้านพัก</h2>
             <div class="homestay-grid" id="homestay-container">
 
             </div>

@@ -31,7 +31,6 @@ class Payment
         INNER JOIN Room r ON b.Room_id = r.Room_id
         INNER JOIN Host h ON p.Host_id = h.Host_id
         WHERE b.Booking_id = ? AND b.User_id = ?";
-
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$booking_id, $user_id]);
         $list_book = $stmt->fetch(PDO::FETCH_ASSOC);

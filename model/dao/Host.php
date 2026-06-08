@@ -19,33 +19,71 @@ class Host
     // Method สำหรับการลงทะเบียน
     public function register($email, $firstname, $lastname, $Id_card, $phone, $password, $confirm_password)
     {
+        // ตรวจสอบข้อมูลพื้นฐาน
         if (empty($email) || empty($Id_card) || empty($firstname) || empty($lastname) || empty($phone) || empty($password) || empty($confirm_password)) {
-            return "กรุณากรอกข้อมูลให้ครบ.";
-        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            return "รูปแบบอีเมลไม่ถูกต้อง.";
+            return "กรุณากรอกข้อมูลให้ครบถ้วน";
         }
+
+        // ตรวจสอบรูปแบบอีเมล
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return "รูปแบบอีเมลไม่ถูกต้อง";
+        }
+
+        // ตรวจสอบความยาวรหัสผ่าน
+        if (strlen($password) < 6) {
+            return "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร";
+        }
+
+        // ตรวจสอบรูปแบบเลขบัตรประชาชน (13 หลัก)
+        if (!preg_match('/^[0-9]{13}$/', $Id_card)) {
+            return "เลขบัตรประชาชนต้องเป็นตัวเลข 13 หลัก";
+        }
+
+        // ตรวจสอบรูปแบบเบอร์โทรศัพท์
+        if (!preg_match('/^[0-9]{10}$/', $phone)) {
+            return "เบอร์โทรศัพท์ต้องเป็นตัวเลข 10 หลัก";
+        }
+
+        // ตรวจสอบรหัสผ่าน
         if ($password !== $confirm_password) {
-            // return "รหัสผ่านไม่ตรงกัน.";
-            $arr = ['pwd' => $password, 'con_pwd' => $confirm_password];
-            return $arr;
+            return "รหัสผ่านไม่ตรงกัน";
         }
+
         // ตรวจสอบว่าอีเมลซ้ำหรือไม่
         $checkStmt = $this->conn->prepare("SELECT COUNT(*) FROM host WHERE Host_email = ?");
         $checkStmt->execute([$email]);
         if ($checkStmt->fetchColumn() > 0) {
             return "อีเมลนี้ถูกใช้งานแล้ว";
         }
+
+        // ตรวจสอบว่าบัตรประชาชนซ้ำหรือไม่
+        $checkIdStmt = $this->conn->prepare("SELECT COUNT(*) FROM host WHERE Host_IdCard = ?");
+        $checkIdStmt->execute([$Id_card]);
+        if ($checkIdStmt->fetchColumn() > 0) {
+            return "เลขบัตรประชาชนนี้ถูกใช้งานแล้ว";
+        }
+
         // เข้ารหัสผ่าน
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
         // บันทึกข้อมูลลงฐานข้อมูล
-        $stmt = $this->conn->prepare(
-            "INSERT INTO host(Host_email,Host_IdCard, Host_firstname, Host_lastname, Host_phone, Host_password) 
-             VALUES (?, ? ,?, ?, ?, ?)"
-        );
-        if ($stmt->execute([$email, $Id_card, $firstname, $lastname, $phone, $hashedPassword])) {
-            return true; // ลงทะเบียนสำเร็จ
-        } else {
-            return "เกิดข้อผิดพลาดในการลงทะเบียน";
+        try {
+            $stmt = $this->conn->prepare(
+                "INSERT INTO host(Host_email, Host_IdCard, Host_firstname, Host_lastname, Host_phone, Host_password) 
+                 VALUES (?, ?, ?, ?, ?, ?)"
+            );
+
+            if ($stmt->execute([$email, $Id_card, $firstname, $lastname, $phone, $hashedPassword])) {
+                return true; // ลงทะเบียนสำเร็จ
+            } else {
+                return "เกิดข้อผิดพลาดในการบันทึกข้อมูล";
+            }
+        } catch (PDOException $e) {
+            // ตรวจสอบ error code สำหรับ duplicate entry
+            if ($e->getCode() == 23000) {
+                return "ข้อมูลนี้ถูกใช้งานแล้ว";
+            }
+            return "เกิดข้อผิดพลาดในการลงทะเบียน: " . $e->getMessage();
         }
     }
     public function admin_edit_host($firstname, $lastname, $phone, $host_id)
@@ -100,7 +138,8 @@ class Host
                     $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
                     $stmt = $this->conn->prepare("UPDATE host SET Host_password = ? WHERE Host_email = ?");
                     $stmt->execute([$hashedPassword, $email]);
-                };
+                }
+                ;
                 return "success";
             }
 

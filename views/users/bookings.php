@@ -13,7 +13,7 @@ require_once __DIR__ . '/../../api/get_bookings.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Bookings - Homestay Booking</title>
+    <title>รายการจอง - Homestay Booking</title>
     <link rel="website icon" type="png" href="../../public/images/logo.png">
     <link rel="stylesheet" href="../../public/css/style.css">
     <link rel="stylesheet" href="../../public/css/main-menu.css">
@@ -461,6 +461,16 @@ require_once __DIR__ . '/../../api/get_bookings.php';
             background-color: #c82333;
         }
 
+        .views-btn {
+            background-color: #2a6f97;
+            color: white;
+
+        }
+
+        .views-btn:hover {
+            background-color: #2a6f97;
+        }
+
         .refund-btn {
             background-color: #6c757d;
             color: white;
@@ -611,6 +621,165 @@ require_once __DIR__ . '/../../api/get_bookings.php';
             background-color: #ccc;
             margin-left: 10px;
         }
+
+        /* Modal Styles */
+        .modal-info {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-contents {
+            background-color: #ffffff;
+            margin: 10% auto;
+            padding: 0;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease-out;
+            overflow: hidden;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(155deg, #1e5470 0%, #74adc9ff 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .close {
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            background: none;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+
+        .close:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+
+        .modal-body {
+            padding: 2rem;
+
+        }
+
+        .modal-body .greeting {
+            /* text-align: center; */
+            font-size: 2rem;
+            color: #1e5470;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .modal-body .message {
+            font-size: 1.1rem;
+            color: #666;
+            line-height: 1.6;
+            align-content: start;
+            margin-bottom: 1.5rem;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            20%,
+            50%,
+            80%,
+            100% {
+                transform: translateY(0);
+            }
+
+            40% {
+                transform: translateY(-10px);
+            }
+
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .modal-footer {
+            padding: 1rem 2rem 2rem;
+            text-align: center;
+        }
+
+        .btn-modal {
+            background: #1e5470;
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-modal:hover {
+            background: #74adc9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(30, 84, 112, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                margin: 20% auto;
+                width: 95%;
+            }
+
+            .modal-header {
+                padding: 1rem 1.5rem;
+            }
+
+            .modal-body {
+                padding: 1.5rem;
+            }
+
+            .modal-body .greeting {
+                font-size: 1.5rem;
+            }
+        }
     </style>
 </head>
 
@@ -633,21 +802,27 @@ require_once __DIR__ . '/../../api/get_bookings.php';
                 <i class="fas fa-bars"></i>
             </button>
             <ul class="sidebar-menu">
-                <li><a href="main-menu.php"><i class="fas fa-home"></i><span class="menu-label">Home</span></a></li>
-                <li><a href="profile.php"><i class="fas fa-user"></i><span class="menu-label">Profile</span></a></li>
-                <li><a href="favorites.php"><i class="fas fa-heart"></i><span class="menu-label">Favorite</span></a>
+                <li><a href="main-menu.php" title="หน้าหลัก"><i class="fa-solid fa-house"></i><span
+                            class="menu-label">หน้าหลัก</span></a></li>
+                <li><a href="profile.php" title="ข้อมูลผู้ใช้งาน"><i class="fas fa-user"></i><span
+                            class="menu-label">ข้อมูลผู้ใช้งาน</span></a></li>
+
+                <li><a href="favorites_rl.php" title="รายการโปรด"><i class="fas fa-heart"></i><span
+                            class="menu-label">รายการโปรด</span></a>
                 </li>
-                <li><a href="bookings.php" class="active"><i class="fas fa-calendar"></i><span
-                            class="menu-label">Booking</span></a></li>
-                <li><a href="../../controls/logout.php"><i class="fas fa-sign-out-alt"></i><span
-                            class="menu-label">Logout</span></a>
+                <li><a href="bookings.php" class="active"><i class="fas fa-calendar"></i><span class="menu-label"
+                            title="รายการจอง">รายการจอง</span></a>
+                </li>
+
+                <li><a href="../../controls/logout.php" title="ออกจากระบบ"><i class="fas fa-sign-out-alt"></i><span
+                            class="menu-label">ออกจากระบบ</span></a>
                 </li>
             </ul>
-
             <div class="sidebar-footer">
                 <div>
                     <i class="fas fa-user-circle"></i>
-                    <span class="menu-label"><?php echo htmlspecialchars($_SESSION['User_email']); ?></span>
+                    <span class="menu-label"
+                        title="อีเมล"><?php echo htmlspecialchars($_SESSION['User_email']); ?></span>
                 </div>
             </div>
         </aside>
@@ -747,10 +922,13 @@ require_once __DIR__ . '/../../api/get_bookings.php';
                                                 <form method="post" action="detail_house.php" style="display:inline;">
                                                     <input type="hidden" name="house_id"
                                                         value="<?php echo htmlspecialchars($booking["Property_id"]); ?>">
-                                                    <button type="submit" class="action-btn refund-btn">
+                                                    <button type="submit" class="action-btn views-btn">
                                                         <i class="fas fa-sync"></i>ดูรายละเอียด
                                                     </button>
                                                 </form>
+                                                <button type="button" onclick="showInfoModal()" class="action-btn views-btn">
+                                                    <i class="fas fa-info-circle"></i>นโยบายการคืนเงิน
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -904,14 +1082,14 @@ require_once __DIR__ . '/../../api/get_bookings.php';
                                                     <button class="action-btn refund-btn"
                                                         data-booking-id="<?php echo htmlspecialchars($booking['Booking_id']); ?>"
                                                         data-amount="<?php echo htmlspecialchars($booking['Total_price']); ?>" disabled>
-                                                        <i class="fas fa-sync"></i>Refund</button>
+                                                        <i class="fas fa-sync"></i>ขอคืนเงิน</button>
                                                 </div>
                                             <?php else: ?>
                                                 <div class="booking-actions">
                                                     <button class="action-btn contact-btn"
                                                         data-booking-id="<?php echo htmlspecialchars($booking['Booking_id']); ?>"
                                                         data-amount="<?php echo htmlspecialchars($booking['Total_price']); ?>">
-                                                        <i class="fas fa-sync"></i>Refund</button>
+                                                        <i class="fas fa-sync"></i>ขอคืนเงิน</button>
                                                 </div>
                                             <?php endif; ?>
                                         </div>
@@ -1009,6 +1187,27 @@ require_once __DIR__ . '/../../api/get_bookings.php';
                 </div>
         </div>
     </div>
+    <!-- Info Modal -->
+    <div id="infoModal" class="modal-info">
+        <div class="modal-contents">
+            <div class="modal-header">
+                <h2><i class="fas fa-info-circle"></i> ข้อมูลเพิ่มเติม</h2>
+                <button class="close" onclick="closeInfoModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+
+                <div class="greeting">นโยบายการคืนเงิน</div>
+                <p>รายการจองงที่ชำระผ่าน QR Code จะสามาถทำเรื่องขอเงินคืนออนไลน์ได้</p>
+                <div id="policy">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal" onclick="closeInfoModal()">
+                    <i class="fas fa-check"></i> เข้าใจแล้ว
+                </button>
+            </div>
+        </div>
+    </div>
     <div id="cancelModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
@@ -1031,6 +1230,53 @@ require_once __DIR__ . '/../../api/get_bookings.php';
             sidebar.classList.toggle("collapsed");
             mainContent.classList.toggle("sidebar-collapsed");
         }
+        // Modal Functions
+        async function showInfoModal() {
+            try {
+                const res = await fetch('../../api/get_policy.php');
+                const policies = await res.json();
+                const msg_policy = document.getElementById('policy');
+                msg_policy.innerHTML = '';
+                if (policies === 0) {
+                    msg_policy.innerHTML = '<div class="message">ไม่พบนโยบายการคืนเงิน</div>';
+                    return
+                }
+                policies.forEach(policy => {
+                    const data = document.createElement('div');
+                    data.innerHTML = `
+                        <div class="message">${policy.Policy_description}</div>
+                    `;
+                    msg_policy.appendChild(data);
+                });
+                const modal = document.getElementById('infoModal');
+                modal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+
+            } catch (error) {
+                console.error('เกิดข้อผิดพลาดในข้อมููล:', error);
+            }
+        }
+
+        function closeInfoModal() {
+            const modal = document.getElementById('infoModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            const modal = document.getElementById('infoModal');
+            if (event.target === modal) {
+                closeInfoModal();
+            }
+        }
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeInfoModal();
+            }
+        });
         document.addEventListener('DOMContentLoaded', function() {
 
             const cancelButtons = document.querySelectorAll('.action-btn.cancel-btn');
@@ -1162,6 +1408,8 @@ require_once __DIR__ . '/../../api/get_bookings.php';
                     console.error('Error:', error);
                     alert('เกิดข้อผิดพลาดในการขอคืนเงิน');
                 });
+
+
         };
     </script>
 <?php endif; ?>

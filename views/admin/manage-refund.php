@@ -166,6 +166,36 @@ require_once __DIR__ . '/../../api/get_refund.php';
         height: 2px;
         background: #1e5470;
     }
+
+    .btn-policy {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        backdrop-filter: blur(10px);
+    }
+
+    .btn-policy:hover {
+        background: rgba(255, 255, 255, 0.3);
+        border-color: rgba(255, 255, 255, 0.5);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-policy:active {
+        transform: translateY(0);
+    }
     </style>
 </head>
 
@@ -180,28 +210,38 @@ require_once __DIR__ . '/../../api/get_refund.php';
     </header>
     <div class="layout">
         <aside class="sidebar" id="sidebar">
-            <button class="toggle-sidebar" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+            <button class="toggle-sidebar" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
             <ul class="sidebar-menu">
-                <li><a href="admin-dashboard.php" title="หน้าแดชบอร์ด"><i class=" fa-solid fa-ranking-star"></i><span
-                            class="menu-label">Dashboard</span></a></li>
-                <li><a href="profile.php" title="ข้อมูลผู้ใช้งาน"><i class="fas fa-user"></i><span
-                            class="menu-label">Profile</span></a></li>
+                <li><a href="admin-dashboard.php" title="รายงานข้อมูล"><i class="fa-solid fa-ranking-star"></i><span
+                            class="menu-label">รายงานข้อมูล</span></a></li>
+                <li><a href="profile.php" title="ข้อมูลส่วนตัว"><i class="fas fa-user"></i><span
+                            class="menu-label">ข้อมูลส่วนตัว</span></a></li>
                 <li><a href="approve-properties.php" title="อนุมัติสถานที่พัก"><i
-                            class="fa-solid fa-house-medical-circle-check"></i><span class="menu-label">Approve
-                            Properties</span></a></li>
+                            class="fa-solid fa-house-medical-circle-check"></i><span
+                            class="menu-label">อนุมัติสถานที่พัก</span></a></li>
                 <li><a href="manage-hosts.php" title="จัดการผู้ใช้งานสถานที่พัก"><i class="fas fa-users"></i><span
-                            class="menu-label">Hosts</span></a></li>
+                            class="menu-label">ข้อมูลเจ้าของบ้านที่พัก</span></a></li>
                 <li><a href="manage-users.php" title="จัดการผู้ใช้งาน"><i class="fas fa-user-friends"></i><span
-                            class="menu-label">Users</span></a></li>
+                            class="menu-label">ข้อมูลผู้ใช้</span></a></li>
                 <li><a href="manage-refund.php" title="คำร้องขอคืนเงินผู้ใช้งาน" class="active"><i
-                            class="fas fa-hand-holding-usd"></i><span class="menu-label">Refund</span></a></li>
-                <li><a href="manage-reviews.php" title="รีวิวจากผู้ใช้งาน"><i class="fas fa-star"></i><span
-                            class="menu-label">Reviews</span></a></li>
+                            class="fas fa-hand-holding-usd"></i><span
+                            class="menu-label">จัดการคำร้องขอคืนเงิน</span></a></li>
+                <li><a href="manage-reviews.php" title="รีวิวจากผู้ใช้"><i class="fas fa-star"></i><span
+                            class="menu-label">รีวิวจากผู้ใช้งาน</span></a></li>
                 <li><a href="violations.php" title="จัดการเรื่องร้องเรียน"><i
-                            class="fas fa-exclamation-triangle"></i><span class="menu-label">Violations</span></a></li>
+                            class="fas fa-exclamation-triangle"></i><span
+                            class="menu-label">จัดการเรื่องร้องเรียน</span></a></li>
                 <li><a href="../../controls/logout.php" title="ออกจากระบบ"><i class="fas fa-sign-out-alt"></i><span
                             class="menu-label">Logout</span></a></li>
             </ul>
+            <div class="sidebar-footer">
+                <div>
+                    <i class="fas fa-user-circle"></i>
+                    <span class="menu-label"><?php echo htmlspecialchars($_SESSION['Admin_email']); ?></span>
+                </div>
+            </div>
         </aside>
         <?php
 
@@ -215,6 +255,11 @@ require_once __DIR__ . '/../../api/get_refund.php';
                 <div class="page-header">
                     <h1><i class="fas fa-hand-holding-usd"></i> ตรวจสอบคำขอคืนเงิน</h1>
                     <p>จัดการและดำเนินการตามคำขอคืนเงินจากผู้ใช้งาน</p>
+                    <div style="margin-top: 1.5rem;">
+                        <a href="manage-refund-policy.php" class="btn-policy">
+                            <i class="fas fa-file-contract"></i> จัดการนโยบายการคืนเงิน
+                        </a>
+                    </div>
                 </div>
                 <div class="refund-tabs">
                     <div class="tab active" id="refund-tab">
@@ -231,8 +276,8 @@ require_once __DIR__ . '/../../api/get_refund.php';
                         <table class="refund-table">
                             <thead>
                                 <tr>
-                                    <th>Refund ID</th>
-                                    <th>Charge ID</th>
+                                    <th>ID</th>
+                                    <th>รหัสชำระเงิน</th>
                                     <th>ชื่อที่พัก</th>
                                     <th>ผู้ขอคืนเงิน</th>
                                     <th>เจ้าของที่พัก</th>
@@ -298,7 +343,7 @@ require_once __DIR__ . '/../../api/get_refund.php';
                         <table class="refund-table">
                             <thead>
                                 <tr>
-                                    <th>Booking ID</th>
+                                    <th>รหัสการจอง</th>
                                     <th>ชื่อที่พัก</th>
                                     <th>ผู้ขอคืนเงิน</th>
                                     <th>เจ้าของที่พัก</th>
